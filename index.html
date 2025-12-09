@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Brújula GenIA Campus</title>
+    <title>Brújula GenIA - Campus V11</title>
     
     <!-- Fuentes e Iconos -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
@@ -11,17 +11,15 @@
     
     <style>
         :root {
-            /* Paleta Vibrante (Solid Colors) */
+            /* Colores Vibrantes */
             --v-purple: #8B5CF6;
-            --v-purple-dark: #7C3AED;
             --v-green: #10B981;
-            --v-green-dark: #059669;
             --v-blue: #3B82F6;
             --v-blue-dark: #2563EB;
             --v-orange: #F59E0B;
             --v-red: #EF4444;
             --v-dark: #1E293B;
-
+            
             /* UI System */
             --bg: #F8FAFC;
             --text-main: #0F172A;
@@ -37,575 +35,581 @@
         .hidden { display: none !important; }
         .fade-in { animation: fadeIn 0.5s ease forwards; }
         .slide-up { animation: slideUp 0.4s ease forwards; }
-        .pulse { animation: pulse 2s infinite; }
-
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(79, 70, 229, 0); } 100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); } }
 
-        /* --- 1. SPLASH SCREEN --- */
-        #view-splash {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
-            background: var(--v-blue-dark); color: white;
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 9999;
-        }
-        .splash-logo { font-size: 4rem; margin-bottom: 20px; background: white; color: var(--v-blue-dark); width: 100px; height: 100px; border-radius: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
-        .loading-bar { width: 150px; height: 6px; background: rgba(255,255,255,0.3); border-radius: 3px; margin-top: 40px; overflow: hidden; }
-        .loading-fill { height: 100%; background: white; width: 0%; animation: load 2.5s ease-in-out forwards; }
-        @keyframes load { to { width: 100%; } }
-
-        /* --- UI GENERAL --- */
         .container { width: 100%; max-width: 600px; margin: 0 auto; padding: 20px; flex: 1; }
-        .view { display: none; }
-        .view.active { display: block; animation: fadeIn 0.4s ease; }
 
-        .btn { width: 100%; padding: 18px; border-radius: 18px; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; }
+        /* BOTONES E INPUTS */
+        .btn { width: 100%; padding: 16px; border-radius: 16px; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; margin-bottom: 10px; display: flex; justify-content: center; align-items: center; gap: 8px; }
         .btn:active { transform: scale(0.97); }
-        .btn-primary { background: var(--v-blue-dark); color: white; box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3); }
-        .btn-white { background: white; color: var(--v-dark); border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
-        .btn-ghost { background: transparent; color: var(--v-blue-dark); }
-        .input-field { width: 100%; padding: 18px; background: white; border: 2px solid #E2E8F0; border-radius: 18px; font-size: 1rem; margin-bottom: 15px; outline: none; }
+        .btn-primary { background: var(--v-blue-dark); color: white; box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3); }
+        .btn-outline { background: white; border: 2px solid #E2E8F0; color: var(--text-main); }
+        .input-field { width: 100%; padding: 16px; background: white; border: 2px solid #E2E8F0; border-radius: 16px; font-size: 1rem; margin-bottom: 12px; outline: none; }
+        .input-field:focus { border-color: var(--v-blue); }
 
-        /* --- LOGIN & ROL --- */
-        .role-btn {
-            background: white; padding: 25px; border-radius: 24px; border: 2px solid #E2E8F0;
-            text-align: left; margin-bottom: 15px; cursor: pointer; transition: 0.2s;
-            display: flex; align-items: center; gap: 20px;
+        /* SPLASH SCREEN */
+        #view-splash { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh; 
+            background: linear-gradient(135deg, var(--v-blue-dark), var(--v-purple)); 
+            color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; 
+            z-index: 9999; transition: opacity 0.5s; 
         }
-        .role-btn:hover { border-color: var(--v-blue); background: #EFF6FF; transform: translateY(-3px); }
-        .role-icon { width: 60px; height: 60px; background: #EFF6FF; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--v-blue); }
+        .splash-icon { font-size: 5rem; margin-bottom: 20px; animation: pulse 2s infinite; }
 
-        /* --- CUESTIONARIO --- */
-        .quiz-step { flex: 1; height: 6px; background: #E2E8F0; border-radius: 3px; }
-        .quiz-step.filled { background: var(--v-blue); }
-        .quiz-option {
-            background: white; padding: 20px; border-radius: 18px; border: 2px solid #E2E8F0;
-            margin-bottom: 12px; cursor: pointer; font-weight: 600; transition: 0.2s; display: flex; justify-content: space-between; align-items: center;
-        }
-        .quiz-option:hover { border-color: var(--v-blue); color: var(--v-blue); background: #F8FAFC; }
+        /* AUTH & TABS */
+        .auth-logo { width: 80px; height: 80px; background: var(--v-blue); color: white; border-radius: 20px; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; margin: 0 auto 20px auto; box-shadow: 0 10px 20px rgba(59, 130, 246, 0.3); }
+        .tab-container { display: flex; gap: 10px; background: #E2E8F0; padding: 5px; border-radius: 14px; margin-bottom: 20px; }
+        .tab { flex: 1; text-align: center; padding: 10px; border-radius: 10px; cursor: pointer; font-weight: 600; color: var(--text-sec); }
+        .tab.active { background: white; color: var(--text-main); box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
 
-        /* --- PERFIL REVEAL (SOLIDO) --- */
-        .reveal-card {
-            padding: 50px 30px; border-radius: 30px; text-align: center; color: white;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.2); margin-top: 20px;
-            display: flex; flex-direction: column; align-items: center;
-        }
-        .reveal-icon { font-size: 5rem; margin-bottom: 20px; }
-        .reveal-btn { background: rgba(255,255,255,0.2); border: 2px solid white; color: white; backdrop-filter: blur(5px); }
+        /* CARDS */
+        .solid-card { padding: 25px; border-radius: 24px; color: white; margin-bottom: 15px; position: relative; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.1); cursor: pointer; transition: transform 0.2s; }
+        .solid-card:active { transform: scale(0.98); }
+        .bg-purple { background: linear-gradient(135deg, #8B5CF6, #7C3AED); }
+        .bg-green { background: linear-gradient(135deg, #10B981, #059669); }
+        .bg-blue { background: linear-gradient(135deg, #3B82F6, #2563EB); }
+        .bg-orange { background: linear-gradient(135deg, #F59E0B, #D97706); }
+        .bg-red { background: linear-gradient(135deg, #EF4444, #DC2626); }
+        .card-bg-icon { position: absolute; right: -15px; bottom: -15px; font-size: 6rem; opacity: 0.15; transform: rotate(-10deg); }
 
-        /* --- NOVEDADES (COLOR CARDS) --- */
-        .news-scroll { display: flex; overflow-x: auto; gap: 15px; padding: 5px 0 20px 0; scroll-snap-type: x mandatory; }
-        .news-card {
-            min-width: 280px; border-radius: 24px; padding: 25px; color: white;
-            scroll-snap-align: center; position: relative; overflow: hidden;
-            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
-            display: flex; flex-direction: column; justify-content: space-between; min-height: 160px;
+        /* QUIZ */
+        .quiz-card { background: white; padding: 25px; border-radius: 24px; box-shadow: 0 5px 20px rgba(0,0,0,0.05); text-align: center; min-height: 320px; display: flex; flex-direction: column; justify-content: center; }
+        .quiz-opt { background: #F8FAFC; border: 2px solid #E2E8F0; padding: 18px; border-radius: 16px; margin-bottom: 12px; cursor: pointer; transition: 0.2s; text-align: left; display: flex; justify-content: space-between; align-items: center; font-weight: 600; }
+        .quiz-opt:hover { border-color: var(--v-blue); background: #EFF6FF; color: var(--v-blue); }
+        .progress-bar { height: 8px; background: #E2E8F0; border-radius: 4px; margin-bottom: 25px; overflow: hidden; }
+        .progress-fill { height: 100%; background: var(--v-blue); width: 0%; transition: width 0.3s; }
+
+        /* CHATBOT */
+        .bot-trigger { 
+            position: fixed; bottom: 90px; right: 20px; width: 65px; height: 65px; 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            font-size: 2rem; color: white; cursor: pointer; z-index: 5000; 
+            box-shadow: 0 10px 25px rgba(0,0,0,0.2); animation: pulse 3s infinite; 
         }
-        .news-bg-icon { position: absolute; right: -15px; bottom: -15px; font-size: 6rem; opacity: 0.2; transform: rotate(-15deg); }
+        .bot-public { background: var(--v-orange); }
+        .bot-private { background: linear-gradient(135deg, var(--v-blue), var(--v-purple)); }
+
+        .chat-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 6000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(3px); }
+        .bot-window { width: 350px; height: 550px; background: white; border-radius: 24px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); overflow: hidden; display: flex; flex-direction: column; animation: slideUp 0.3s; }
+        .chat-area { flex: 1; padding: 15px; overflow-y: auto; background: #F8FAFC; display: flex; flex-direction: column; gap: 12px; }
+        .msg { padding: 12px 16px; border-radius: 18px; font-size: 0.95rem; line-height: 1.5; max-width: 80%; }
+        .msg-bot { background: white; border: 1px solid #E2E8F0; border-bottom-left-radius: 4px; align-self: flex-start; }
+        .msg-user { background: var(--v-blue); color: white; border-bottom-right-radius: 4px; align-self: flex-end; }
+        .bot-controls { padding: 15px; background: white; border-top: 1px solid #E2E8F0; display: flex; gap: 8px; flex-wrap: wrap; }
+        .chip-btn { background: #EFF6FF; border: 1px solid var(--v-blue); color: var(--v-blue); padding: 8px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 600; cursor: pointer; transition: 0.2s; }
+        .chip-btn:hover { background: var(--v-blue); color: white; }
+
+        /* MODALS & NAVBAR */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); z-index: 2000; display: none; align-items: flex-end; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-content { background: white; width: 100%; max-width: 600px; border-radius: 30px 30px 0 0; padding: 30px; max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s; position: relative; }
+        .done-overlay { position: absolute; top: 0; left: 0; width: 100%; height: 100%; background: rgba(16, 185, 129, 0.9); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: 800; color: white; z-index: 10; backdrop-filter: blur(2px); animation: fadeIn 0.3s; }
         
-        .news-purple { background: linear-gradient(135deg, var(--v-purple), var(--v-purple-dark)); }
-        .news-green { background: linear-gradient(135deg, var(--v-green), var(--v-green-dark)); }
+        nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 75px; background: white; border-top: 1px solid #E2E8F0; display: flex; justify-content: space-around; align-items: center; z-index: 100; }
+        .nav-item { text-align: center; font-size: 0.7rem; color: var(--text-sec); cursor: pointer; flex: 1; }
+        .nav-item i { font-size: 1.4rem; display: block; margin-bottom: 3px; }
+        .nav-item.active { color: var(--v-blue); font-weight: 700; }
+        #toast-level { position: fixed; top: 30px; left: 50%; transform: translateX(-50%); background: var(--v-dark); color: white; padding: 12px 25px; border-radius: 30px; display: flex; align-items: center; gap: 10px; z-index: 8000; display: none; box-shadow: 0 10px 20px rgba(0,0,0,0.2); }
 
-        /* --- MISIONES (SOLID COLOR) --- */
-        .mission-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .mission-card {
-            padding: 20px; border-radius: 24px; text-align: center; color: white;
-            transition: 0.2s; position: relative; overflow: hidden; cursor: pointer;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: none;
-            display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 140px;
-        }
-        .mission-card:active { transform: scale(0.97); }
-        .mission-icon { font-size: 2.5rem; margin-bottom: 12px; }
-        .check-badge { position: absolute; top: 10px; right: 10px; color: white; display: none; background: rgba(0,0,0,0.2); border-radius: 50%; padding: 5px; }
-        .mission-card.done .check-badge { display: block; }
-
-        /* Colores Misiones */
-        .bg-blue { background: var(--v-blue); }
-        .bg-orange { background: var(--v-orange); }
-        .bg-green { background: var(--v-green); }
-        .bg-red { background: var(--v-red); }
-        .bg-purple { background: var(--v-purple); }
-
-        /* --- TEACHER --- */
-        .thermometer-card { background: white; padding: 25px; border-radius: 24px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-
-        /* --- MODAL --- */
-        .modal-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 2000;
-            display: none; align-items: flex-end; justify-content: center;
-        }
-        .modal-content {
-            background: white; width: 100%; max-width: 600px;
-            border-radius: 30px 30px 0 0; padding: 30px;
-            max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s;
-        }
-        @media(min-width:600px){ .modal-content { border-radius: 30px; margin-bottom: 20px; } .modal-overlay { align-items: center; } }
-
-        /* --- CHATBOT --- */
-        #bot-trigger {
-            position: fixed; bottom: 100px; right: 20px; width: 65px; height: 65px;
-            background: linear-gradient(135deg, var(--v-blue), var(--v-purple));
-            color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 2rem; box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4); cursor: pointer; z-index: 100;
-        }
-        #bot-window {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 100%; background: white;
-            z-index: 3000; display: none; flex-direction: column;
-        }
-        @media(min-width:600px){ #bot-window { bottom: 110px; left: auto; right: 20px; width: 380px; height: 550px; border-radius: 24px; box-shadow: 0 20px 80px rgba(0,0,0,0.2); border: 1px solid #E2E8F0; } }
+        /* Indicators */
+        .stat-row { margin-bottom: 15px; }
+        .stat-label { display: flex; justify-content: space-between; font-size: 0.9rem; margin-bottom: 5px; font-weight: 600; }
+        .stat-track { height: 10px; background: #E2E8F0; border-radius: 5px; overflow: hidden; }
+        .stat-val { height: 100%; border-radius: 5px; transition: width 1s ease; }
         
-        .chat-area { flex: 1; padding: 20px; overflow-y: auto; background: #F8FAFC; display: flex; flex-direction: column; gap: 15px; }
-        .msg { max-width: 85%; padding: 14px 18px; border-radius: 18px; font-size: 0.95rem; line-height: 1.5; }
-        .bot-msg { background: white; border: 1px solid #E2E8F0; border-bottom-left-radius: 4px; align-self: flex-start; }
-        .user-msg { background: var(--v-blue); color: white; border-bottom-right-radius: 4px; align-self: flex-end; }
-        .bot-btn { background: white; border: 1px solid var(--v-blue); color: var(--v-blue); padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; cursor: pointer; margin-right: 5px; margin-top: 5px; }
+        /* Historial XP */
+        .xp-list { list-style: none; margin-top: 10px; }
+        .xp-item { display: flex; justify-content: space-between; padding: 12px 0; border-bottom: 1px solid #F1F5F9; font-size: 0.9rem; }
+        .xp-badge { background: #DCFCE7; color: #166534; padding: 2px 8px; border-radius: 8px; font-weight: 700; font-size: 0.8rem; }
 
-        /* --- NAVBAR --- */
-        nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 80px;
-            background: white; border-top: 1px solid #E2E8F0;
-            display: flex; justify-content: space-around; align-items: center; z-index: 1000;
-        }
-        .nav-item { color: var(--text-sec); text-align: center; font-size: 0.75rem; font-weight: 600; cursor: pointer; flex: 1; }
-        .nav-item.active { color: var(--v-blue); }
-
+        @keyframes pulse { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
     </style>
 </head>
 <body>
 
-    <!-- 1. SPLASH SCREEN -->
+    <!-- === SPLASH SCREEN === -->
     <div id="view-splash">
-        <div class="splash-logo"><i class="fa-solid fa-compass"></i></div>
-        <h1 style="font-weight:800; margin-bottom: 5px;">Brújula GenIA</h1>
-        <p style="opacity:0.8; letter-spacing: 1px;">CAMPUS</p>
-        <div class="loading-bar"><div class="loading-fill"></div></div>
+        <i class="fa-solid fa-compass splash-icon"></i>
+        <h1 style="font-weight: 800; margin-bottom: 5px;">Brújula GenIA</h1>
+        <p style="opacity: 0.9; letter-spacing: 2px;">CAMPUS VIRTUAL</p>
     </div>
 
-    <!-- 2. LOGIN / AUTH -->
-    <div id="view-auth" class="view hidden">
-        <div class="container" style="text-align: center; padding-top: 50px;">
-            <div style="font-size:3.5rem; color:var(--v-blue); margin-bottom:20px;"><i class="fa-solid fa-compass"></i></div>
-            <h2 style="margin-bottom:10px; font-size: 1.8rem;">Bienvenido</h2>
-            <p style="color:var(--text-sec); margin-bottom:40px;">Tu compañero de investigación con IA.</p>
-            
-            <input type="email" placeholder="correo@institucion.edu" class="input-field">
-            <input type="password" placeholder="contraseña" class="input-field">
-            
-            <button class="btn btn-primary" onclick="goToRole()">Iniciar Sesión</button>
-            <button class="btn btn-ghost" onclick="goToRole()">Ingresar como Invitado</button>
+    <!-- === 1. LOGIN (Con Bot Público) === -->
+    <div id="view-auth" class="view container hidden">
+        <div style="margin-top: 40px; text-align: center;">
+            <div class="auth-logo"><i class="fa-solid fa-compass"></i></div>
+            <h1>Bienvenido</h1>
+            <p style="color: var(--text-sec);">Plataforma de Competencias IA</p>
         </div>
-    </div>
 
-    <!-- 3. SELECCIÓN DE ROL -->
-    <div id="view-role" class="view hidden">
-        <div class="container">
-            <h2 style="margin-bottom:10px;">Selecciona tu Rol</h2>
-            <p style="color:var(--text-sec); margin-bottom:30px;">Adaptaremos el contenido para ti.</p>
-            
-            <div class="role-btn" onclick="setRole('student')">
-                <div class="role-icon"><i class="fa-solid fa-user-graduate"></i></div>
-                <div>
-                    <h3>Soy Estudiante</h3>
-                    <small style="color:var(--text-sec)">Aprendizaje y Tareas</small>
-                </div>
+        <div class="slide-up" style="margin-top: 30px;">
+            <div class="tab-container">
+                <div class="tab active" onclick="renderAuthForm('login', this)">Ingresar</div>
+                <div class="tab" onclick="renderAuthForm('register', this)">Registrarse</div>
             </div>
-
-            <div class="role-btn" onclick="setRole('teacher')">
-                <div class="role-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
-                <div>
-                    <h3>Soy Docente</h3>
-                    <small style="color:var(--text-sec)">Gestión y Evaluación</small>
-                </div>
+            <div id="auth-form">
+                <input type="email" placeholder="Correo Institucional" class="input-field">
+                <input type="password" placeholder="Contraseña" class="input-field">
+                <button class="btn btn-primary" onclick="goToRole()">Iniciar Sesión</button>
+            </div>
+            <div style="text-align: center; margin-top: 20px;">
+                <button class="btn btn-outline" onclick="goToRole()">Ingresar como Invitado</button>
             </div>
         </div>
+
+        <!-- Bot Público -->
+        <div class="bot-trigger bot-public" onclick="toggleBot('public')"><i class="fa-solid fa-info"></i></div>
     </div>
 
-    <!-- 4. QUIZ (DIAGNÓSTICO) -->
-    <div id="view-quiz" class="view hidden">
-        <div class="container">
-            <div style="display: flex; gap: 5px; margin-bottom: 30px;">
-                <div id="qp-1" class="quiz-step filled"></div>
-                <div id="qp-2" class="quiz-step"></div>
-                <div id="qp-3" class="quiz-step"></div>
-                <div id="qp-4" class="quiz-step"></div>
+    <!-- === 2. ROL === -->
+    <div id="view-role" class="view container hidden">
+        <h2 style="margin-top: 30px; margin-bottom: 20px;">Selecciona tu Perfil</h2>
+        <div class="solid-card bg-blue" onclick="setRole('student')">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <i class="fa-solid fa-user-graduate" style="font-size: 2.2rem;"></i>
+                <div><h3>Soy Estudiante</h3><p style="font-size: 0.9rem; opacity: 0.9;">Aprendizaje y Tareas.</p></div>
             </div>
-            
-            <span style="color:var(--v-blue); font-weight:700; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px;">Diagnóstico IA</span>
-            <h2 id="q-text" style="margin: 15px 0 30px 0; font-size: 1.4rem;">...</h2>
-            <div id="q-options"></div>
         </div>
-    </div>
-
-    <!-- 5. PERFIL REVEAL (SOLID COLOR CARD) -->
-    <div id="view-reveal" class="view hidden">
-        <div class="container">
-            <p style="text-align: center; color:var(--text-sec); margin-top:20px; margin-bottom: 15px;">Basado en la investigación, tu perfil es:</p>
-            
-            <div id="reveal-card" class="reveal-card slide-up">
-                <i id="r-icon" class="reveal-icon fa-solid fa-bolt"></i>
-                <h1 id="r-title" style="margin-bottom:10px; font-weight:800; font-size: 2.2rem;">...</h1>
-                <p id="r-desc" style="font-size: 1.1rem; line-height:1.5; opacity: 0.95; margin-bottom: 20px;">...</p>
-                
-                <button class="btn btn-white" style="margin-top: 20px; color: var(--text-main); width: auto; padding: 15px 30px;" onclick="goToDashboard()">
-                    Ir a mi Inicio <i class="fa-solid fa-arrow-right"></i>
-                </button>
+        <div class="solid-card bg-purple" onclick="setRole('teacher')">
+            <div style="display: flex; align-items: center; gap: 15px;">
+                <i class="fa-solid fa-chalkboard-user" style="font-size: 2.2rem;"></i>
+                <div><h3>Soy Docente</h3><p style="font-size: 0.9rem; opacity: 0.9;">Gestión del Aula.</p></div>
             </div>
         </div>
     </div>
 
-    <!-- 6. DASHBOARD (HOME) -->
-    <header id="app-header" class="hidden" style="position: sticky; top: 0; background: var(--bg); z-index: 50; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;">
-        <div style="font-weight:800; color:var(--v-blue-dark); display:flex; gap:8px; align-items:center; font-size: 1.2rem;">
-            <i class="fa-solid fa-compass"></i> Brújula
-        </div>
-        <div style="background: white; padding: 5px 12px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: var(--v-orange);">
-            <i class="fa-solid fa-star"></i> <span id="xp-val">0</span> XP
-        </div>
-    </header>
-
-    <div id="view-home" class="view hidden">
-        <div class="container" style="padding-top:10px;">
-            
-            <h2 style="margin-bottom:5px;">Hola, <span id="dash-name">Explorador</span> 👋</h2>
-            <p style="color:var(--text-sec); font-size:0.95rem; margin-bottom:25px;">Aquí tienes tus recursos de hoy.</p>
-
-            <!-- NOVEDADES (COLOR CARDS) -->
-            <div class="news-scroll">
-                <!-- Card 1: Morado -->
-                <div class="news-card news-purple">
-                    <div>
-                        <div style="font-weight: 800; margin-bottom: 5px;"><i class="fa-solid fa-bell"></i> Novedad</div>
-                        <h3 style="line-height: 1.3;">Módulo "Ética en IA" actualizado. Evita el plagio accidental.</h3>
-                    </div>
-                    <i class="fa-regular fa-newspaper news-bg-icon"></i>
-                </div>
-                
-                <!-- Card 2: Verde -->
-                <div class="news-card news-green">
-                    <div>
-                        <div style="font-weight: 800; margin-bottom: 5px;"><i class="fa-solid fa-lightbulb"></i> Tip del Día</div>
-                        <h3 style="line-height: 1.3;">Usa NotebookLM para estudiar tus PDFs sin alucinaciones.</h3>
-                    </div>
-                    <i class="fa-regular fa-lightbulb news-bg-icon"></i>
-                </div>
+    <!-- === 3. QUIZ (Preguntas de Investigación) === -->
+    <div id="view-quiz" class="view container hidden">
+        <div style="margin-top: 20px;">
+            <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                <span style="font-weight: 700; color: var(--v-blue);">Diagnóstico</span>
+                <span id="q-progress-text" style="color: var(--text-sec);">1/4</span>
             </div>
-
-            <!-- CONTENIDO ESTUDIANTE (MISIONES DE COLOR) -->
-            <div id="student-dash" style="margin-top: 30px;">
-                <h3 style="margin-bottom:15px;">🎯 Tus Misiones</h3>
-                <div id="missions-container" class="mission-grid">
-                    <!-- JS inyecta tarjetas de colores aquí -->
-                </div>
-            </div>
-
-            <!-- CONTENIDO DOCENTE -->
-            <div id="teacher-dash" class="hidden">
-                <h3 style="margin-bottom:15px;">📊 Termómetro del Aula</h3>
-                <div class="thermometer-card">
-                    <p style="margin-bottom: 15px;"><strong>Resumen del grupo (40 alumnos):</strong></p>
-                    <div style="height:15px; border-radius:10px; background:#F1F5F9; display:flex; overflow:hidden; margin-bottom: 20px;">
-                        <div style="width:40%; background:var(--v-blue);"></div>
-                        <div style="width:30%; background:var(--v-orange);"></div>
-                        <div style="width:30%; background:var(--v-red);"></div>
-                    </div>
-                    <div style="font-size: 0.9rem; display: flex; flex-direction: column; gap: 8px;">
-                        <div style="display:flex; align-items:center; gap:8px;"><div style="width:10px; height:10px; border-radius:50%; background:var(--v-blue);"></div> 40% Exploradores</div>
-                        <div style="display:flex; align-items:center; gap:8px;"><div style="width:10px; height:10px; border-radius:50%; background:var(--v-orange);"></div> 30% Cautelosos</div>
-                        <div style="display:flex; align-items:center; gap:8px;"><div style="width:10px; height:10px; border-radius:50%; background:var(--v-red);"></div> 30% Desconfiados</div>
-                    </div>
-                    <div style="background:#FFFBEB; border-left:4px solid var(--v-orange); padding:15px; margin-top:20px; border-radius:8px; font-size:0.9rem; color: #92400E;">
-                        <strong>Sugerencia:</strong> Asigna el módulo de Ética esta semana.
-                    </div>
-                </div>
+            <div class="progress-bar"><div id="q-bar" class="progress-fill" style="width: 25%;"></div></div>
+            <div class="quiz-card slide-up">
+                <h2 id="q-txt" style="margin-bottom: 30px; line-height: 1.4;">...</h2>
+                <div id="q-opts"></div>
             </div>
         </div>
     </div>
 
-    <!-- 7. PROGRESO -->
-    <div id="view-stats" class="view hidden">
-        <div class="container">
-            <h2 style="margin-bottom:20px;">Tu Evolución</h2>
-            <div style="background: white; padding: 25px; border-radius: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
-                <div style="margin-bottom: 25px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                        <strong>Conocimiento Técnico</strong>
-                        <span style="color: var(--v-blue);">Nivel 2</span>
-                    </div>
-                    <div style="height: 10px; background: #F1F5F9; border-radius: 5px; overflow: hidden;">
-                        <div style="height: 100%; width: 60%; background: var(--v-blue);"></div>
-                    </div>
-                </div>
-
-                <div style="margin-bottom: 25px;">
-                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-                        <strong>Criterio Ético</strong>
-                        <span style="color: var(--v-green);">Nivel 3</span>
-                    </div>
-                    <div style="height: 10px; background: #F1F5F9; border-radius: 5px; overflow: hidden;">
-                        <div style="height: 100%; width: 85%; background: var(--v-green);"></div>
-                    </div>
-                </div>
-
-                <p style="font-size: 0.9rem; color: var(--text-sec); text-align: center;">
-                    Has mejorado un 40% tu confianza en el uso de IA desde el test inicial.
-                </p>
-            </div>
+    <!-- === 4. REVELACIÓN DE PERFIL === -->
+    <div id="view-reveal" class="view container hidden" style="text-align: center;">
+        <h3 style="margin-top: 40px; color: var(--text-sec);">Según la investigación:</h3>
+        <div id="profile-card" class="solid-card slide-up" style="margin-top: 20px; padding: 40px 20px; display: flex; flex-direction: column; align-items: center;">
+            <i id="p-icon" class="fa-solid fa-rocket" style="font-size: 5rem; margin-bottom: 20px;"></i>
+            <h1 id="p-name" style="margin-bottom: 10px; font-size: 2.2rem;">...</h1>
+            <p id="p-desc" style="opacity: 0.95; font-size: 1.1rem; line-height: 1.5;">...</p>
         </div>
+        <button class="btn btn-primary" onclick="goToDashboard()">Ir a mi Campus <i class="fa-solid fa-arrow-right"></i></button>
     </div>
 
-    <!-- MODAL APRENDIZAJE -->
-    <div id="lesson-modal" class="modal-overlay">
-        <div class="modal-content">
-            <div style="display:flex; justify-content:flex-end;"><i class="fa-solid fa-times" style="font-size:1.5rem; color:#94a3b8; cursor:pointer;" onclick="closeLesson()"></i></div>
-            
-            <div id="ls-step1" class="fade-in">
-                <div style="text-align:center; margin-bottom:20px;">
-                    <i id="ls-icon" class="fa-solid" style="font-size:3.5rem; color:var(--v-blue);"></i>
-                </div>
-                <h2 id="ls-title" style="text-align:center; margin-bottom:15px;">...</h2>
-                <p id="ls-desc" style="line-height:1.6; color:var(--text-main); font-size:1.05rem; margin-bottom:25px;">...</p>
-                <div style="display: flex; gap: 10px; flex-direction: column;">
-                    <button class="btn btn-primary" onclick="finishLesson()">✅ ¡Entendido! (+50 XP)</button>
-                    <button class="btn btn-white" style="border: 2px solid #E2E8F0;" onclick="showAnalogy()">🤔 Dame un ejemplo fácil</button>
-                </div>
-            </div>
-
-            <div id="ls-step2" class="hidden">
-                <h3 style="color:var(--v-blue); margin-bottom:15px;">Piénsalo así:</h3>
-                <div style="background:#EFF6FF; padding:20px; border-radius:18px; border-left:4px solid var(--v-blue); margin-bottom:20px;">
-                    <p id="ls-analogy" style="font-size:1.1rem; line-height:1.6; font-style:italic;">...</p>
-                </div>
-                <button class="btn btn-primary" onclick="finishLesson()">¡Ah, ahora sí! (+50 XP)</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- BOT -->
-    <div id="bot-trigger" class="pulse" onclick="toggleBot()">
-        <i class="fa-solid fa-robot"></i>
-    </div>
-    <div id="bot-window">
-        <div style="padding:15px; background:var(--v-blue); color:white; font-weight:700; display:flex; justify-content:space-between; align-items:center;">
-            <span>Entrenador IA</span>
-            <i class="fa-solid fa-chevron-down" style="cursor:pointer;" onclick="toggleBot()"></i>
-        </div>
-        <div id="chat-feed" class="chat-area">
-            <div class="msg bot-msg">¡Hola! Soy tu entrenador. ¿Practicamos?</div>
+    <!-- === 5. DASHBOARD (HOME) === -->
+    <div id="view-home" class="view container hidden">
+        <!-- Header -->
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 10px; margin-bottom: 20px;">
             <div>
-                <button class="bot-btn" onclick="botReply('quiz')">🧠 Quiz Rápido</button>
-                <button class="bot-btn" onclick="botReply('tip')">🔥 Dame un Tip</button>
+                <h2 style="line-height: 1;">Hola, <span id="user-name">Usuario</span></h2>
+                <small style="color: var(--text-sec);">Campus Virtual</small>
+            </div>
+            <div style="background: white; padding: 6px 15px; border-radius: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.05); color: var(--v-orange); font-weight: 800;">
+                <i class="fa-solid fa-star"></i> <span id="xp-val">0</span> XP
             </div>
         </div>
-        <div style="padding:10px; border-top:1px solid #E2E8F0; display:flex; gap:10px;">
-            <input type="text" placeholder="Escribe..." style="flex:1; padding:10px; border-radius:20px; border:1px solid #E2E8F0; outline:none;">
-            <button style="width:40px; height:40px; background:var(--v-blue); color:white; border:none; border-radius:50%;"><i class="fa-solid fa-paper-plane"></i></button>
+
+        <!-- CONTENIDO ESTUDIANTE -->
+        <div id="student-dash" class="hidden">
+            
+            <!-- 1. Novedades -->
+            <h3 style="margin-bottom: 15px;">📰 Novedades IA</h3>
+            <div style="display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 20px; scroll-snap-type: x mandatory;">
+                <div class="solid-card bg-purple" style="min-width: 260px; scroll-snap-align: center;">
+                    <div style="font-weight: 800; font-size: 0.8rem; margin-bottom: 5px;"><i class="fa-solid fa-bolt"></i> TENDENCIA</div>
+                    <h3>Gemini vs ChatGPT: ¿Cuál cita mejor?</h3>
+                    <i class="fa-solid fa-robot card-bg-icon"></i>
+                </div>
+                <div class="solid-card bg-orange" style="min-width: 260px; scroll-snap-align: center;">
+                    <div style="font-weight: 800; font-size: 0.8rem; margin-bottom: 5px;"><i class="fa-solid fa-triangle-exclamation"></i> ÉTICA</div>
+                    <h3>Riesgos de usar IA en Tesis sin revisar.</h3>
+                </div>
+            </div>
+
+            <!-- 2. Herramientas / Misiones -->
+            <h3 style="margin-bottom: 15px;">🚀 Tus Herramientas</h3>
+            <div id="resources-list"></div>
+
+            <!-- 3. Consejos del Docente -->
+            <h3 style="margin-bottom: 15px; margin-top: 25px;">👨‍🏫 Consejos del Docente</h3>
+            <div id="teacher-msg-container"></div>
+
+            <!-- 4. Dudas Estudiante -->
+            <h3 style="margin-bottom: 15px; margin-top: 25px;">💬 ¿Dudas para el Docente?</h3>
+            <div style="background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                <textarea class="input-field" placeholder="Escribe tu consulta aquí..." style="height: 80px; resize: none; margin-bottom: 10px;"></textarea>
+                <button class="btn btn-outline" style="margin:0;" onclick="alert('Consulta enviada.')">Enviar Mensaje</button>
+            </div>
+        </div>
+
+        <!-- CONTENIDO DOCENTE -->
+        <div id="teacher-dash" class="hidden">
+            <h3 style="margin-bottom: 15px;">📊 Monitoreo del Aula</h3>
+            
+            <div style="background: white; padding: 20px; border-radius: 20px; text-align: center; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px;">
+                <small style="color: var(--text-sec);">PROMEDIO GENERAL</small>
+                <h1 style="color: var(--v-blue-dark); font-size: 3.5rem; margin: 5px 0;">3.8 <span style="font-size:1.5rem; color:#CBD5E1;">/ 5</span></h1>
+            </div>
+
+            <div style="background: white; padding: 25px; border-radius: 24px; box-shadow: 0 4px 10px rgba(0,0,0,0.05); margin-bottom: 20px;">
+                <h4 style="margin-bottom: 20px;">Indicadores de Investigación</h4>
+                <!-- Indicadores Homologados -->
+                <div class="stat-row">
+                    <div class="stat-label"><span>Conocimiento IA</span> <span style="color: var(--v-blue);">65%</span></div>
+                    <div class="stat-track"><div class="stat-val" style="width: 65%; background: var(--v-blue);"></div></div>
+                </div>
+                <div class="stat-row">
+                    <div class="stat-label"><span>Confianza</span> <span style="color: var(--v-purple);">72%</span></div>
+                    <div class="stat-track"><div class="stat-val" style="width: 72%; background: var(--v-purple);"></div></div>
+                </div>
+                <div class="stat-row">
+                    <div class="stat-label"><span>Claridad Ética</span> <span style="color: var(--v-orange);">40%</span></div>
+                    <div class="stat-track"><div class="stat-val" style="width: 40%; background: var(--v-orange);"></div></div>
+                    <small style="color: var(--v-red); display:block; margin-top:5px;"><i class="fa-solid fa-triangle-exclamation"></i> Ética baja en el grupo.</small>
+                </div>
+            </div>
+            
+             <h3 style="margin-bottom: 15px;">📢 Publicar Consejo</h3>
+            <div style="background: white; padding: 20px; border-radius: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                <textarea class="input-field" placeholder="Escribe un consejo para el grupo..." style="height: 80px; resize: none;"></textarea>
+                <select class="input-field"><option>Para: Todos</option><option>Para: Cautelosos</option></select>
+                <button class="btn btn-primary" onclick="alert('Consejo publicado con éxito.')">Publicar</button>
+            </div>
+        </div>
+
+        <!-- Bot Trigger (Privado) -->
+        <div class="bot-trigger bot-private" onclick="toggleBot('private')"><i class="fa-solid fa-robot"></i></div>
+    </div>
+
+    <!-- === 6. PROGRESO (HISTORIAL + INDICADORES) === -->
+    <div id="view-impact" class="view container hidden">
+        <h2 style="margin-top: 20px;">Tu Evolución</h2>
+        <p style="color: var(--text-sec); margin-bottom: 20px;">Indicadores actuales:</p>
+
+        <!-- Indicadores Estudiante (Iguales al Docente) -->
+        <div style="background: white; padding: 25px; border-radius: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 25px;">
+            <div class="stat-row">
+                <div class="stat-label">Conocimiento sobre IA</div>
+                <div style="color: var(--v-blue);"><i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-regular fa-star"></i></div>
+            </div>
+            <div class="stat-row">
+                <div class="stat-label">Confianza</div>
+                <div style="color: var(--v-purple);"><i class="fa-solid fa-star"></i> <i class="fa-regular fa-star"></i> <i class="fa-regular fa-star"></i></div>
+            </div>
+            <div class="stat-row" style="border:none;">
+                <div class="stat-label">Claridad Ética</div>
+                <div style="color: var(--v-green);"><i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i> <i class="fa-solid fa-star"></i></div>
+            </div>
+        </div>
+        
+        <!-- Historial XP -->
+        <h3 style="margin-bottom: 15px;">📜 Historial de Actividad</h3>
+        <div style="background: white; padding: 20px; border-radius: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+            <ul id="xp-history" class="xp-list">
+                <li class="xp-item">
+                    <span><i class="fa-solid fa-check-circle" style="color:var(--v-green)"></i> Registro</span> <span class="xp-badge">+20 XP</span>
+                </li>
+            </ul>
         </div>
     </div>
 
-    <!-- NAVBAR -->
-    <nav id="app-nav" class="hidden">
-        <div class="nav-item active" onclick="navTo('home', this)"><i class="fa-solid fa-compass"></i>Inicio</div>
-        <div class="nav-item" onclick="navTo('stats', this)"><i class="fa-solid fa-chart-pie"></i>Progreso</div>
+    <!-- === MODALS === -->
+
+    <!-- Chatbot Overlay -->
+    <div id="bot-overlay" class="chat-overlay" onclick="closeBot()">
+        <div class="bot-window" onclick="event.stopPropagation()">
+            <div id="bot-header" style="padding: 15px; color: white; font-weight: 700; display: flex; justify-content: space-between; align-items: center;">
+                <div style="display:flex; align-items:center; gap:10px;"><i class="fa-solid fa-robot"></i> <span id="bot-title">Asistente</span></div>
+                <i class="fa-solid fa-times" onclick="closeBot()" style="cursor: pointer;"></i>
+            </div>
+            <div id="chat-feed" class="chat-area"></div>
+            <div id="bot-controls" class="bot-controls"></div>
+        </div>
+    </div>
+
+    <!-- Mission Modal (Robust Content) -->
+    <div id="mission-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div style="text-align: right; margin-bottom: 10px;"><i class="fa-solid fa-times" onclick="closeModal()" style="font-size: 1.5rem; color: #94A3B8; cursor: pointer;"></i></div>
+            
+            <div id="modal-theory" class="fade-in">
+                <div style="text-align: center; margin-bottom: 15px;">
+                    <div style="width: 80px; height: 80px; background: #EFF6FF; border-radius: 50%; display: inline-flex; align-items: center; justify-content: center;">
+                        <i id="m-icon" class="fa-solid" style="font-size: 3rem; color: var(--v-blue);"></i>
+                    </div>
+                </div>
+                <h2 id="m-title" style="text-align: center; margin-bottom: 20px; color: var(--text-main);">...</h2>
+                <div id="m-desc" style="line-height: 1.6; color: var(--text-sec); font-size: 1rem; margin-bottom: 25px;">...</div>
+                
+                <div style="display: flex; flex-direction: column; gap: 10px;">
+                    <button class="btn btn-primary" onclick="completeMission()">✅ ¡Entendido! (Ganar XP)</button>
+                    <button class="btn btn-outline" onclick="showAnalogy()">🤔 No entendí, explícame fácil</button>
+                </div>
+            </div>
+
+            <div id="modal-analogy" class="hidden fade-in">
+                <h3 style="color: var(--v-blue); margin-bottom: 15px;"><i class="fa-solid fa-lightbulb"></i> Piénsalo así:</h3>
+                <div style="background: #EFF6FF; padding: 25px; border-radius: 20px; border: 2px solid var(--v-blue); margin-bottom: 20px;">
+                    <p id="m-analogy" style="font-style: italic; font-size: 1.1rem; line-height: 1.6; color: var(--v-dark);">...</p>
+                </div>
+                <button class="btn btn-primary" onclick="completeMission()">¡Ah, ahora sí!</button>
+                <button class="btn btn-outline" style="margin-top: 10px; border:none;" onclick="showTheory()">🔙 Ver teoría</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Level Up -->
+    <div id="toast-level"><i class="fa-solid fa-circle-arrow-up" style="color: var(--v-green);"></i><span>¡Excelente! +50 XP</span></div>
+
+    <!-- Navbar -->
+    <nav id="navbar" class="hidden">
+        <div class="nav-item active" onclick="nav('home')"><i class="fa-solid fa-compass"></i>Inicio</div>
+        <div class="nav-item" onclick="nav('impact')"><i class="fa-solid fa-chart-line"></i>Progreso</div>
         <div class="nav-item" onclick="location.reload()"><i class="fa-solid fa-right-from-bracket"></i>Salir</div>
     </nav>
 
     <script>
-        // --- DATA ---
-        let app = { role: '', xp: 0, profile: '', answers: {} };
-        
+        // --- ESTADO & DATOS ---
+        let app = { role: '', xp: 20, profile: '', qIdx: 0, answers: [] };
+        let currentMissionId = '';
+
+        // Contenido Robusto (Versión Expandida V11)
         const lessons = {
-            'perplexity': {
-                title: 'Perplexity AI',
-                icon: 'fa-magnifying-glass',
-                color: 'bg-blue',
-                desc: 'Motor de búsqueda que cita fuentes. Úsalo para investigar hechos reales.',
-                analogy: 'Es como un bibliotecario estricto: te da la respuesta, pero siempre te muestra el libro de donde la sacó.'
+            'prompt': { 
+                t: 'Dominando el Prompting', 
+                i: 'fa-wand-magic-sparkles', 
+                d: `
+                    <p><strong>La Ingeniería de Prompts es clave.</strong> No basta con pedirle cosas a la IA; debes saber <em>cómo</em> pedirlas para obtener resultados académicos.</p>
+                    <p>Usa la estructura <strong>COT (Chain of Thought)</strong>:</p>
+                    <ul style="text-align:left; margin: 15px 0; padding-left: 20px; line-height: 1.5;">
+                        <li>👤 <strong>ROL:</strong> "Actúa como un profesor experto..."</li>
+                        <li>📝 <strong>TAREA:</strong> "Escribe un resumen ejecutivo de..."</li>
+                        <li>🌍 <strong>CONTEXTO:</strong> "Para estudiantes de primer año..."</li>
+                        <li>⚙️ <strong>FORMATO:</strong> "En una lista con viñetas."</li>
+                    </ul>
+                    <div style="background:#F1F5F9; padding:10px; border-radius:10px; font-size:0.9rem; border-left: 4px solid var(--v-red);">
+                        ❌ <strong>Mal Prompt:</strong> "Dime qué es la fotosíntesis."
+                    </div>
+                    <div style="background:#F0FDF4; padding:10px; border-radius:10px; font-size:0.9rem; border-left: 4px solid var(--v-green); margin-top: 5px;">
+                        ✅ <strong>Buen Prompt:</strong> "Actúa como biólogo. Explica la fotosíntesis para niños de 10 años usando una analogía de cocina."
+                    </div>
+                `, 
+                a: `
+                    <p>Imagina que entras a un restaurante de lujo. Si le dices al mesero simplemente <strong>"Trae comida"</strong>, te podría traer una sopa que odias.</p>
+                    <p>Para comer bien, debes ser específico:</p>
+                    <p><em>"Soy vegetariano (<strong>Contexto</strong>), quiero una pizza mediana de champiñones (<strong>Tarea</strong>), con masa delgada (<strong>Formatos</strong>), y trátame como a un cliente VIP (<strong>Rol</strong>)."</em></p>
+                    <p>La IA es ese mesero: tiene todo el menú, pero no lee tu mente.</p>
+                ` 
             },
-            'ethics': {
-                title: 'Semáforo Ético',
-                icon: 'fa-traffic-light',
-                color: 'bg-orange',
-                desc: 'Aprende cuándo citar y cuándo no. Evita el plagio accidental.',
-                analogy: 'Como cocinar: comprar ingredientes cortados está bien (ayuda IA), pero comprar el plato hecho y decir que lo cocinaste tú es engañar (Plagio).'
+            'ethics': { 
+                t: 'Integridad Académica', 
+                i: 'fa-traffic-light', 
+                d: `
+                    <p><strong>El Semáforo del Uso Ético de IA:</strong></p>
+                    <ul style="text-align:left; margin: 15px 0; padding-left: 20px; line-height: 1.6;">
+                        <li><span style="color:var(--v-red); font-weight:700;">● ROJO (Prohibido):</span> Generar un ensayo completo y entregarlo como tuyo. Eso es PLAGIO y fraude académico.</li>
+                        <li><span style="color:var(--v-orange); font-weight:700;">● AMARILLO (Con Cuidado):</span> Pedirle a la IA que resuma un texto o explique un concepto difícil. Debes citar que usaste la herramienta.</li>
+                        <li><span style="color:var(--v-green); font-weight:700;">● VERDE (Permitido):</span> Usarla para lluvia de ideas, corregir ortografía o mejorar la redacción de TU propio texto.</li>
+                    </ul>
+                `, 
+                a: `
+                    <p>Piénsalo como si fueras un Chef:</p>
+                    <p>🥬 Comprar las verduras ya cortadas en el mercado (Ayuda de la IA) está bien, te ahorra tiempo.</p>
+                    <p>🍲 Comprar el plato ya hecho en otro restaurante, calentarlo en el microondas y servirlo diciendo "Lo cociné yo", es engañar a tus clientes (tus profesores).</p>
+                ` 
             },
-            'notebook': {
-                title: 'NotebookLM',
-                icon: 'fa-book-open',
-                color: 'bg-purple',
-                desc: 'Sube tus PDFs y chatea con ellos. No inventa datos fuera de tus archivos.',
-                analogy: 'Un asistente que solo ha leído los libros que tú le diste. No te mentirá sobre cosas que no sabe.'
-            },
-            'prompting': {
-                title: 'Prompting Pro',
-                icon: 'fa-wand-magic-sparkles',
-                color: 'bg-green',
-                desc: 'Estructura tus órdenes: ROL + TAREA + CONTEXTO + FORMATO.',
-                analogy: 'Como pedir un café: Si solo dices "café" te dan cualquier cosa. Si dices "Latte descremado tibio", obtienes lo que quieres.'
+             'perplexity': {
+                t: 'Investigación Verificada', 
+                i: 'fa-magnifying-glass',
+                d: `
+                    <p><strong>El Problema de las Alucinaciones:</strong></p>
+                    <p>ChatGPT funciona prediciendo la siguiente palabra, no consultando una base de datos de hechos. Por eso, a veces inventa fechas, autores o leyes.</p>
+                    <p><strong>La Solución: Perplexity AI</strong></p>
+                    <p>Es un "motor de respuestas" que busca en internet en tiempo real y te da la respuesta citando las fuentes exactas (con números pequeños). Siempre verifica el enlace original.</p>
+                `,
+                a: `
+                    <p>Imagina que tienes dos amigos:</p>
+                    <p>🗣️ <strong>ChatGPT</strong> es el amigo charlatán que sabe de todo un poco, pero a veces inventa cosas para sonar inteligente y no quedarse callado.</p>
+                    <p>📚 <strong>Perplexity</strong> es el bibliotecario estricto. Te da la respuesta, pero siempre pone el libro abierto sobre la mesa y te señala el párrafo exacto para probar que es verdad.</p>
+                `
             }
         };
 
-        const quiz = [
-            { id:'knw', q:"¿Cómo explicarías qué es una IA a un amigo?", opts:[{t:"Fácil, lo entiendo",v:3}, {t:"Más o menos",v:2}, {t:"Ni idea",v:1}] },
-            { id:'att', q:"¿Crees que la IA te ayudará a aprender mejor?", opts:[{t:"Sí, mucho",v:3}, {t:"Tengo dudas",v:2}, {t:"No, me perjudica",v:1}] },
-            { id:'eth', q:"¿Te preocupa que te acusen de plagio por usar IA?", opts:[{t:"Sí, me da miedo",v:1}, {t:"Un poco",v:2}, {t:"No me preocupa",v:3}] }
+        const teacherMsgs = {
+            'Cauteloso': "He notado preocupación por el plagio en el grupo. Revisen el módulo de Ética, les dará tranquilidad sobre qué está permitido.",
+            'Desconfiado': "La IA es una herramienta, no un reemplazo. Prueben investigar con Perplexity para ver fuentes reales y confiables.",
+            'Avanzado': "Excelente dominio técnico. Ahora enfóquense en la verificación crítica de los datos que genera la IA.",
+            'Explorador': "¡Bienvenidos a la IA! Empiecen por los conceptos básicos de Prompting para obtener mejores respuestas."
+        };
+
+        const quizQs = [
+            { t: "Si tuvieras que explicar qué es una IA a un amigo, ¿te sentirías...", opts: [{txt:"Seguro", v:3}, {txt:"Más o menos", v:2}, {txt:"Perdido", v:1}] }, // Conocimiento
+            { t: "¿Te parece que usar IA para aprender puede ayudarte?", opts: [{txt:"Mucho", v:3}, {txt:"Poco", v:2}, {txt:"Nada", v:1}] }, // Confianza/Actitud
+            { t: "¿Te preocupa que la IA te lleve a cometer plagio?", opts: [{txt:"Sí, mucho", v:1}, {txt:"Tengo dudas", v:2}, {txt:"No me preocupa", v:3}] }, // Ética
+            { t: "¿Crees que la IA afectará negativamente los trabajos?", opts: [{txt:"Sí, dañará", v:1}, {txt:"Tal vez", v:2}, {txt:"No, ayudará", v:3}] } // Riesgo
         ];
 
         // --- INIT ---
         window.onload = () => {
             setTimeout(() => {
-                document.getElementById('view-splash').style.display = 'none';
-                document.getElementById('view-auth').classList.remove('hidden');
-                document.getElementById('view-auth').classList.add('active');
+                const s = document.getElementById('view-splash'); s.style.opacity='0';
+                setTimeout(() => { s.classList.add('hidden'); document.getElementById('view-auth').classList.remove('hidden'); document.getElementById('view-auth').classList.add('fade-in'); }, 500);
             }, 2500);
         };
 
-        // --- NAVIGATION ---
+        // --- AUTH ---
+        function renderAuthForm(type, tab) {
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active')); tab.classList.add('active');
+            const f = document.getElementById('auth-form');
+            f.innerHTML = type==='login' 
+                ? `<input type="email" placeholder="Correo" class="input-field"><input type="password" placeholder="Pass" class="input-field"><button class="btn btn-primary" onclick="goToRole()">Entrar</button>`
+                : `<input type="text" placeholder="Nombre" class="input-field"><input type="email" placeholder="Correo" class="input-field"><button class="btn btn-primary" onclick="goToRole()">Registrar</button>`;
+        }
         function goToRole() { switchView('view-role'); }
-        function setRole(r) { app.role = r; r === 'student' ? startQuiz() : (app.profile='Docente', goToDashboard()); }
-        function switchView(id) {
-            document.querySelectorAll('.view').forEach(v => { v.classList.remove('active'); v.classList.add('hidden'); });
-            document.getElementById(id).classList.remove('hidden');
-            document.getElementById(id).classList.add('active');
-        }
+        function setRole(r) { app.role=r; if(r==='student'){ app.qIdx=0; switchView('view-quiz'); renderQ(); } else { app.profile='Profesor'; goToDashboard(); } }
 
-        // --- QUIZ & PROFILE ---
-        let qIdx = 0;
-        function startQuiz() { switchView('view-quiz'); renderQ(); }
-        
+        // --- ALGORITMO PERFIL ---
         function renderQ() {
-            const q = quiz[qIdx];
-            document.getElementById('q-text').innerText = q.q;
-            document.querySelectorAll('.quiz-step').forEach((e,i) => i<=qIdx ? e.classList.add('filled') : e.classList.remove('filled'));
-            let h = '';
-            q.opts.forEach(o => h+=`<div class="quiz-option" onclick="ans('${q.id}',${o.v})"><span>${o.t}</span><i class="fa-regular fa-circle"></i></div>`);
-            document.getElementById('q-options').innerHTML = h;
+            const q = quizQs[app.qIdx]; document.getElementById('q-txt').innerText = q.t;
+            document.getElementById('q-bar').style.width = `${((app.qIdx+1)/quizQs.length)*100}%`;
+            document.getElementById('q-progress-text').innerText = `${app.qIdx+1}/${quizQs.length}`;
+            let h = ''; q.opts.forEach(o => h+=`<div class="quiz-opt" onclick="nextQ(${o.v})"><span>${o.txt}</span><i class="fa-regular fa-circle"></i></div>`);
+            document.getElementById('q-opts').innerHTML = h;
         }
-
-        function ans(id, v) {
-            app.answers[id] = v; qIdx++;
-            qIdx < quiz.length ? renderQ() : calcProfile();
-        }
-
+        function nextQ(v) { app.answers.push(v); app.qIdx++; if(app.qIdx < quizQs.length) renderQ(); else calcProfile(); }
+        
         function calcProfile() {
-            const a = app.answers;
-            let p = { t:'', d:'', c:'' }; // Title, Desc, Color class
-
-            if(a.eth === 1) { 
-                p.t="Cauteloso"; p.d="Te preocupa la ética y el plagio. Tu ruta incluye seguridad académica."; p.c="var(--v-orange)"; 
-            } else if(a.att === 1) { 
-                p.t="Desconfiado"; p.d="Prefieres evitar riesgos. Te enseñaremos usos seguros y privados."; p.c="var(--v-red)"; 
-            } else if(a.knw === 3) { 
-                p.t="Usuario Avanzado"; p.d="Dominas la IA. Tu reto es perfeccionar el criterio crítico."; p.c="var(--v-green)"; 
-            } else { 
-                p.t="Explorador"; p.d="Curioso pero principiante. Empezaremos con lo básico."; p.c="var(--v-blue)"; 
-            }
-
-            app.profile = p.t;
-            const card = document.getElementById('reveal-card');
+            const a = app.answers; // [Conocimiento, Confianza, Etica, Riesgo]
+            let p = {n:'Explorador Curioso', d:'Interés pero falta base.', c:'bg-blue', i:'fa-compass'};
             
-            // SETTING SOLID COLOR CARD
-            card.style.background = p.c; 
+            if(a[2] === 1) p = {n:'Cauteloso', d:'Alta preocupación ética.', c:'bg-orange', i:'fa-shield-halved'};
+            else if(a[1] === 1 || a[3] === 1) p = {n:'Desconfiado', d:'Escepticismo alto.', c:'bg-red', i:'fa-user-shield'};
+            else if(a[0] === 3) p = {n:'Usuario Avanzado', d:'Alto conocimiento técnico.', c:'bg-green', i:'fa-bolt'};
             
-            document.getElementById('r-title').innerText = p.t;
-            document.getElementById('r-desc').innerText = p.d;
-            
+            app.profile = p.n;
+            const card = document.getElementById('profile-card');
+            card.className = `solid-card slide-up ${p.c}`;
+            document.getElementById('p-name').innerText = p.n;
+            document.getElementById('p-desc').innerText = p.d;
+            document.getElementById('p-icon').className = `fa-solid ${p.i}`;
             switchView('view-reveal');
         }
 
         // --- DASHBOARD ---
         function goToDashboard() {
             switchView('view-home');
-            document.getElementById('app-header').classList.remove('hidden');
-            document.getElementById('app-nav').classList.remove('hidden');
-            document.getElementById('app-nav').style.display = 'flex';
-            document.getElementById('dash-name').innerText = app.profile;
-
-            if(app.role === 'student') renderMissions();
-            else { document.getElementById('teacher-dash').classList.remove('hidden'); document.getElementById('student-dash').classList.add('hidden'); }
+            document.getElementById('navbar').classList.remove('hidden');
+            document.getElementById('user-name').innerText = app.profile;
+            
+            if(app.role === 'student') {
+                document.getElementById('student-dash').classList.remove('hidden');
+                document.getElementById('teacher-dash').classList.add('hidden');
+                
+                // Mensaje del Docente según Perfil
+                const msg = teacherMsgs[app.profile] || teacherMsgs['Explorador'];
+                document.getElementById('teacher-msg-container').innerHTML = `
+                    <div style="background: white; padding: 20px; border-radius: 20px; border-left: 5px solid var(--v-blue); margin-bottom: 20px; box-shadow: 0 4px 10px rgba(0,0,0,0.05);">
+                        <p style="font-style: italic; color: var(--text-sec); margin-bottom: 10px;">"${msg}"</p>
+                        <small style="font-weight: 700; color: var(--v-blue);">- Docente del Curso</small>
+                    </div>`;
+                
+                renderMissions();
+            } else {
+                document.getElementById('student-dash').classList.add('hidden');
+                document.getElementById('teacher-dash').classList.remove('hidden');
+            }
         }
 
         function renderMissions() {
-            const container = document.getElementById('missions-container');
-            let m = '';
+            document.getElementById('resources-list').innerHTML = `
+                <div id="card-prompt" class="solid-card bg-green" onclick="openMission('prompt')"><div style="font-weight:800; font-size:0.8rem;">MISIÓN CLAVE</div><h3>Fórmula Prompting</h3><i class="fa-solid fa-wand-magic-sparkles card-bg-icon"></i></div>
+                <div id="card-perplexity" class="solid-card bg-blue" onclick="openMission('perplexity')"><div style="font-weight:800; font-size:0.8rem;">INVESTIGACIÓN</div><h3>Perplexity AI</h3><i class="fa-solid fa-magnifying-glass card-bg-icon"></i></div>
+                <div id="card-ethics" class="solid-card bg-orange" onclick="openMission('ethics')"><div style="font-weight:800; font-size:0.8rem;">ÉTICA</div><h3>Semáforo Ético</h3><i class="fa-solid fa-traffic-light card-bg-icon"></i></div>
+            `;
+        }
+
+        // --- DOBLE BOT ---
+        function toggleBot(mode) {
+            document.getElementById('bot-overlay').style.display = 'flex';
+            const head = document.getElementById('bot-header');
+            const chat = document.getElementById('chat-feed');
+            const ctrls = document.getElementById('bot-controls');
+            chat.innerHTML = ''; ctrls.innerHTML = ''; // Reset
+
+            if(mode === 'public') {
+                head.style.background = 'var(--v-orange)';
+                document.getElementById('bot-title').innerText = 'Info Brújula';
+                addBotMsg("¡Hola! Soy el asistente informativo. ¿Qué deseas saber?");
+                setBotOptions([{txt: "¿Es gratis?", act: "free"}, {txt: "¿Para qué sirve?", act: "what"}]);
+            } else {
+                head.style.background = 'linear-gradient(135deg, var(--v-blue), var(--v-purple))';
+                document.getElementById('bot-title').innerText = 'Entrenador IA';
+                addBotMsg(`Hola ${app.profile}, ¿qué entrenamos hoy?`);
+                setBotOptions([{txt: "🧠 Quiz (+20 XP)", act: "quiz"}, {txt: "💡 Tip Rápido", act: "tip"}]);
+            }
+        }
+
+        function botAction(type) {
+            const chat = document.getElementById('chat-feed');
             
-            // GENERATE COLORED CARDS
-            const add = (k) => {
-                const l = lessons[k];
-                m += `<div class="mission-card ${l.color}" onclick="openLesson('${k}')">
-                        <i class="check-badge fa-solid fa-check"></i>
-                        <i class="mission-icon fa-solid ${l.icon}"></i>
-                        <div style="font-weight:700;">${l.title}</div>
-                      </div>`;
-            };
-
-            if(app.profile.includes('Cauteloso')) { add('ethics'); add('perplexity'); }
-            else if(app.profile.includes('Desconfiado')) { add('notebook'); add('ethics'); }
-            else if(app.profile.includes('Avanzado')) { add('prompting'); add('perplexity'); }
-            else { add('perplexity'); add('ethics'); } // Explorador
-            
-            if(!app.profile.includes('Avanzado')) add('prompting'); // Todos menos avanzado reciben prompting basico extra
-
-            container.innerHTML = m;
+            // Lógica Pública
+            if(type === 'free') {
+                addUserMsg("¿Es gratis?"); setTimeout(() => { addBotMsg("Sí, es una herramienta institucional gratuita."); setBotOptions([{txt:"Ok, gracias", act:"close"}]); }, 600);
+            } else if (type === 'what') {
+                addUserMsg("¿Para qué sirve?"); setTimeout(() => { addBotMsg("Para medir y mejorar tus competencias en IA."); setBotOptions([{txt:"Entendido", act:"close"}]); }, 600);
+            }
+            // Lógica Privada
+            else if (type === 'quiz') {
+                addUserMsg("Quiero un Quiz");
+                setTimeout(() => { addBotMsg("Pregunta: ¿Qué indicador mide el citado correcto?"); setBotOptions([{txt:"Confianza", act:"wrong"}, {txt:"Claridad Ética", act:"correct"}]); }, 600);
+            } else if (type === 'correct') {
+                addUserMsg("Claridad Ética");
+                setTimeout(() => { 
+                    addBotMsg("¡Correcto! +20 XP"); app.xp += 20; document.getElementById('xp-val').innerText = app.xp;
+                    document.getElementById('xp-history').innerHTML = `<li class="xp-item"><span><i class="fa-solid fa-robot" style="color:var(--v-blue)"></i> Quiz</span><span class="xp-badge">+20 XP</span></li>` + document.getElementById('xp-history').innerHTML;
+                    setBotOptions([{txt:"Cerrar", act:"close"}]); 
+                }, 600);
+            } else if (type === 'wrong') {
+                addUserMsg("Confianza"); setTimeout(() => { addBotMsg("Incorrecto. Intenta de nuevo."); setBotOptions([{txt:"Claridad Ética", act:"correct"}]); }, 600);
+            } else if (type === 'tip') {
+                addUserMsg("Dame un Tip"); setTimeout(() => { addBotMsg("Tip: Usa 'NotebookLM' para analizar PDFs sin alucinaciones."); setBotOptions([{txt:"Gracias", act:"close"}]); }, 600);
+            } else if (type === 'close') { closeBot(); }
         }
 
-        // --- LESSONS ---
-        let currL = '';
-        function openLesson(k) {
-            currL = k;
-            document.getElementById('lesson-modal').style.display = 'flex';
-            document.getElementById('ls-step1').classList.remove('hidden');
-            document.getElementById('ls-step2').classList.add('hidden');
-            
-            const l = lessons[k];
-            document.getElementById('ls-title').innerText = l.title;
-            document.getElementById('ls-desc').innerText = l.desc;
-            document.getElementById('ls-icon').className = `fa-solid ${l.icon}`;
-        }
+        function addBotMsg(txt) { const c = document.getElementById('chat-feed'); c.innerHTML += `<div class="msg msg-bot slide-up">${txt}</div>`; c.scrollTop = c.scrollHeight; }
+        function addUserMsg(txt) { const c = document.getElementById('chat-feed'); c.innerHTML += `<div class="msg msg-user slide-up">${txt}</div>`; document.getElementById('bot-controls').innerHTML = ''; c.scrollTop = c.scrollHeight; }
+        function setBotOptions(opts) { const c = document.getElementById('bot-controls'); let h = ''; opts.forEach(o => h += `<button class="chip-btn" onclick="botAction('${o.act}')">${o.txt}</button>`); c.innerHTML = h; }
+        function closeBot() { document.getElementById('bot-overlay').style.display='none'; }
 
-        function showAnalogy() {
-            document.getElementById('ls-step1').classList.add('hidden');
-            document.getElementById('ls-step2').classList.remove('hidden');
-            document.getElementById('ls-step2').classList.add('fade-in');
-            document.getElementById('ls-analogy').innerText = lessons[currL].analogy;
+        // --- MISIONES ---
+        function openMission(id) {
+            currentMissionId = id; const l = lessons[id];
+            document.getElementById('modal-theory').classList.remove('hidden'); document.getElementById('modal-analogy').classList.add('hidden');
+            document.getElementById('m-title').innerText=l.t; document.getElementById('m-desc').innerHTML=l.d; document.getElementById('m-analogy').innerHTML=l.a; document.getElementById('m-icon').className=`fa-solid ${l.i}`;
+            document.getElementById('mission-modal').style.display='flex';
         }
-
-        function finishLesson() {
-            document.getElementById('lesson-modal').style.display = 'none';
-            app.xp += 50; document.getElementById('xp-val').innerText = app.xp;
-            // Mark visible cards as done (simple hack)
-            document.querySelectorAll('.mission-card').forEach(c => {
-                if(c.innerHTML.includes(lessons[currL].title)) c.classList.add('done');
-            });
+        function showAnalogy() { document.getElementById('modal-theory').classList.add('hidden'); document.getElementById('modal-analogy').classList.remove('hidden'); }
+        function showTheory() { document.getElementById('modal-theory').classList.remove('hidden'); document.getElementById('modal-analogy').classList.add('hidden'); }
+        function completeMission() {
+            closeModal();
+            app.xp+=50; document.getElementById('xp-val').innerText=app.xp;
+            const t = document.getElementById('toast-level'); t.style.display='flex'; t.classList.add('slide-up'); setTimeout(()=>{t.style.display='none'},3000);
+            const c = document.getElementById('card-'+currentMissionId); if(!c.querySelector('.done-overlay')) c.innerHTML+=`<div class="done-overlay">¡HECHO!</div>`;
+            document.getElementById('xp-history').innerHTML = `<li class="xp-item"><span><i class="fa-solid fa-check" style="color:var(--v-green)"></i> ${lessons[currentMissionId].t}</span><span class="xp-badge">+50 XP</span></li>` + document.getElementById('xp-history').innerHTML;
         }
-        function closeLesson() { document.getElementById('lesson-modal').style.display = 'none'; }
-
-        // --- BOT ---
-        function toggleBot() { 
-            const b = document.getElementById('bot-window');
-            b.style.display = (b.style.display==='flex') ? 'none' : 'flex'; 
-        }
-        function botReply(t) {
-            const f = document.getElementById('chat-feed');
-            f.innerHTML += `<div class="msg user-msg slide-up">${t==='quiz'?'Quiz':'Tip'}</div>`;
-            setTimeout(() => {
-                const txt = t==='quiz' ? '¿Verdadero o Falso? ChatGPT siempre dice la verdad.' : 'Tip: Verifica siempre las fuentes con Perplexity.';
-                f.innerHTML += `<div class="msg bot-msg slide-up">${txt}</div>`;
-                f.scrollTop = f.scrollHeight;
-            }, 600);
-        }
+        function closeModal() { document.getElementById('mission-modal').style.display='none'; }
 
         // --- NAV ---
-        function navTo(page, el) {
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            el.classList.add('active');
-            if(page === 'home') switchView('view-home');
-            else switchView('view-stats');
-            // Keep header/nav visible
-            document.getElementById('app-header').classList.remove('hidden');
-            document.getElementById('app-nav').classList.remove('hidden');
-        }
+        function switchView(id) { document.querySelectorAll('.view').forEach(v=>v.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
+        function nav(dest) { if(dest==='home') goToDashboard(); else switchView('view-impact'); }
 
     </script>
 </body>
