@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Brújula GenIA Campus</title>
+    <!-- Iconos y Fuentes -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            /* Colores de Marca */
+            --brand-blue: #4F46E5; /* El azul de tu imagen */
+            --brand-dark: #3730a3;
+            
+            /* Colores de UI */
+            --bg-body: #F8FAFC;
+            --surface: #FFFFFF;
+            --text-main: #0F172A;
+            --text-sec: #64748B;
+            --gold: #F59E0B;
+            --radius: 20px;
+            --max-width: 1000px;
+            
+            /* Colores de Perfiles (Variables Investigación) */
+            --p-blue: #3B82F6; /* Explorador */
+            --p-yellow: #F59E0B; /* Cauteloso */
+            --p-red: #EF4444; /* Desconfiado */
+            --p-green: #10B981; /* Avanzado */
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        
+        body { background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; padding-bottom: 80px; }
+
+        /* --- UTILIDADES --- */
+        .hidden { display: none !important; }
+        .fade-in { animation: fadeIn 0.5s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- 1. SPLASH SCREEN (DISEÑO SOLICITADO) --- */
+        #view-splash {
+            background-color: var(--brand-blue);
+            color: white;
+            height: 100vh;
+            width: 100%;
+            position: fixed;
+            top: 0; left: 0;
+            z-index: 9999;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .splash-logo-box {
+            background: white;
+            color: var(--brand-blue);
+            width: 100px; height: 100px;
+            border-radius: 30px;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 3rem;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .splash-title { font-size: 2.2rem; font-weight: 800; line-height: 1.1; margin-bottom: 10px; }
+        .splash-sub { font-size: 1rem; opacity: 0.8; font-weight: 500; letter-spacing: 0.5px; }
+
+        /* Barra de carga animada */
+        .loading-bar {
+            width: 60px; height: 6px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 3px;
+            margin-top: 50px;
+            position: relative;
+            overflow: hidden;
+        }
+        .loading-fill {
+            position: absolute; left: 0; top: 0; height: 100%; width: 0%;
+            background: white;
+            border-radius: 3px;
+            animation: loadApp 3s ease-in-out forwards; /* Simula carga */
+        }
+        @keyframes loadApp { 0% { width: 0%; } 50% { width: 60%; } 100% { width: 100%; } }
+
+        /* --- HEADER --- */
+        header {
+            background: var(--surface); padding: 15px 20px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 50;
+            display: flex; justify-content: space-between; align-items: center;
+        }
+        .brand { font-weight: 800; color: var(--brand-blue); font-size: 1.2rem; display: flex; gap: 8px; align-items: center; }
+        .role-badge { font-size: 0.75rem; background: #EEF2FF; color: var(--brand-blue); padding: 5px 12px; border-radius: 20px; font-weight: 700; border: 1px solid #E0E7FF; display: none; }
+
+        /* --- CONTAINER --- */
+        .container { width: 100%; max-width: var(--max-width); margin: 0 auto; padding: 20px; flex: 1; display: flex; flex-direction: column; }
+
+        /* --- VISTAS --- */
+        .view { display: none; flex: 1; animation: fadeIn 0.4s ease; }
+        .view.active { display: block; }
+
+        /* --- UI ELEMENTS --- */
+        .btn { width: 100%; padding: 16px; border-radius: 14px; border: none; font-weight: 700; cursor: pointer; font-size: 1rem; transition: 0.2s; margin-bottom: 12px; }
+        .btn-primary { background: var(--brand-blue); color: white; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3); }
+        .btn-primary:active { transform: scale(0.98); }
+        .btn-outline { background: white; border: 2px solid #E2E8F0; color: var(--text-main); }
+        
+        .btn-select { 
+            width: 100%; text-align: left; padding: 20px; margin-bottom: 15px; 
+            background: white; border: 2px solid #E2E8F0; border-radius: 16px;
+            font-size: 1rem; font-weight: 600; display: flex; align-items: center; gap: 15px;
+            transition: all 0.2s; cursor: pointer;
+        }
+        .btn-select:hover { border-color: var(--brand-blue); background: #EEF2FF; color: var(--brand-blue); transform: translateX(5px); }
+        .btn-select i { font-size: 1.5rem; }
+
+        .input-field { width: 100%; padding: 15px; border: 2px solid #E2E8F0; border-radius: 12px; font-size: 1rem; margin-bottom: 15px; outline: none; }
+        .input-field:focus { border-color: var(--brand-blue); }
+
+        /* --- REVELACIÓN DE PERFIL --- */
+        .profile-reveal-card {
+            background: white; border-radius: 30px; padding: 40px 20px; text-align: center;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.15); margin-top: 20px;
+        }
+        .reveal-icon { font-size: 5rem; margin-bottom: 20px; display: inline-block; }
+        .reveal-title { font-size: 2.2rem; font-weight: 800; margin-bottom: 10px; line-height: 1.1; }
+        .reveal-desc { font-size: 1.1rem; opacity: 0.9; margin-bottom: 30px; line-height: 1.5; }
+
+        /* --- DASHBOARD --- */
+        .slider-container { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 25px; scroll-snap-type: x mandatory; }
+        .slide-card {
+            min-width: 280px; background: linear-gradient(135deg, var(--brand-blue), #8B5CF6); color: white;
+            padding: 20px; border-radius: 16px; scroll-snap-align: center; position: relative; overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+        .slide-bg-icon { position: absolute; right: -10px; bottom: -10px; font-size: 5rem; opacity: 0.2; }
+
+        .card { background: var(--surface); border-radius: var(--radius); padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); margin-bottom: 20px; }
+
+        .mini-profile {
+            background: white; padding: 15px; border-radius: 16px; margin-bottom: 25px; 
+            border-left: 6px solid var(--brand-blue); display: flex; justify-content: space-between; align-items: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+
+        .dash-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
+        @media(min-width: 768px) { .dash-grid { grid-template-columns: 2fr 1fr; } }
+
+        /* Rutas */
+        .tool-card {
+            background: white; padding: 20px; border-radius: 16px; display: flex; align-items: center; gap: 15px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s; border: 1px solid transparent; margin-bottom: 15px;
+        }
+        .tool-card:hover { border-color: var(--brand-blue); transform: translateY(-2px); }
+
+        /* Progreso */
+        .prog-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #F1F5F9; }
+        .stars { color: #CBD5E1; letter-spacing: 2px; }
+        .stars.filled { color: var(--gold); }
+
+        /* --- CHATBOT --- */
+        #bot-trigger {
+            position: fixed; bottom: 90px; right: 20px; width: 65px; height: 65px;
+            background: linear-gradient(135deg, var(--brand-blue), #6366f1); color: white;
+            border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4); cursor: pointer; z-index: 90;
+            animation: pulse 3s infinite;
+        }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(79, 70, 229, 0); } 100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); } }
+
+        #bot-window {
+            position: fixed; bottom: 170px; right: 20px; width: 340px; height: 450px;
+            background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            display: none; flex-direction: column; z-index: 91; overflow: hidden; border: 1px solid #E2E8F0;
+        }
+        .chat-area { flex: 1; padding: 15px; overflow-y: auto; background: #F8FAFC; display: flex; flex-direction: column; gap: 10px; }
+        .msg { padding: 10px 15px; border-radius: 14px; font-size: 0.95rem; max-width: 85%; }
+        .bot-msg { background: white; border: 1px solid #E2E8F0; align-self: flex-start; border-bottom-left-radius: 2px; }
+        .user-msg { background: var(--brand-blue); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
+        .chip { background: #EEF2FF; color: var(--brand-blue); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; border: 1px solid var(--brand-blue); display: inline-block; margin: 3px; }
+
+        /* --- NAVBAR --- */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 75px;
+            background: var(--surface); border-top: 1px solid #E2E8F0;
+            display: flex; justify-content: space-around; align-items: center;
+            z-index: 100; padding-bottom: 5px;
+        }
+        .nav-item { text-align: center; color: var(--text-sec); font-size: 0.7rem; cursor: pointer; flex: 1; }
+        .nav-item i { font-size: 1.4rem; display: block; margin-bottom: 4px; }
+        .nav-item.active { color: var(--brand-blue); font-weight: 700; }
+
+        /* --- MODAL --- */
+        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index: 200; display: none; align-items: center; justify-content: center; }
+        .modal-card { background: white; width: 90%; max-width: 500px; padding: 30px; border-radius: 20px; max-height: 80vh; overflow-y: auto; animation: fadeIn 0.3s; }
+
+    </style>
+</head>
+<body>
+
+    <!-- 1. PANTALLA SPLASH (Azul y Logo) -->
+    <div id="view-splash">
+        <div class="splash-logo-box">
+            <i class="fa-solid fa-compass"></i>
+        </div>
+        <div class="splash-title">Brújula GenIA<br>Campus</div>
+        <div class="splash-sub">Investigación + IA en tu bolsillo</div>
+        
+        <div class="loading-bar">
+            <div class="loading-fill"></div>
+        </div>
+    </div>
+
+    <!-- HEADER (Se muestra después del splash) -->
+    <header id="app-header" class="hidden">
+        <div class="brand"><i class="fa-solid fa-compass"></i> Brújula GenIA</div>
+        <div id="role-display" class="role-badge">Invitado</div>
+    </header>
+
+    <div class="container">
+
+        <!-- 2. AUTH (LOGIN) -->
+        <div id="view-auth" class="view">
+            <div style="max-width:400px; margin:40px auto; text-align:center;">
+                <h2 style="margin-bottom:20px;">Identifícate</h2>
+                <input type="email" placeholder="correo@institucion.edu" class="input-field">
+                <button class="btn btn-primary" onclick="goTo('view-role')">Ingresar / Registrarse</button>
+                <div style="margin:20px 0; color:#ccc;">— O —</div>
+                <button class="btn btn-outline" onclick="goTo('view-role')">Ingresar como Invitado</button>
+            </div>
+        </div>
+
+        <!-- 3. ROL -->
+        <div id="view-role" class="view">
+            <div style="max-width:500px; margin:40px auto;">
+                <h2 style="text-align:center; margin-bottom:10px;">Selecciona tu Rol</h2>
+                <p style="text-align:center; color:var(--text-sec); margin-bottom:30px;">Ambos perfiles deben completar el diagnóstico inicial.</p>
+                
+                <button class="btn-select" onclick="setRole('student')">
+                    <i class="fa-solid fa-user-graduate" style="color:var(--brand-blue)"></i>
+                    <div><div>Soy Estudiante</div><small style="color:var(--text-sec)">Aprendizaje y Tareas</small></div>
+                </button>
+                
+                <button class="btn-select" onclick="setRole('teacher')">
+                    <i class="fa-solid fa-chalkboard-user" style="color:var(--brand-blue)"></i>
+                    <div><div>Soy Docente</div><small style="color:var(--text-sec)">Gestión de Aula</small></div>
+                </button>
+            </div>
+        </div>
+
+        <!-- 4. TEST DIAGNÓSTICO (Investigación) -->
+        <div id="view-test" class="view">
+            <div style="max-width:600px; margin:20px auto;">
+                <span style="background:#EEF2FF; color:var(--brand-blue); padding:5px 10px; border-radius:8px; font-weight:700; font-size:0.8rem;">TEST IA</span>
+                <h2 style="margin:10px 0 30px 0;">Analizando tu Perfil IA</h2>
+                <div id="quiz-box">
+                    <h3 id="q-text" style="font-size:1.2rem; margin-bottom:25px; line-height:1.4;">...</h3>
+                    <div id="q-opts"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 5. REVELACIÓN DEL PERFIL -->
+        <div id="view-reveal" class="view">
+            <div style="max-width:600px; margin:0 auto; text-align:center;">
+                <p style="color:var(--text-sec); margin-top:20px;">Basado en la investigación, tu perfil es:</p>
+                
+                <div id="reveal-card" class="profile-reveal-card">
+                    <i id="r-icon" class="reveal-icon fa-solid fa-user"></i>
+                    <h1 id="r-title" class="reveal-title">...</h1>
+                    <p id="r-desc" class="reveal-desc">...</p>
+                    
+                    <button class="btn btn-outline" style="background:rgba(255,255,255,0.25); border:2px solid white; color:white; font-weight:700; margin-top:20px;" onclick="goToDashboard()">
+                        Ir a mi Inicio <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 6. DASHBOARD PRINCIPAL -->
+        <div id="view-dashboard" class="view">
+            
+            <!-- SLIDER NOVEDADES -->
+            <div class="slider-container">
+                <div class="slide-card">
+                    <h3>🔔 Novedad</h3>
+                    <p>Módulo "Ética en IA" actualizado. Evita el plagio accidental.</p>
+                    <i class="fa-solid fa-newspaper slide-bg-icon"></i>
+                </div>
+                <div class="slide-card" style="background: linear-gradient(135deg, #10B981, #059669);">
+                    <h3>💡 Tip del Día</h3>
+                    <p>Usa NotebookLM para estudiar tus PDFs sin alucinaciones.</p>
+                    <i class="fa-solid fa-lightbulb slide-bg-icon"></i>
+                </div>
+            </div>
+
+            <!-- ANÁLISIS PERFIL -->
+            <div id="mini-profile" class="mini-profile">
+                <div>
+                    <h3 id="dash-p-name" style="font-size:1.1rem;">...</h3>
+                    <p style="font-size:0.9rem; color:var(--text-sec);">Tus rutas están personalizadas.</p>
+                </div>
+                <i id="dash-p-icon" class="fa-solid fa-user" style="font-size:2rem; opacity:0.5;"></i>
+            </div>
+
+            <!-- CONTENIDO ESTUDIANTE -->
+            <div id="student-content">
+                <h3 style="margin-bottom:15px;">🚀 Rutas Recomendadas</h3>
+                <div id="routes-container"></div> <!-- JS inserta aquí -->
+                
+                <div style="margin-top:20px; text-align:center;">
+                    <button class="btn btn-outline" onclick="switchTab('progress')">Ver mi Progreso Completo</button>
+                </div>
+            </div>
+
+            <!-- CONTENIDO DOCENTE -->
+            <div id="teacher-content" class="hidden">
+                <h3 style="margin-bottom:15px;">📊 Termómetro del Aula</h3>
+                <div class="card">
+                    <p style="margin-bottom:10px;"><strong>35% Cautelosos</strong> (Preocupación alta)</p>
+                    <div style="height:10px; background:#E2E8F0; border-radius:5px; margin-bottom:15px;">
+                        <div style="width:35%; height:100%; background:var(--p-yellow); border-radius:5px;"></div>
+                    </div>
+                    
+                    <p style="margin-bottom:10px;"><strong>40% Exploradores</strong> (Falta base)</p>
+                    <div style="height:10px; background:#E2E8F0; border-radius:5px; margin-bottom:15px;">
+                        <div style="width:40%; height:100%; background:var(--p-blue); border-radius:5px;"></div>
+                    </div>
+
+                    <div style="background:#FFFBEB; border:1px solid #FEF3C7; padding:15px; border-radius:12px; color:#92400E; margin-top:15px;">
+                        <strong>Recomendación:</strong> El grupo tiene miedo al plagio. Asigna el módulo de "Integridad Académica" esta semana.
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- 7. VISTA RECURSOS -->
+        <div id="view-resources" class="view">
+            <h2 style="margin-bottom:20px;">Biblioteca IA</h2>
+            <div class="dash-grid">
+                <div class="tool-card" onclick="openModal('tool')">
+                    <i class="fa-solid fa-magnifying-glass" style="font-size:2rem; color:var(--p-blue)"></i>
+                    <div><b>Perplexity AI</b><br><small style="color:var(--text-sec)">Investigación con fuentes</small></div>
+                </div>
+                <div class="tool-card" onclick="openModal('ethics')">
+                    <i class="fa-solid fa-scale-balanced" style="font-size:2rem; color:var(--p-red)"></i>
+                    <div><b>Integridad Académica</b><br><small style="color:var(--text-sec)">Guía anti-plagio</small></div>
+                </div>
+                <div class="tool-card" onclick="openModal('prompt')">
+                    <i class="fa-solid fa-wand-magic-sparkles" style="font-size:2rem; color:var(--p-green)"></i>
+                    <div><b>Prompting Pro</b><br><small style="color:var(--text-sec)">Estructura de instrucciones</small></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 8. VISTA PROGRESO -->
+        <div id="view-progress" class="view">
+            <h2 style="margin-bottom:10px;">Tu Impacto</h2>
+            <p style="color:var(--text-sec); margin-bottom:20px;">Antes (Test) vs Ahora (Uso)</p>
+            
+            <div class="card">
+                <div class="prog-row">
+                    <span style="font-weight:600; color:var(--text-sec);">Conocimiento</span>
+                    <div><span class="stars" id="b-k">★☆☆</span> <span style="margin:0 5px;">→</span> <span class="stars filled" id="a-k">★☆☆</span></div>
+                </div>
+                <div class="prog-row">
+                    <span style="font-weight:600; color:var(--text-sec);">Confianza</span>
+                    <div><span class="stars" id="b-c">★☆☆</span> <span style="margin:0 5px;">→</span> <span class="stars filled" id="a-c">★☆☆</span></div>
+                </div>
+                <div class="prog-row">
+                    <span style="font-weight:600; color:var(--text-sec);">Ética</span>
+                    <div><span class="stars" id="b-e">★☆☆</span> <span style="margin:0 5px;">→</span> <span class="stars filled" id="a-e">★☆☆</span></div>
+                </div>
+                
+                <div style="margin-top:20px; background:#F0FDF4; padding:15px; border-radius:12px; border:1px solid #BBF7D0; color:#166534; font-size:0.9rem;">
+                    <i class="fa-solid fa-robot"></i> <strong>Tip:</strong> Habla con el Entrenador IA para subir nivel.
+                </div>
+            </div>
+        </div>
+
+    </div> <!-- FIN CONTAINER -->
+
+    <!-- ELEMENTOS FLOTANTES -->
+    
+    <!-- BOT -->
+    <div id="bot-trigger" onclick="toggleBot()" class="hidden">
+        <i class="fa-solid fa-robot"></i>
+    </div>
+    <div id="bot-window">
+        <div style="background:var(--brand-blue); padding:15px; color:white; font-weight:700; display:flex; justify-content:space-between;">
+            <span>Entrenador IA</span> <i class="fa-solid fa-times" style="cursor:pointer;" onclick="toggleBot()"></i>
+        </div>
+        <div id="chat-content" class="chat-area"></div>
+    </div>
+
+    <!-- MODAL RECURSOS -->
+    <div id="modal" class="modal">
+        <div class="modal-card">
+            <h2 id="m-tit" style="color:var(--brand-blue); margin-bottom:15px;">...</h2>
+            <div id="m-bod" style="margin-bottom:25px; line-height:1.6; color:var(--text-main); font-size:0.95rem;">...</div>
+            <button class="btn btn-primary" onclick="closeModal(true)">¡Entendido! (+1 Estrella)</button>
+        </div>
+    </div>
+
+    <!-- NAVBAR INFERIOR -->
+    <nav id="navbar" class="bottom-nav hidden">
+        <div class="nav-item active" id="n-home" onclick="switchTab('home')"><i class="fa-solid fa-house"></i>Inicio</div>
+        <div class="nav-item" id="n-res" onclick="switchTab('resources')"><i class="fa-solid fa-book-open"></i>Recursos</div>
+        <div class="nav-item" id="n-prog" onclick="switchTab('progress')"><i class="fa-solid fa-chart-pie"></i>Progreso</div>
+        <div class="nav-item" onclick="location.reload()"><i class="fa-solid fa-right-from-bracket"></i>Salir</div>
+    </nav>
+
+    <script>
+        // --- ESTADO INICIAL ---
+        let app = { role: '', profile: '', statsBefore: {k:1,c:1,e:1}, statsAfter: {k:1,c:1,e:1} };
+        let activeResType = '';
+
+        // --- SPLASH LOGIC ---
+        setTimeout(() => {
+            document.getElementById('view-splash').style.display = 'none'; // Quitar Splash
+            document.getElementById('view-auth').classList.remove('hidden'); // Mostrar Auth
+            document.getElementById('view-auth').classList.add('active');
+        }, 3000); // 3 segundos de carga simulada
+
+        // --- NAVEGACIÓN ---
+        function goTo(id) {
+            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+            // Hack para mantener ocultos los que no son views principales
+            const els = ['view-auth','view-role','view-test','view-reveal','view-dashboard','view-resources','view-progress'];
+            els.forEach(e => document.getElementById(e).classList.add('hidden'));
+            
+            const target = document.getElementById(id);
+            target.classList.remove('hidden');
+            target.classList.add('active');
+        }
+
+        // --- TABS DASHBOARD ---
+        function switchTab(tab) {
+            document.getElementById('view-dashboard').classList.remove('active');
+            document.getElementById('view-resources').classList.remove('active');
+            document.getElementById('view-progress').classList.remove('active');
+            document.getElementById('view-dashboard').classList.add('hidden');
+            document.getElementById('view-resources').classList.add('hidden');
+            document.getElementById('view-progress').classList.add('hidden');
+
+            if(tab==='home') { document.getElementById('view-dashboard').classList.remove('hidden'); document.getElementById('view-dashboard').classList.add('active'); }
+            if(tab==='resources') { document.getElementById('view-resources').classList.remove('hidden'); document.getElementById('view-resources').classList.add('active'); }
+            if(tab==='progress') { document.getElementById('view-progress').classList.remove('hidden'); document.getElementById('view-progress').classList.add('active'); }
+
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            if(tab==='home') document.getElementById('n-home').classList.add('active');
+            if(tab==='resources') document.getElementById('n-res').classList.add('active');
+            if(tab==='progress') document.getElementById('n-prog').classList.add('active');
+        }
+
+        function setRole(role) {
+            app.role = role;
+            document.getElementById('app-header').classList.remove('hidden'); // Mostrar header
+            const b = document.getElementById('role-display');
+            b.innerText = role === 'student' ? 'Estudiante' : 'Docente';
+            b.style.display = 'block';
+            startQuiz(); // Ambos hacen quiz
+        }
+
+        // --- CUESTIONARIO (4 PREGUNTAS) ---
+        const qs = [
+            { id:'knw', txt:"Si tuvieras que explicar qué es una IA a un amigo, ¿te sentirías...?", opts:[{t:"Seguro",v:3},{t:"Más o menos",v:2},{t:"Perdido",v:1}] },
+            { id:'att', txt:"¿Te parece que usar IA para aprender puede ayudarte?", opts:[{t:"Mucho",v:3},{t:"Poco",v:2},{t:"Nada",v:1}] },
+            { id:'eth', txt:"¿Te preocupa que la IA te lleve a cometer plagio?", opts:[{t:"Sí, mucho",v:1},{t:"Tengo dudas",v:2},{t:"No me preocupa",v:3}] },
+            { id:'rsk', txt:"¿Crees que la IA afectará negativamente los trabajos?", opts:[{t:"Sí, dañará",v:1},{t:"Tal vez",v:2},{t:"No, ayudará",v:3}] }
+        ];
+        let qIdx=0, ans={};
+
+        function startQuiz() { goTo('view-test'); renderQ(); }
+        function renderQ() {
+            const q = qs[qIdx];
+            document.getElementById('q-text').innerText = q.txt;
+            let h=''; q.opts.forEach(o => h+=`<button class="btn-select" onclick="handleAns('${q.id}',${o.v})"><i class="fa-regular fa-circle-check" style="color:var(--brand-blue)"></i> ${o.t}</button>`);
+            document.getElementById('q-opts').innerHTML=h;
+        }
+        function handleAns(id,v) {
+            ans[id]=v; qIdx++;
+            if(qIdx < qs.length) renderQ(); else calcProfile();
+        }
+
+        function calcProfile() {
+            let pName="", pDesc="", pColor="", pIcon="";
+            
+            // Lógica Investigación
+            if(ans.eth === 1) { 
+                pName="Cauteloso"; pDesc="Te da curiosidad la IA, pero te preocupa mucho el plagio y los riesgos."; 
+                pColor="var(--p-yellow)"; pIcon="fa-shield-halved";
+                app.statsBefore={k:1,c:2,e:1};
+            } else if(ans.att === 1 || ans.rsk === 1) {
+                pName="Desconfiado"; pDesc="Piensas que la IA puede dañar más que ayudar en educación.";
+                pColor="var(--p-red)"; pIcon="fa-thumbs-down";
+                app.statsBefore={k:1,c:1,e:2};
+            } else if(ans.knw === 3) {
+                pName="Usuario Avanzado"; pDesc="La usas con frecuencia, pero quizá subestimas algunos riesgos.";
+                pColor="var(--p-green)"; pIcon="fa-bolt";
+                app.statsBefore={k:3,c:3,e:2};
+            } else {
+                pName="Explorador Curioso"; pDesc="Usas IA o te interesa, pero todavía no entiendes bien cómo funciona.";
+                pColor="var(--p-blue)"; pIcon="fa-rocket";
+                app.statsBefore={k:1,c:3,e:2};
+            }
+
+            app.profile = pName;
+            app.statsAfter = {...app.statsBefore};
+
+            // Setup Reveal
+            const card = document.getElementById('reveal-card');
+            card.style.background = pColor;
+            card.style.color = (pName==="Cauteloso") ? "#000" : "#fff";
+            document.getElementById('r-title').innerText = pName;
+            document.getElementById('r-desc').innerText = pDesc;
+            document.getElementById('r-icon').className = `reveal-icon fa-solid ${pIcon}`;
+
+            // Setup Dashboard
+            const mini = document.getElementById('mini-profile');
+            mini.style.borderLeftColor = pColor;
+            document.getElementById('dash-p-name').innerText = pName;
+            document.getElementById('dash-p-icon').className = `fa-solid ${pIcon}`;
+            document.getElementById('dash-p-icon').style.color = pColor;
+
+            renderRoutes(pName, pColor);
+            goTo('view-reveal');
+        }
+
+        function renderRoutes(name, color) {
+            const div = document.getElementById('routes-container');
+            let h = '';
+            if(name.includes("Cauteloso")) {
+                h = `<div class="tool-card" onclick="openModal('ethics')"><i class="fa-solid fa-traffic-light" style="color:${color}; font-size:1.5rem;"></i><div><b>Módulo Ética</b><br><small>Semáforo anti-plagio</small></div></div>`;
+            } else if(name.includes("Desconfiado")) {
+                 h = `<div class="tool-card" onclick="openModal('tool')"><i class="fa-solid fa-book" style="color:${color}; font-size:1.5rem;"></i><div><b>Caso Práctico</b><br><small>NotebookLM para organizar</small></div></div>`;
+            } else {
+                h = `<div class="tool-card" onclick="openModal('tool')"><i class="fa-solid fa-rocket" style="color:${color}; font-size:1.5rem;"></i><div><b>Descubrimiento</b><br><small>Investigación con Perplexity</small></div></div>`;
+            }
+            h += `<div class="tool-card" onclick="openModal('prompt')"><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--text-sec); font-size:1.5rem;"></i><div><b>Guía Prompting</b><br><small>Estructura básica</small></div></div>`;
+            div.innerHTML = h;
+        }
+
+        function goToDashboard() {
+            goTo('view-dashboard');
+            document.getElementById('navbar').classList.remove('hidden');
+            document.getElementById('navbar').style.display = 'flex';
+            
+            if(app.role === 'teacher') {
+                document.getElementById('teacher-content').classList.remove('hidden');
+                document.getElementById('student-content').classList.add('hidden');
+                document.getElementById('navbar').classList.add('hidden'); 
+                document.getElementById('bot-trigger').classList.add('hidden');
+            } else {
+                document.getElementById('student-content').classList.remove('hidden');
+                document.getElementById('teacher-content').classList.add('hidden');
+                document.getElementById('bot-trigger').classList.remove('hidden');
+            }
+            renderStars();
+        }
+
+        function renderStars() {
+            const d=(id,v)=>{ let s=""; for(let i=0;i<3;i++)s+=(i<v)?"★":"☆"; document.getElementById(id).innerText=s; }
+            d('b-k',app.statsBefore.k); d('b-c',app.statsBefore.c); d('b-e',app.statsBefore.e);
+            d('a-k',app.statsAfter.k); d('a-c',app.statsAfter.c); d('a-e',app.statsAfter.e);
+        }
+
+        // --- BOT FUNCIONAL ---
+        function toggleBot() {
+            const w=document.getElementById('bot-window');
+            if(w.style.display==='flex') w.style.display='none'; else { w.style.display='flex'; if(document.getElementById('chat-content').innerHTML==="") initChat(); }
+        }
+        function initChat() {
+            const c=document.getElementById('chat-content');
+            c.innerHTML = `<div class="msg bot-msg">Hola, ${app.profile}. Vamos a entrenar.</div>`;
+            setTimeout(()=>{
+                c.innerHTML += `<div class="msg bot-msg">¿Qué es una 'alucinación' de IA?
+                <div class="chips"><div class="chip" onclick="reply(true)">Invención de datos</div><div class="chip" onclick="reply(false)">Error de conexión</div></div></div>`;
+            },800);
+        }
+        function reply(ok) {
+            const c=document.getElementById('chat-content');
+            document.querySelectorAll('.chip').forEach(e=>e.style.display='none');
+            c.innerHTML+=`<div class="msg user-msg">${ok?'Invención':'Error'}</div>`;
+            setTimeout(()=>{
+                if(ok) {
+                    c.innerHTML+=`<div class="msg bot-msg">¡Correcto! +1 Estrella Conocimiento ⭐</div>`;
+                    app.statsAfter.k = Math.min(3, app.statsAfter.k+1); renderStars();
+                } else c.innerHTML+=`<div class="msg bot-msg">Incorrecto.</div>`;
+            },600);
+        }
+
+        // --- MODAL RECURSOS ---
+        function openModal(t) {
+            activeResType=t;
+            document.getElementById('modal').style.display='flex';
+            const ti=document.getElementById('m-tit'), bo=document.getElementById('m-bod');
+            
+            if(t==='tool') { 
+                ti.innerText="Perplexity AI"; 
+                bo.innerHTML="<p><b>¿Qué es?</b><br>Un motor de búsqueda conversacional que cita sus fuentes en tiempo real.</p><br><p><b>¿Por qué usarlo?</b><br>Reduce las alucinaciones al basarse en datos web actuales. Ideal para verificar datos de tareas.</p>"; 
+            } else if(t==='ethics') { 
+                ti.innerText="Integridad Académica"; 
+                bo.innerHTML="<p><b>El Semáforo Ético:</b><br>🟢 <b>Verde:</b> Lluvia de ideas, corrección ortográfica.<br>🟡 <b>Amarillo:</b> Resumir textos (Debes citar la herramienta).<br>🔴 <b>Rojo:</b> Copiar y pegar texto como propio (PLAGIO).</p>"; 
+            } else { 
+                ti.innerText="Prompting Efectivo"; 
+                bo.innerHTML="<p><b>Fórmula COT (Chain of Thought):</b><br>1. <b>Rol:</b> 'Actúa como experto...'<br>2. <b>Contexto:</b> 'Para una clase de...' <br>3. <b>Tarea:</b> 'Explica este concepto...'<br>4. <b>Formato:</b> 'En una lista de 3 puntos'.</p>"; 
+            }
+        }
+        function closeModal(ok) {
+            document.getElementById('modal').style.display='none';
+            if(ok) {
+                if(activeResType==='tool') app.statsAfter.k = Math.min(3,app.statsAfter.k+1);
+                else app.statsAfter.e = Math.min(3,app.statsAfter.e+1);
+                renderStars();
+                // Feedback visual simple sin alert
+                const btn = document.querySelector('.nav-item[onclick*="progress"]');
+                btn.style.color = "var(--gold)";
+                setTimeout(()=>btn.style.color="", 500);
+            }
+        }
+    </script>
+</body>
+</html>
