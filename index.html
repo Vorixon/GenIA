@@ -2,627 +2,611 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Brújula GenIA Campus</title>
-    <!-- Iconos y Fuentes -->
+    
+    <!-- Fuentes e Iconos -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     
     <style>
         :root {
-            /* Colores de Marca */
-            --brand-blue: #4F46E5; /* El azul de tu imagen */
-            --brand-dark: #3730a3;
-            
-            /* Colores de UI */
-            --bg-body: #F8FAFC;
-            --surface: #FFFFFF;
+            /* Paleta Vibrante (Solid Colors) */
+            --v-purple: #8B5CF6;
+            --v-purple-dark: #7C3AED;
+            --v-green: #10B981;
+            --v-green-dark: #059669;
+            --v-blue: #3B82F6;
+            --v-blue-dark: #2563EB;
+            --v-orange: #F59E0B;
+            --v-red: #EF4444;
+            --v-dark: #1E293B;
+
+            /* UI System */
+            --bg: #F8FAFC;
             --text-main: #0F172A;
             --text-sec: #64748B;
-            --gold: #F59E0B;
-            --radius: 20px;
-            --max-width: 1000px;
-            
-            /* Colores de Perfiles (Variables Investigación) */
-            --p-blue: #3B82F6; /* Explorador */
-            --p-yellow: #F59E0B; /* Cauteloso */
-            --p-red: #EF4444; /* Desconfiado */
-            --p-green: #10B981; /* Avanzado */
+            --radius: 24px;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
         
-        body { background-color: var(--bg-body); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; padding-bottom: 80px; }
+        body { background-color: var(--bg); color: var(--text-main); min-height: 100vh; display: flex; flex-direction: column; padding-bottom: 90px; overflow-x: hidden; }
 
-        /* --- UTILIDADES --- */
+        /* UTILIDADES */
         .hidden { display: none !important; }
-        .fade-in { animation: fadeIn 0.5s ease; }
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .fade-in { animation: fadeIn 0.5s ease forwards; }
+        .slide-up { animation: slideUp 0.4s ease forwards; }
+        .pulse { animation: pulse 2s infinite; }
 
-        /* --- 1. SPLASH SCREEN (DISEÑO SOLICITADO) --- */
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.4); } 70% { box-shadow: 0 0 0 15px rgba(79, 70, 229, 0); } 100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); } }
+
+        /* --- 1. SPLASH SCREEN --- */
         #view-splash {
-            background-color: var(--brand-blue);
-            color: white;
-            height: 100vh;
-            width: 100%;
-            position: fixed;
-            top: 0; left: 0;
+            position: fixed; top: 0; left: 0; width: 100%; height: 100vh;
+            background: var(--v-blue-dark); color: white;
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
             z-index: 9999;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
         }
+        .splash-logo { font-size: 4rem; margin-bottom: 20px; background: white; color: var(--v-blue-dark); width: 100px; height: 100px; border-radius: 30px; display: flex; align-items: center; justify-content: center; box-shadow: 0 20px 40px rgba(0,0,0,0.2); }
+        .loading-bar { width: 150px; height: 6px; background: rgba(255,255,255,0.3); border-radius: 3px; margin-top: 40px; overflow: hidden; }
+        .loading-fill { height: 100%; background: white; width: 0%; animation: load 2.5s ease-in-out forwards; }
+        @keyframes load { to { width: 100%; } }
 
-        .splash-logo-box {
-            background: white;
-            color: var(--brand-blue);
-            width: 100px; height: 100px;
-            border-radius: 30px;
-            display: flex; align-items: center; justify-content: center;
-            font-size: 3rem;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        /* --- UI GENERAL --- */
+        .container { width: 100%; max-width: 600px; margin: 0 auto; padding: 20px; flex: 1; }
+        .view { display: none; }
+        .view.active { display: block; animation: fadeIn 0.4s ease; }
+
+        .btn { width: 100%; padding: 18px; border-radius: 18px; border: none; font-weight: 700; font-size: 1rem; cursor: pointer; transition: 0.2s; display: flex; align-items: center; justify-content: center; gap: 10px; margin-bottom: 15px; }
+        .btn:active { transform: scale(0.97); }
+        .btn-primary { background: var(--v-blue-dark); color: white; box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3); }
+        .btn-white { background: white; color: var(--v-dark); border: none; box-shadow: 0 4px 15px rgba(0,0,0,0.1); }
+        .btn-ghost { background: transparent; color: var(--v-blue-dark); }
+        .input-field { width: 100%; padding: 18px; background: white; border: 2px solid #E2E8F0; border-radius: 18px; font-size: 1rem; margin-bottom: 15px; outline: none; }
+
+        /* --- LOGIN & ROL --- */
+        .role-btn {
+            background: white; padding: 25px; border-radius: 24px; border: 2px solid #E2E8F0;
+            text-align: left; margin-bottom: 15px; cursor: pointer; transition: 0.2s;
+            display: flex; align-items: center; gap: 20px;
         }
+        .role-btn:hover { border-color: var(--v-blue); background: #EFF6FF; transform: translateY(-3px); }
+        .role-icon { width: 60px; height: 60px; background: #EFF6FF; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; color: var(--v-blue); }
 
-        .splash-title { font-size: 2.2rem; font-weight: 800; line-height: 1.1; margin-bottom: 10px; }
-        .splash-sub { font-size: 1rem; opacity: 0.8; font-weight: 500; letter-spacing: 0.5px; }
-
-        /* Barra de carga animada */
-        .loading-bar {
-            width: 60px; height: 6px;
-            background: rgba(255,255,255,0.3);
-            border-radius: 3px;
-            margin-top: 50px;
-            position: relative;
-            overflow: hidden;
+        /* --- CUESTIONARIO --- */
+        .quiz-step { flex: 1; height: 6px; background: #E2E8F0; border-radius: 3px; }
+        .quiz-step.filled { background: var(--v-blue); }
+        .quiz-option {
+            background: white; padding: 20px; border-radius: 18px; border: 2px solid #E2E8F0;
+            margin-bottom: 12px; cursor: pointer; font-weight: 600; transition: 0.2s; display: flex; justify-content: space-between; align-items: center;
         }
-        .loading-fill {
-            position: absolute; left: 0; top: 0; height: 100%; width: 0%;
-            background: white;
-            border-radius: 3px;
-            animation: loadApp 3s ease-in-out forwards; /* Simula carga */
+        .quiz-option:hover { border-color: var(--v-blue); color: var(--v-blue); background: #F8FAFC; }
+
+        /* --- PERFIL REVEAL (SOLIDO) --- */
+        .reveal-card {
+            padding: 50px 30px; border-radius: 30px; text-align: center; color: white;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.2); margin-top: 20px;
+            display: flex; flex-direction: column; align-items: center;
         }
-        @keyframes loadApp { 0% { width: 0%; } 50% { width: 60%; } 100% { width: 100%; } }
+        .reveal-icon { font-size: 5rem; margin-bottom: 20px; }
+        .reveal-btn { background: rgba(255,255,255,0.2); border: 2px solid white; color: white; backdrop-filter: blur(5px); }
 
-        /* --- HEADER --- */
-        header {
-            background: var(--surface); padding: 15px 20px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.05); position: sticky; top: 0; z-index: 50;
-            display: flex; justify-content: space-between; align-items: center;
+        /* --- NOVEDADES (COLOR CARDS) --- */
+        .news-scroll { display: flex; overflow-x: auto; gap: 15px; padding: 5px 0 20px 0; scroll-snap-type: x mandatory; }
+        .news-card {
+            min-width: 280px; border-radius: 24px; padding: 25px; color: white;
+            scroll-snap-align: center; position: relative; overflow: hidden;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            display: flex; flex-direction: column; justify-content: space-between; min-height: 160px;
         }
-        .brand { font-weight: 800; color: var(--brand-blue); font-size: 1.2rem; display: flex; gap: 8px; align-items: center; }
-        .role-badge { font-size: 0.75rem; background: #EEF2FF; color: var(--brand-blue); padding: 5px 12px; border-radius: 20px; font-weight: 700; border: 1px solid #E0E7FF; display: none; }
-
-        /* --- CONTAINER --- */
-        .container { width: 100%; max-width: var(--max-width); margin: 0 auto; padding: 20px; flex: 1; display: flex; flex-direction: column; }
-
-        /* --- VISTAS --- */
-        .view { display: none; flex: 1; animation: fadeIn 0.4s ease; }
-        .view.active { display: block; }
-
-        /* --- UI ELEMENTS --- */
-        .btn { width: 100%; padding: 16px; border-radius: 14px; border: none; font-weight: 700; cursor: pointer; font-size: 1rem; transition: 0.2s; margin-bottom: 12px; }
-        .btn-primary { background: var(--brand-blue); color: white; box-shadow: 0 4px 15px rgba(79, 70, 229, 0.3); }
-        .btn-primary:active { transform: scale(0.98); }
-        .btn-outline { background: white; border: 2px solid #E2E8F0; color: var(--text-main); }
+        .news-bg-icon { position: absolute; right: -15px; bottom: -15px; font-size: 6rem; opacity: 0.2; transform: rotate(-15deg); }
         
-        .btn-select { 
-            width: 100%; text-align: left; padding: 20px; margin-bottom: 15px; 
-            background: white; border: 2px solid #E2E8F0; border-radius: 16px;
-            font-size: 1rem; font-weight: 600; display: flex; align-items: center; gap: 15px;
-            transition: all 0.2s; cursor: pointer;
+        .news-purple { background: linear-gradient(135deg, var(--v-purple), var(--v-purple-dark)); }
+        .news-green { background: linear-gradient(135deg, var(--v-green), var(--v-green-dark)); }
+
+        /* --- MISIONES (SOLID COLOR) --- */
+        .mission-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .mission-card {
+            padding: 20px; border-radius: 24px; text-align: center; color: white;
+            transition: 0.2s; position: relative; overflow: hidden; cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1); border: none;
+            display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 140px;
         }
-        .btn-select:hover { border-color: var(--brand-blue); background: #EEF2FF; color: var(--brand-blue); transform: translateX(5px); }
-        .btn-select i { font-size: 1.5rem; }
+        .mission-card:active { transform: scale(0.97); }
+        .mission-icon { font-size: 2.5rem; margin-bottom: 12px; }
+        .check-badge { position: absolute; top: 10px; right: 10px; color: white; display: none; background: rgba(0,0,0,0.2); border-radius: 50%; padding: 5px; }
+        .mission-card.done .check-badge { display: block; }
 
-        .input-field { width: 100%; padding: 15px; border: 2px solid #E2E8F0; border-radius: 12px; font-size: 1rem; margin-bottom: 15px; outline: none; }
-        .input-field:focus { border-color: var(--brand-blue); }
+        /* Colores Misiones */
+        .bg-blue { background: var(--v-blue); }
+        .bg-orange { background: var(--v-orange); }
+        .bg-green { background: var(--v-green); }
+        .bg-red { background: var(--v-red); }
+        .bg-purple { background: var(--v-purple); }
 
-        /* --- REVELACIÓN DE PERFIL --- */
-        .profile-reveal-card {
-            background: white; border-radius: 30px; padding: 40px 20px; text-align: center;
-            box-shadow: 0 20px 50px rgba(0,0,0,0.15); margin-top: 20px;
+        /* --- TEACHER --- */
+        .thermometer-card { background: white; padding: 25px; border-radius: 24px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
+
+        /* --- MODAL --- */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.6); backdrop-filter: blur(5px); z-index: 2000;
+            display: none; align-items: flex-end; justify-content: center;
         }
-        .reveal-icon { font-size: 5rem; margin-bottom: 20px; display: inline-block; }
-        .reveal-title { font-size: 2.2rem; font-weight: 800; margin-bottom: 10px; line-height: 1.1; }
-        .reveal-desc { font-size: 1.1rem; opacity: 0.9; margin-bottom: 30px; line-height: 1.5; }
-
-        /* --- DASHBOARD --- */
-        .slider-container { display: flex; gap: 15px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 25px; scroll-snap-type: x mandatory; }
-        .slide-card {
-            min-width: 280px; background: linear-gradient(135deg, var(--brand-blue), #8B5CF6); color: white;
-            padding: 20px; border-radius: 16px; scroll-snap-align: center; position: relative; overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        .modal-content {
+            background: white; width: 100%; max-width: 600px;
+            border-radius: 30px 30px 0 0; padding: 30px;
+            max-height: 90vh; overflow-y: auto; animation: slideUp 0.3s;
         }
-        .slide-bg-icon { position: absolute; right: -10px; bottom: -10px; font-size: 5rem; opacity: 0.2; }
-
-        .card { background: var(--surface); border-radius: var(--radius); padding: 20px; box-shadow: 0 2px 10px rgba(0,0,0,0.04); margin-bottom: 20px; }
-
-        .mini-profile {
-            background: white; padding: 15px; border-radius: 16px; margin-bottom: 25px; 
-            border-left: 6px solid var(--brand-blue); display: flex; justify-content: space-between; align-items: center;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-        }
-
-        .dash-grid { display: grid; grid-template-columns: 1fr; gap: 20px; }
-        @media(min-width: 768px) { .dash-grid { grid-template-columns: 2fr 1fr; } }
-
-        /* Rutas */
-        .tool-card {
-            background: white; padding: 20px; border-radius: 16px; display: flex; align-items: center; gap: 15px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.05); cursor: pointer; transition: 0.2s; border: 1px solid transparent; margin-bottom: 15px;
-        }
-        .tool-card:hover { border-color: var(--brand-blue); transform: translateY(-2px); }
-
-        /* Progreso */
-        .prog-row { display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid #F1F5F9; }
-        .stars { color: #CBD5E1; letter-spacing: 2px; }
-        .stars.filled { color: var(--gold); }
+        @media(min-width:600px){ .modal-content { border-radius: 30px; margin-bottom: 20px; } .modal-overlay { align-items: center; } }
 
         /* --- CHATBOT --- */
         #bot-trigger {
-            position: fixed; bottom: 90px; right: 20px; width: 65px; height: 65px;
-            background: linear-gradient(135deg, var(--brand-blue), #6366f1); color: white;
-            border-radius: 50%; display: flex; align-items: center; justify-content: center;
-            font-size: 2rem; box-shadow: 0 10px 25px rgba(79, 70, 229, 0.4); cursor: pointer; z-index: 90;
-            animation: pulse 3s infinite;
+            position: fixed; bottom: 100px; right: 20px; width: 65px; height: 65px;
+            background: linear-gradient(135deg, var(--v-blue), var(--v-purple));
+            color: white; border-radius: 50%; display: flex; align-items: center; justify-content: center;
+            font-size: 2rem; box-shadow: 0 10px 30px rgba(59, 130, 246, 0.4); cursor: pointer; z-index: 100;
         }
-        @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0.7); } 70% { box-shadow: 0 0 0 15px rgba(79, 70, 229, 0); } 100% { box-shadow: 0 0 0 0 rgba(79, 70, 229, 0); } }
-
         #bot-window {
-            position: fixed; bottom: 170px; right: 20px; width: 340px; height: 450px;
-            background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-            display: none; flex-direction: column; z-index: 91; overflow: hidden; border: 1px solid #E2E8F0;
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 100%; background: white;
+            z-index: 3000; display: none; flex-direction: column;
         }
-        .chat-area { flex: 1; padding: 15px; overflow-y: auto; background: #F8FAFC; display: flex; flex-direction: column; gap: 10px; }
-        .msg { padding: 10px 15px; border-radius: 14px; font-size: 0.95rem; max-width: 85%; }
-        .bot-msg { background: white; border: 1px solid #E2E8F0; align-self: flex-start; border-bottom-left-radius: 2px; }
-        .user-msg { background: var(--brand-blue); color: white; align-self: flex-end; border-bottom-right-radius: 2px; }
-        .chip { background: #EEF2FF; color: var(--brand-blue); padding: 5px 12px; border-radius: 20px; font-size: 0.8rem; cursor: pointer; border: 1px solid var(--brand-blue); display: inline-block; margin: 3px; }
+        @media(min-width:600px){ #bot-window { bottom: 110px; left: auto; right: 20px; width: 380px; height: 550px; border-radius: 24px; box-shadow: 0 20px 80px rgba(0,0,0,0.2); border: 1px solid #E2E8F0; } }
+        
+        .chat-area { flex: 1; padding: 20px; overflow-y: auto; background: #F8FAFC; display: flex; flex-direction: column; gap: 15px; }
+        .msg { max-width: 85%; padding: 14px 18px; border-radius: 18px; font-size: 0.95rem; line-height: 1.5; }
+        .bot-msg { background: white; border: 1px solid #E2E8F0; border-bottom-left-radius: 4px; align-self: flex-start; }
+        .user-msg { background: var(--v-blue); color: white; border-bottom-right-radius: 4px; align-self: flex-end; }
+        .bot-btn { background: white; border: 1px solid var(--v-blue); color: var(--v-blue); padding: 8px 16px; border-radius: 20px; font-size: 0.8rem; font-weight: 700; cursor: pointer; margin-right: 5px; margin-top: 5px; }
 
         /* --- NAVBAR --- */
-        .bottom-nav {
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 75px;
-            background: var(--surface); border-top: 1px solid #E2E8F0;
-            display: flex; justify-content: space-around; align-items: center;
-            z-index: 100; padding-bottom: 5px;
+        nav {
+            position: fixed; bottom: 0; left: 0; width: 100%; height: 80px;
+            background: white; border-top: 1px solid #E2E8F0;
+            display: flex; justify-content: space-around; align-items: center; z-index: 1000;
         }
-        .nav-item { text-align: center; color: var(--text-sec); font-size: 0.7rem; cursor: pointer; flex: 1; }
-        .nav-item i { font-size: 1.4rem; display: block; margin-bottom: 4px; }
-        .nav-item.active { color: var(--brand-blue); font-weight: 700; }
-
-        /* --- MODAL --- */
-        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.6); z-index: 200; display: none; align-items: center; justify-content: center; }
-        .modal-card { background: white; width: 90%; max-width: 500px; padding: 30px; border-radius: 20px; max-height: 80vh; overflow-y: auto; animation: fadeIn 0.3s; }
+        .nav-item { color: var(--text-sec); text-align: center; font-size: 0.75rem; font-weight: 600; cursor: pointer; flex: 1; }
+        .nav-item.active { color: var(--v-blue); }
 
     </style>
 </head>
 <body>
 
-    <!-- 1. PANTALLA SPLASH (Azul y Logo) -->
+    <!-- 1. SPLASH SCREEN -->
     <div id="view-splash">
-        <div class="splash-logo-box">
-            <i class="fa-solid fa-compass"></i>
-        </div>
-        <div class="splash-title">Brújula GenIA<br>Campus</div>
-        <div class="splash-sub">Investigación + IA en tu bolsillo</div>
-        
-        <div class="loading-bar">
-            <div class="loading-fill"></div>
+        <div class="splash-logo"><i class="fa-solid fa-compass"></i></div>
+        <h1 style="font-weight:800; margin-bottom: 5px;">Brújula GenIA</h1>
+        <p style="opacity:0.8; letter-spacing: 1px;">CAMPUS</p>
+        <div class="loading-bar"><div class="loading-fill"></div></div>
+    </div>
+
+    <!-- 2. LOGIN / AUTH -->
+    <div id="view-auth" class="view hidden">
+        <div class="container" style="text-align: center; padding-top: 50px;">
+            <div style="font-size:3.5rem; color:var(--v-blue); margin-bottom:20px;"><i class="fa-solid fa-compass"></i></div>
+            <h2 style="margin-bottom:10px; font-size: 1.8rem;">Bienvenido</h2>
+            <p style="color:var(--text-sec); margin-bottom:40px;">Tu compañero de investigación con IA.</p>
+            
+            <input type="email" placeholder="correo@institucion.edu" class="input-field">
+            <input type="password" placeholder="contraseña" class="input-field">
+            
+            <button class="btn btn-primary" onclick="goToRole()">Iniciar Sesión</button>
+            <button class="btn btn-ghost" onclick="goToRole()">Ingresar como Invitado</button>
         </div>
     </div>
 
-    <!-- HEADER (Se muestra después del splash) -->
-    <header id="app-header" class="hidden">
-        <div class="brand"><i class="fa-solid fa-compass"></i> Brújula GenIA</div>
-        <div id="role-display" class="role-badge">Invitado</div>
+    <!-- 3. SELECCIÓN DE ROL -->
+    <div id="view-role" class="view hidden">
+        <div class="container">
+            <h2 style="margin-bottom:10px;">Selecciona tu Rol</h2>
+            <p style="color:var(--text-sec); margin-bottom:30px;">Adaptaremos el contenido para ti.</p>
+            
+            <div class="role-btn" onclick="setRole('student')">
+                <div class="role-icon"><i class="fa-solid fa-user-graduate"></i></div>
+                <div>
+                    <h3>Soy Estudiante</h3>
+                    <small style="color:var(--text-sec)">Aprendizaje y Tareas</small>
+                </div>
+            </div>
+
+            <div class="role-btn" onclick="setRole('teacher')">
+                <div class="role-icon"><i class="fa-solid fa-chalkboard-user"></i></div>
+                <div>
+                    <h3>Soy Docente</h3>
+                    <small style="color:var(--text-sec)">Gestión y Evaluación</small>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- 4. QUIZ (DIAGNÓSTICO) -->
+    <div id="view-quiz" class="view hidden">
+        <div class="container">
+            <div style="display: flex; gap: 5px; margin-bottom: 30px;">
+                <div id="qp-1" class="quiz-step filled"></div>
+                <div id="qp-2" class="quiz-step"></div>
+                <div id="qp-3" class="quiz-step"></div>
+                <div id="qp-4" class="quiz-step"></div>
+            </div>
+            
+            <span style="color:var(--v-blue); font-weight:700; font-size:0.8rem; text-transform:uppercase; letter-spacing:1px;">Diagnóstico IA</span>
+            <h2 id="q-text" style="margin: 15px 0 30px 0; font-size: 1.4rem;">...</h2>
+            <div id="q-options"></div>
+        </div>
+    </div>
+
+    <!-- 5. PERFIL REVEAL (SOLID COLOR CARD) -->
+    <div id="view-reveal" class="view hidden">
+        <div class="container">
+            <p style="text-align: center; color:var(--text-sec); margin-top:20px; margin-bottom: 15px;">Basado en la investigación, tu perfil es:</p>
+            
+            <div id="reveal-card" class="reveal-card slide-up">
+                <i id="r-icon" class="reveal-icon fa-solid fa-bolt"></i>
+                <h1 id="r-title" style="margin-bottom:10px; font-weight:800; font-size: 2.2rem;">...</h1>
+                <p id="r-desc" style="font-size: 1.1rem; line-height:1.5; opacity: 0.95; margin-bottom: 20px;">...</p>
+                
+                <button class="btn btn-white" style="margin-top: 20px; color: var(--text-main); width: auto; padding: 15px 30px;" onclick="goToDashboard()">
+                    Ir a mi Inicio <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 6. DASHBOARD (HOME) -->
+    <header id="app-header" class="hidden" style="position: sticky; top: 0; background: var(--bg); z-index: 50; padding: 15px 20px; display: flex; justify-content: space-between; align-items: center;">
+        <div style="font-weight:800; color:var(--v-blue-dark); display:flex; gap:8px; align-items:center; font-size: 1.2rem;">
+            <i class="fa-solid fa-compass"></i> Brújula
+        </div>
+        <div style="background: white; padding: 5px 12px; border-radius: 20px; font-weight: 700; font-size: 0.85rem; box-shadow: 0 2px 5px rgba(0,0,0,0.05); color: var(--v-orange);">
+            <i class="fa-solid fa-star"></i> <span id="xp-val">0</span> XP
+        </div>
     </header>
 
-    <div class="container">
-
-        <!-- 2. AUTH (LOGIN) -->
-        <div id="view-auth" class="view">
-            <div style="max-width:400px; margin:40px auto; text-align:center;">
-                <h2 style="margin-bottom:20px;">Identifícate</h2>
-                <input type="email" placeholder="correo@institucion.edu" class="input-field">
-                <button class="btn btn-primary" onclick="goTo('view-role')">Ingresar / Registrarse</button>
-                <div style="margin:20px 0; color:#ccc;">— O —</div>
-                <button class="btn btn-outline" onclick="goTo('view-role')">Ingresar como Invitado</button>
-            </div>
-        </div>
-
-        <!-- 3. ROL -->
-        <div id="view-role" class="view">
-            <div style="max-width:500px; margin:40px auto;">
-                <h2 style="text-align:center; margin-bottom:10px;">Selecciona tu Rol</h2>
-                <p style="text-align:center; color:var(--text-sec); margin-bottom:30px;">Ambos perfiles deben completar el diagnóstico inicial.</p>
-                
-                <button class="btn-select" onclick="setRole('student')">
-                    <i class="fa-solid fa-user-graduate" style="color:var(--brand-blue)"></i>
-                    <div><div>Soy Estudiante</div><small style="color:var(--text-sec)">Aprendizaje y Tareas</small></div>
-                </button>
-                
-                <button class="btn-select" onclick="setRole('teacher')">
-                    <i class="fa-solid fa-chalkboard-user" style="color:var(--brand-blue)"></i>
-                    <div><div>Soy Docente</div><small style="color:var(--text-sec)">Gestión de Aula</small></div>
-                </button>
-            </div>
-        </div>
-
-        <!-- 4. TEST DIAGNÓSTICO (Investigación) -->
-        <div id="view-test" class="view">
-            <div style="max-width:600px; margin:20px auto;">
-                <span style="background:#EEF2FF; color:var(--brand-blue); padding:5px 10px; border-radius:8px; font-weight:700; font-size:0.8rem;">TEST IA</span>
-                <h2 style="margin:10px 0 30px 0;">Analizando tu Perfil IA</h2>
-                <div id="quiz-box">
-                    <h3 id="q-text" style="font-size:1.2rem; margin-bottom:25px; line-height:1.4;">...</h3>
-                    <div id="q-opts"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 5. REVELACIÓN DEL PERFIL -->
-        <div id="view-reveal" class="view">
-            <div style="max-width:600px; margin:0 auto; text-align:center;">
-                <p style="color:var(--text-sec); margin-top:20px;">Basado en la investigación, tu perfil es:</p>
-                
-                <div id="reveal-card" class="profile-reveal-card">
-                    <i id="r-icon" class="reveal-icon fa-solid fa-user"></i>
-                    <h1 id="r-title" class="reveal-title">...</h1>
-                    <p id="r-desc" class="reveal-desc">...</p>
-                    
-                    <button class="btn btn-outline" style="background:rgba(255,255,255,0.25); border:2px solid white; color:white; font-weight:700; margin-top:20px;" onclick="goToDashboard()">
-                        Ir a mi Inicio <i class="fa-solid fa-arrow-right"></i>
-                    </button>
-                </div>
-            </div>
-        </div>
-
-        <!-- 6. DASHBOARD PRINCIPAL -->
-        <div id="view-dashboard" class="view">
+    <div id="view-home" class="view hidden">
+        <div class="container" style="padding-top:10px;">
             
-            <!-- SLIDER NOVEDADES -->
-            <div class="slider-container">
-                <div class="slide-card">
-                    <h3>🔔 Novedad</h3>
-                    <p>Módulo "Ética en IA" actualizado. Evita el plagio accidental.</p>
-                    <i class="fa-solid fa-newspaper slide-bg-icon"></i>
-                </div>
-                <div class="slide-card" style="background: linear-gradient(135deg, #10B981, #059669);">
-                    <h3>💡 Tip del Día</h3>
-                    <p>Usa NotebookLM para estudiar tus PDFs sin alucinaciones.</p>
-                    <i class="fa-solid fa-lightbulb slide-bg-icon"></i>
-                </div>
-            </div>
+            <h2 style="margin-bottom:5px;">Hola, <span id="dash-name">Explorador</span> 👋</h2>
+            <p style="color:var(--text-sec); font-size:0.95rem; margin-bottom:25px;">Aquí tienes tus recursos de hoy.</p>
 
-            <!-- ANÁLISIS PERFIL -->
-            <div id="mini-profile" class="mini-profile">
-                <div>
-                    <h3 id="dash-p-name" style="font-size:1.1rem;">...</h3>
-                    <p style="font-size:0.9rem; color:var(--text-sec);">Tus rutas están personalizadas.</p>
+            <!-- NOVEDADES (COLOR CARDS) -->
+            <div class="news-scroll">
+                <!-- Card 1: Morado -->
+                <div class="news-card news-purple">
+                    <div>
+                        <div style="font-weight: 800; margin-bottom: 5px;"><i class="fa-solid fa-bell"></i> Novedad</div>
+                        <h3 style="line-height: 1.3;">Módulo "Ética en IA" actualizado. Evita el plagio accidental.</h3>
+                    </div>
+                    <i class="fa-regular fa-newspaper news-bg-icon"></i>
                 </div>
-                <i id="dash-p-icon" class="fa-solid fa-user" style="font-size:2rem; opacity:0.5;"></i>
-            </div>
-
-            <!-- CONTENIDO ESTUDIANTE -->
-            <div id="student-content">
-                <h3 style="margin-bottom:15px;">🚀 Rutas Recomendadas</h3>
-                <div id="routes-container"></div> <!-- JS inserta aquí -->
                 
-                <div style="margin-top:20px; text-align:center;">
-                    <button class="btn btn-outline" onclick="switchTab('progress')">Ver mi Progreso Completo</button>
+                <!-- Card 2: Verde -->
+                <div class="news-card news-green">
+                    <div>
+                        <div style="font-weight: 800; margin-bottom: 5px;"><i class="fa-solid fa-lightbulb"></i> Tip del Día</div>
+                        <h3 style="line-height: 1.3;">Usa NotebookLM para estudiar tus PDFs sin alucinaciones.</h3>
+                    </div>
+                    <i class="fa-regular fa-lightbulb news-bg-icon"></i>
+                </div>
+            </div>
+
+            <!-- CONTENIDO ESTUDIANTE (MISIONES DE COLOR) -->
+            <div id="student-dash" style="margin-top: 30px;">
+                <h3 style="margin-bottom:15px;">🎯 Tus Misiones</h3>
+                <div id="missions-container" class="mission-grid">
+                    <!-- JS inyecta tarjetas de colores aquí -->
                 </div>
             </div>
 
             <!-- CONTENIDO DOCENTE -->
-            <div id="teacher-content" class="hidden">
+            <div id="teacher-dash" class="hidden">
                 <h3 style="margin-bottom:15px;">📊 Termómetro del Aula</h3>
-                <div class="card">
-                    <p style="margin-bottom:10px;"><strong>35% Cautelosos</strong> (Preocupación alta)</p>
-                    <div style="height:10px; background:#E2E8F0; border-radius:5px; margin-bottom:15px;">
-                        <div style="width:35%; height:100%; background:var(--p-yellow); border-radius:5px;"></div>
+                <div class="thermometer-card">
+                    <p style="margin-bottom: 15px;"><strong>Resumen del grupo (40 alumnos):</strong></p>
+                    <div style="height:15px; border-radius:10px; background:#F1F5F9; display:flex; overflow:hidden; margin-bottom: 20px;">
+                        <div style="width:40%; background:var(--v-blue);"></div>
+                        <div style="width:30%; background:var(--v-orange);"></div>
+                        <div style="width:30%; background:var(--v-red);"></div>
                     </div>
-                    
-                    <p style="margin-bottom:10px;"><strong>40% Exploradores</strong> (Falta base)</p>
-                    <div style="height:10px; background:#E2E8F0; border-radius:5px; margin-bottom:15px;">
-                        <div style="width:40%; height:100%; background:var(--p-blue); border-radius:5px;"></div>
+                    <div style="font-size: 0.9rem; display: flex; flex-direction: column; gap: 8px;">
+                        <div style="display:flex; align-items:center; gap:8px;"><div style="width:10px; height:10px; border-radius:50%; background:var(--v-blue);"></div> 40% Exploradores</div>
+                        <div style="display:flex; align-items:center; gap:8px;"><div style="width:10px; height:10px; border-radius:50%; background:var(--v-orange);"></div> 30% Cautelosos</div>
+                        <div style="display:flex; align-items:center; gap:8px;"><div style="width:10px; height:10px; border-radius:50%; background:var(--v-red);"></div> 30% Desconfiados</div>
                     </div>
-
-                    <div style="background:#FFFBEB; border:1px solid #FEF3C7; padding:15px; border-radius:12px; color:#92400E; margin-top:15px;">
-                        <strong>Recomendación:</strong> El grupo tiene miedo al plagio. Asigna el módulo de "Integridad Académica" esta semana.
+                    <div style="background:#FFFBEB; border-left:4px solid var(--v-orange); padding:15px; margin-top:20px; border-radius:8px; font-size:0.9rem; color: #92400E;">
+                        <strong>Sugerencia:</strong> Asigna el módulo de Ética esta semana.
                     </div>
                 </div>
             </div>
-
         </div>
+    </div>
 
-        <!-- 7. VISTA RECURSOS -->
-        <div id="view-resources" class="view">
-            <h2 style="margin-bottom:20px;">Biblioteca IA</h2>
-            <div class="dash-grid">
-                <div class="tool-card" onclick="openModal('tool')">
-                    <i class="fa-solid fa-magnifying-glass" style="font-size:2rem; color:var(--p-blue)"></i>
-                    <div><b>Perplexity AI</b><br><small style="color:var(--text-sec)">Investigación con fuentes</small></div>
+    <!-- 7. PROGRESO -->
+    <div id="view-stats" class="view hidden">
+        <div class="container">
+            <h2 style="margin-bottom:20px;">Tu Evolución</h2>
+            <div style="background: white; padding: 25px; border-radius: 24px; box-shadow: 0 4px 15px rgba(0,0,0,0.05);">
+                <div style="margin-bottom: 25px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <strong>Conocimiento Técnico</strong>
+                        <span style="color: var(--v-blue);">Nivel 2</span>
+                    </div>
+                    <div style="height: 10px; background: #F1F5F9; border-radius: 5px; overflow: hidden;">
+                        <div style="height: 100%; width: 60%; background: var(--v-blue);"></div>
+                    </div>
                 </div>
-                <div class="tool-card" onclick="openModal('ethics')">
-                    <i class="fa-solid fa-scale-balanced" style="font-size:2rem; color:var(--p-red)"></i>
-                    <div><b>Integridad Académica</b><br><small style="color:var(--text-sec)">Guía anti-plagio</small></div>
+
+                <div style="margin-bottom: 25px;">
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <strong>Criterio Ético</strong>
+                        <span style="color: var(--v-green);">Nivel 3</span>
+                    </div>
+                    <div style="height: 10px; background: #F1F5F9; border-radius: 5px; overflow: hidden;">
+                        <div style="height: 100%; width: 85%; background: var(--v-green);"></div>
+                    </div>
                 </div>
-                <div class="tool-card" onclick="openModal('prompt')">
-                    <i class="fa-solid fa-wand-magic-sparkles" style="font-size:2rem; color:var(--p-green)"></i>
-                    <div><b>Prompting Pro</b><br><small style="color:var(--text-sec)">Estructura de instrucciones</small></div>
-                </div>
+
+                <p style="font-size: 0.9rem; color: var(--text-sec); text-align: center;">
+                    Has mejorado un 40% tu confianza en el uso de IA desde el test inicial.
+                </p>
             </div>
         </div>
+    </div>
 
-        <!-- 8. VISTA PROGRESO -->
-        <div id="view-progress" class="view">
-            <h2 style="margin-bottom:10px;">Tu Impacto</h2>
-            <p style="color:var(--text-sec); margin-bottom:20px;">Antes (Test) vs Ahora (Uso)</p>
+    <!-- MODAL APRENDIZAJE -->
+    <div id="lesson-modal" class="modal-overlay">
+        <div class="modal-content">
+            <div style="display:flex; justify-content:flex-end;"><i class="fa-solid fa-times" style="font-size:1.5rem; color:#94a3b8; cursor:pointer;" onclick="closeLesson()"></i></div>
             
-            <div class="card">
-                <div class="prog-row">
-                    <span style="font-weight:600; color:var(--text-sec);">Conocimiento</span>
-                    <div><span class="stars" id="b-k">★☆☆</span> <span style="margin:0 5px;">→</span> <span class="stars filled" id="a-k">★☆☆</span></div>
+            <div id="ls-step1" class="fade-in">
+                <div style="text-align:center; margin-bottom:20px;">
+                    <i id="ls-icon" class="fa-solid" style="font-size:3.5rem; color:var(--v-blue);"></i>
                 </div>
-                <div class="prog-row">
-                    <span style="font-weight:600; color:var(--text-sec);">Confianza</span>
-                    <div><span class="stars" id="b-c">★☆☆</span> <span style="margin:0 5px;">→</span> <span class="stars filled" id="a-c">★☆☆</span></div>
-                </div>
-                <div class="prog-row">
-                    <span style="font-weight:600; color:var(--text-sec);">Ética</span>
-                    <div><span class="stars" id="b-e">★☆☆</span> <span style="margin:0 5px;">→</span> <span class="stars filled" id="a-e">★☆☆</span></div>
-                </div>
-                
-                <div style="margin-top:20px; background:#F0FDF4; padding:15px; border-radius:12px; border:1px solid #BBF7D0; color:#166534; font-size:0.9rem;">
-                    <i class="fa-solid fa-robot"></i> <strong>Tip:</strong> Habla con el Entrenador IA para subir nivel.
+                <h2 id="ls-title" style="text-align:center; margin-bottom:15px;">...</h2>
+                <p id="ls-desc" style="line-height:1.6; color:var(--text-main); font-size:1.05rem; margin-bottom:25px;">...</p>
+                <div style="display: flex; gap: 10px; flex-direction: column;">
+                    <button class="btn btn-primary" onclick="finishLesson()">✅ ¡Entendido! (+50 XP)</button>
+                    <button class="btn btn-white" style="border: 2px solid #E2E8F0;" onclick="showAnalogy()">🤔 Dame un ejemplo fácil</button>
                 </div>
             </div>
+
+            <div id="ls-step2" class="hidden">
+                <h3 style="color:var(--v-blue); margin-bottom:15px;">Piénsalo así:</h3>
+                <div style="background:#EFF6FF; padding:20px; border-radius:18px; border-left:4px solid var(--v-blue); margin-bottom:20px;">
+                    <p id="ls-analogy" style="font-size:1.1rem; line-height:1.6; font-style:italic;">...</p>
+                </div>
+                <button class="btn btn-primary" onclick="finishLesson()">¡Ah, ahora sí! (+50 XP)</button>
+            </div>
         </div>
+    </div>
 
-    </div> <!-- FIN CONTAINER -->
-
-    <!-- ELEMENTOS FLOTANTES -->
-    
     <!-- BOT -->
-    <div id="bot-trigger" onclick="toggleBot()" class="hidden">
+    <div id="bot-trigger" class="pulse" onclick="toggleBot()">
         <i class="fa-solid fa-robot"></i>
     </div>
     <div id="bot-window">
-        <div style="background:var(--brand-blue); padding:15px; color:white; font-weight:700; display:flex; justify-content:space-between;">
-            <span>Entrenador IA</span> <i class="fa-solid fa-times" style="cursor:pointer;" onclick="toggleBot()"></i>
+        <div style="padding:15px; background:var(--v-blue); color:white; font-weight:700; display:flex; justify-content:space-between; align-items:center;">
+            <span>Entrenador IA</span>
+            <i class="fa-solid fa-chevron-down" style="cursor:pointer;" onclick="toggleBot()"></i>
         </div>
-        <div id="chat-content" class="chat-area"></div>
+        <div id="chat-feed" class="chat-area">
+            <div class="msg bot-msg">¡Hola! Soy tu entrenador. ¿Practicamos?</div>
+            <div>
+                <button class="bot-btn" onclick="botReply('quiz')">🧠 Quiz Rápido</button>
+                <button class="bot-btn" onclick="botReply('tip')">🔥 Dame un Tip</button>
+            </div>
+        </div>
+        <div style="padding:10px; border-top:1px solid #E2E8F0; display:flex; gap:10px;">
+            <input type="text" placeholder="Escribe..." style="flex:1; padding:10px; border-radius:20px; border:1px solid #E2E8F0; outline:none;">
+            <button style="width:40px; height:40px; background:var(--v-blue); color:white; border:none; border-radius:50%;"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
     </div>
 
-    <!-- MODAL RECURSOS -->
-    <div id="modal" class="modal">
-        <div class="modal-card">
-            <h2 id="m-tit" style="color:var(--brand-blue); margin-bottom:15px;">...</h2>
-            <div id="m-bod" style="margin-bottom:25px; line-height:1.6; color:var(--text-main); font-size:0.95rem;">...</div>
-            <button class="btn btn-primary" onclick="closeModal(true)">¡Entendido! (+1 Estrella)</button>
-        </div>
-    </div>
-
-    <!-- NAVBAR INFERIOR -->
-    <nav id="navbar" class="bottom-nav hidden">
-        <div class="nav-item active" id="n-home" onclick="switchTab('home')"><i class="fa-solid fa-house"></i>Inicio</div>
-        <div class="nav-item" id="n-res" onclick="switchTab('resources')"><i class="fa-solid fa-book-open"></i>Recursos</div>
-        <div class="nav-item" id="n-prog" onclick="switchTab('progress')"><i class="fa-solid fa-chart-pie"></i>Progreso</div>
+    <!-- NAVBAR -->
+    <nav id="app-nav" class="hidden">
+        <div class="nav-item active" onclick="navTo('home', this)"><i class="fa-solid fa-compass"></i>Inicio</div>
+        <div class="nav-item" onclick="navTo('stats', this)"><i class="fa-solid fa-chart-pie"></i>Progreso</div>
         <div class="nav-item" onclick="location.reload()"><i class="fa-solid fa-right-from-bracket"></i>Salir</div>
     </nav>
 
     <script>
-        // --- ESTADO INICIAL ---
-        let app = { role: '', profile: '', statsBefore: {k:1,c:1,e:1}, statsAfter: {k:1,c:1,e:1} };
-        let activeResType = '';
+        // --- DATA ---
+        let app = { role: '', xp: 0, profile: '', answers: {} };
+        
+        const lessons = {
+            'perplexity': {
+                title: 'Perplexity AI',
+                icon: 'fa-magnifying-glass',
+                color: 'bg-blue',
+                desc: 'Motor de búsqueda que cita fuentes. Úsalo para investigar hechos reales.',
+                analogy: 'Es como un bibliotecario estricto: te da la respuesta, pero siempre te muestra el libro de donde la sacó.'
+            },
+            'ethics': {
+                title: 'Semáforo Ético',
+                icon: 'fa-traffic-light',
+                color: 'bg-orange',
+                desc: 'Aprende cuándo citar y cuándo no. Evita el plagio accidental.',
+                analogy: 'Como cocinar: comprar ingredientes cortados está bien (ayuda IA), pero comprar el plato hecho y decir que lo cocinaste tú es engañar (Plagio).'
+            },
+            'notebook': {
+                title: 'NotebookLM',
+                icon: 'fa-book-open',
+                color: 'bg-purple',
+                desc: 'Sube tus PDFs y chatea con ellos. No inventa datos fuera de tus archivos.',
+                analogy: 'Un asistente que solo ha leído los libros que tú le diste. No te mentirá sobre cosas que no sabe.'
+            },
+            'prompting': {
+                title: 'Prompting Pro',
+                icon: 'fa-wand-magic-sparkles',
+                color: 'bg-green',
+                desc: 'Estructura tus órdenes: ROL + TAREA + CONTEXTO + FORMATO.',
+                analogy: 'Como pedir un café: Si solo dices "café" te dan cualquier cosa. Si dices "Latte descremado tibio", obtienes lo que quieres.'
+            }
+        };
 
-        // --- SPLASH LOGIC ---
-        setTimeout(() => {
-            document.getElementById('view-splash').style.display = 'none'; // Quitar Splash
-            document.getElementById('view-auth').classList.remove('hidden'); // Mostrar Auth
-            document.getElementById('view-auth').classList.add('active');
-        }, 3000); // 3 segundos de carga simulada
-
-        // --- NAVEGACIÓN ---
-        function goTo(id) {
-            document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-            // Hack para mantener ocultos los que no son views principales
-            const els = ['view-auth','view-role','view-test','view-reveal','view-dashboard','view-resources','view-progress'];
-            els.forEach(e => document.getElementById(e).classList.add('hidden'));
-            
-            const target = document.getElementById(id);
-            target.classList.remove('hidden');
-            target.classList.add('active');
-        }
-
-        // --- TABS DASHBOARD ---
-        function switchTab(tab) {
-            document.getElementById('view-dashboard').classList.remove('active');
-            document.getElementById('view-resources').classList.remove('active');
-            document.getElementById('view-progress').classList.remove('active');
-            document.getElementById('view-dashboard').classList.add('hidden');
-            document.getElementById('view-resources').classList.add('hidden');
-            document.getElementById('view-progress').classList.add('hidden');
-
-            if(tab==='home') { document.getElementById('view-dashboard').classList.remove('hidden'); document.getElementById('view-dashboard').classList.add('active'); }
-            if(tab==='resources') { document.getElementById('view-resources').classList.remove('hidden'); document.getElementById('view-resources').classList.add('active'); }
-            if(tab==='progress') { document.getElementById('view-progress').classList.remove('hidden'); document.getElementById('view-progress').classList.add('active'); }
-
-            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-            if(tab==='home') document.getElementById('n-home').classList.add('active');
-            if(tab==='resources') document.getElementById('n-res').classList.add('active');
-            if(tab==='progress') document.getElementById('n-prog').classList.add('active');
-        }
-
-        function setRole(role) {
-            app.role = role;
-            document.getElementById('app-header').classList.remove('hidden'); // Mostrar header
-            const b = document.getElementById('role-display');
-            b.innerText = role === 'student' ? 'Estudiante' : 'Docente';
-            b.style.display = 'block';
-            startQuiz(); // Ambos hacen quiz
-        }
-
-        // --- CUESTIONARIO (4 PREGUNTAS) ---
-        const qs = [
-            { id:'knw', txt:"Si tuvieras que explicar qué es una IA a un amigo, ¿te sentirías...?", opts:[{t:"Seguro",v:3},{t:"Más o menos",v:2},{t:"Perdido",v:1}] },
-            { id:'att', txt:"¿Te parece que usar IA para aprender puede ayudarte?", opts:[{t:"Mucho",v:3},{t:"Poco",v:2},{t:"Nada",v:1}] },
-            { id:'eth', txt:"¿Te preocupa que la IA te lleve a cometer plagio?", opts:[{t:"Sí, mucho",v:1},{t:"Tengo dudas",v:2},{t:"No me preocupa",v:3}] },
-            { id:'rsk', txt:"¿Crees que la IA afectará negativamente los trabajos?", opts:[{t:"Sí, dañará",v:1},{t:"Tal vez",v:2},{t:"No, ayudará",v:3}] }
+        const quiz = [
+            { id:'knw', q:"¿Cómo explicarías qué es una IA a un amigo?", opts:[{t:"Fácil, lo entiendo",v:3}, {t:"Más o menos",v:2}, {t:"Ni idea",v:1}] },
+            { id:'att', q:"¿Crees que la IA te ayudará a aprender mejor?", opts:[{t:"Sí, mucho",v:3}, {t:"Tengo dudas",v:2}, {t:"No, me perjudica",v:1}] },
+            { id:'eth', q:"¿Te preocupa que te acusen de plagio por usar IA?", opts:[{t:"Sí, me da miedo",v:1}, {t:"Un poco",v:2}, {t:"No me preocupa",v:3}] }
         ];
-        let qIdx=0, ans={};
 
-        function startQuiz() { goTo('view-test'); renderQ(); }
-        function renderQ() {
-            const q = qs[qIdx];
-            document.getElementById('q-text').innerText = q.txt;
-            let h=''; q.opts.forEach(o => h+=`<button class="btn-select" onclick="handleAns('${q.id}',${o.v})"><i class="fa-regular fa-circle-check" style="color:var(--brand-blue)"></i> ${o.t}</button>`);
-            document.getElementById('q-opts').innerHTML=h;
+        // --- INIT ---
+        window.onload = () => {
+            setTimeout(() => {
+                document.getElementById('view-splash').style.display = 'none';
+                document.getElementById('view-auth').classList.remove('hidden');
+                document.getElementById('view-auth').classList.add('active');
+            }, 2500);
+        };
+
+        // --- NAVIGATION ---
+        function goToRole() { switchView('view-role'); }
+        function setRole(r) { app.role = r; r === 'student' ? startQuiz() : (app.profile='Docente', goToDashboard()); }
+        function switchView(id) {
+            document.querySelectorAll('.view').forEach(v => { v.classList.remove('active'); v.classList.add('hidden'); });
+            document.getElementById(id).classList.remove('hidden');
+            document.getElementById(id).classList.add('active');
         }
-        function handleAns(id,v) {
-            ans[id]=v; qIdx++;
-            if(qIdx < qs.length) renderQ(); else calcProfile();
+
+        // --- QUIZ & PROFILE ---
+        let qIdx = 0;
+        function startQuiz() { switchView('view-quiz'); renderQ(); }
+        
+        function renderQ() {
+            const q = quiz[qIdx];
+            document.getElementById('q-text').innerText = q.q;
+            document.querySelectorAll('.quiz-step').forEach((e,i) => i<=qIdx ? e.classList.add('filled') : e.classList.remove('filled'));
+            let h = '';
+            q.opts.forEach(o => h+=`<div class="quiz-option" onclick="ans('${q.id}',${o.v})"><span>${o.t}</span><i class="fa-regular fa-circle"></i></div>`);
+            document.getElementById('q-options').innerHTML = h;
+        }
+
+        function ans(id, v) {
+            app.answers[id] = v; qIdx++;
+            qIdx < quiz.length ? renderQ() : calcProfile();
         }
 
         function calcProfile() {
-            let pName="", pDesc="", pColor="", pIcon="";
-            
-            // Lógica Investigación
-            if(ans.eth === 1) { 
-                pName="Cauteloso"; pDesc="Te da curiosidad la IA, pero te preocupa mucho el plagio y los riesgos."; 
-                pColor="var(--p-yellow)"; pIcon="fa-shield-halved";
-                app.statsBefore={k:1,c:2,e:1};
-            } else if(ans.att === 1 || ans.rsk === 1) {
-                pName="Desconfiado"; pDesc="Piensas que la IA puede dañar más que ayudar en educación.";
-                pColor="var(--p-red)"; pIcon="fa-thumbs-down";
-                app.statsBefore={k:1,c:1,e:2};
-            } else if(ans.knw === 3) {
-                pName="Usuario Avanzado"; pDesc="La usas con frecuencia, pero quizá subestimas algunos riesgos.";
-                pColor="var(--p-green)"; pIcon="fa-bolt";
-                app.statsBefore={k:3,c:3,e:2};
-            } else {
-                pName="Explorador Curioso"; pDesc="Usas IA o te interesa, pero todavía no entiendes bien cómo funciona.";
-                pColor="var(--p-blue)"; pIcon="fa-rocket";
-                app.statsBefore={k:1,c:3,e:2};
-            }
+            const a = app.answers;
+            let p = { t:'', d:'', c:'' }; // Title, Desc, Color class
 
-            app.profile = pName;
-            app.statsAfter = {...app.statsBefore};
-
-            // Setup Reveal
-            const card = document.getElementById('reveal-card');
-            card.style.background = pColor;
-            card.style.color = (pName==="Cauteloso") ? "#000" : "#fff";
-            document.getElementById('r-title').innerText = pName;
-            document.getElementById('r-desc').innerText = pDesc;
-            document.getElementById('r-icon').className = `reveal-icon fa-solid ${pIcon}`;
-
-            // Setup Dashboard
-            const mini = document.getElementById('mini-profile');
-            mini.style.borderLeftColor = pColor;
-            document.getElementById('dash-p-name').innerText = pName;
-            document.getElementById('dash-p-icon').className = `fa-solid ${pIcon}`;
-            document.getElementById('dash-p-icon').style.color = pColor;
-
-            renderRoutes(pName, pColor);
-            goTo('view-reveal');
-        }
-
-        function renderRoutes(name, color) {
-            const div = document.getElementById('routes-container');
-            let h = '';
-            if(name.includes("Cauteloso")) {
-                h = `<div class="tool-card" onclick="openModal('ethics')"><i class="fa-solid fa-traffic-light" style="color:${color}; font-size:1.5rem;"></i><div><b>Módulo Ética</b><br><small>Semáforo anti-plagio</small></div></div>`;
-            } else if(name.includes("Desconfiado")) {
-                 h = `<div class="tool-card" onclick="openModal('tool')"><i class="fa-solid fa-book" style="color:${color}; font-size:1.5rem;"></i><div><b>Caso Práctico</b><br><small>NotebookLM para organizar</small></div></div>`;
-            } else {
-                h = `<div class="tool-card" onclick="openModal('tool')"><i class="fa-solid fa-rocket" style="color:${color}; font-size:1.5rem;"></i><div><b>Descubrimiento</b><br><small>Investigación con Perplexity</small></div></div>`;
-            }
-            h += `<div class="tool-card" onclick="openModal('prompt')"><i class="fa-solid fa-wand-magic-sparkles" style="color:var(--text-sec); font-size:1.5rem;"></i><div><b>Guía Prompting</b><br><small>Estructura básica</small></div></div>`;
-            div.innerHTML = h;
-        }
-
-        function goToDashboard() {
-            goTo('view-dashboard');
-            document.getElementById('navbar').classList.remove('hidden');
-            document.getElementById('navbar').style.display = 'flex';
-            
-            if(app.role === 'teacher') {
-                document.getElementById('teacher-content').classList.remove('hidden');
-                document.getElementById('student-content').classList.add('hidden');
-                document.getElementById('navbar').classList.add('hidden'); 
-                document.getElementById('bot-trigger').classList.add('hidden');
-            } else {
-                document.getElementById('student-content').classList.remove('hidden');
-                document.getElementById('teacher-content').classList.add('hidden');
-                document.getElementById('bot-trigger').classList.remove('hidden');
-            }
-            renderStars();
-        }
-
-        function renderStars() {
-            const d=(id,v)=>{ let s=""; for(let i=0;i<3;i++)s+=(i<v)?"★":"☆"; document.getElementById(id).innerText=s; }
-            d('b-k',app.statsBefore.k); d('b-c',app.statsBefore.c); d('b-e',app.statsBefore.e);
-            d('a-k',app.statsAfter.k); d('a-c',app.statsAfter.c); d('a-e',app.statsAfter.e);
-        }
-
-        // --- BOT FUNCIONAL ---
-        function toggleBot() {
-            const w=document.getElementById('bot-window');
-            if(w.style.display==='flex') w.style.display='none'; else { w.style.display='flex'; if(document.getElementById('chat-content').innerHTML==="") initChat(); }
-        }
-        function initChat() {
-            const c=document.getElementById('chat-content');
-            c.innerHTML = `<div class="msg bot-msg">Hola, ${app.profile}. Vamos a entrenar.</div>`;
-            setTimeout(()=>{
-                c.innerHTML += `<div class="msg bot-msg">¿Qué es una 'alucinación' de IA?
-                <div class="chips"><div class="chip" onclick="reply(true)">Invención de datos</div><div class="chip" onclick="reply(false)">Error de conexión</div></div></div>`;
-            },800);
-        }
-        function reply(ok) {
-            const c=document.getElementById('chat-content');
-            document.querySelectorAll('.chip').forEach(e=>e.style.display='none');
-            c.innerHTML+=`<div class="msg user-msg">${ok?'Invención':'Error'}</div>`;
-            setTimeout(()=>{
-                if(ok) {
-                    c.innerHTML+=`<div class="msg bot-msg">¡Correcto! +1 Estrella Conocimiento ⭐</div>`;
-                    app.statsAfter.k = Math.min(3, app.statsAfter.k+1); renderStars();
-                } else c.innerHTML+=`<div class="msg bot-msg">Incorrecto.</div>`;
-            },600);
-        }
-
-        // --- MODAL RECURSOS ---
-        function openModal(t) {
-            activeResType=t;
-            document.getElementById('modal').style.display='flex';
-            const ti=document.getElementById('m-tit'), bo=document.getElementById('m-bod');
-            
-            if(t==='tool') { 
-                ti.innerText="Perplexity AI"; 
-                bo.innerHTML="<p><b>¿Qué es?</b><br>Un motor de búsqueda conversacional que cita sus fuentes en tiempo real.</p><br><p><b>¿Por qué usarlo?</b><br>Reduce las alucinaciones al basarse en datos web actuales. Ideal para verificar datos de tareas.</p>"; 
-            } else if(t==='ethics') { 
-                ti.innerText="Integridad Académica"; 
-                bo.innerHTML="<p><b>El Semáforo Ético:</b><br>🟢 <b>Verde:</b> Lluvia de ideas, corrección ortográfica.<br>🟡 <b>Amarillo:</b> Resumir textos (Debes citar la herramienta).<br>🔴 <b>Rojo:</b> Copiar y pegar texto como propio (PLAGIO).</p>"; 
+            if(a.eth === 1) { 
+                p.t="Cauteloso"; p.d="Te preocupa la ética y el plagio. Tu ruta incluye seguridad académica."; p.c="var(--v-orange)"; 
+            } else if(a.att === 1) { 
+                p.t="Desconfiado"; p.d="Prefieres evitar riesgos. Te enseñaremos usos seguros y privados."; p.c="var(--v-red)"; 
+            } else if(a.knw === 3) { 
+                p.t="Usuario Avanzado"; p.d="Dominas la IA. Tu reto es perfeccionar el criterio crítico."; p.c="var(--v-green)"; 
             } else { 
-                ti.innerText="Prompting Efectivo"; 
-                bo.innerHTML="<p><b>Fórmula COT (Chain of Thought):</b><br>1. <b>Rol:</b> 'Actúa como experto...'<br>2. <b>Contexto:</b> 'Para una clase de...' <br>3. <b>Tarea:</b> 'Explica este concepto...'<br>4. <b>Formato:</b> 'En una lista de 3 puntos'.</p>"; 
+                p.t="Explorador"; p.d="Curioso pero principiante. Empezaremos con lo básico."; p.c="var(--v-blue)"; 
             }
+
+            app.profile = p.t;
+            const card = document.getElementById('reveal-card');
+            
+            // SETTING SOLID COLOR CARD
+            card.style.background = p.c; 
+            
+            document.getElementById('r-title').innerText = p.t;
+            document.getElementById('r-desc').innerText = p.d;
+            
+            switchView('view-reveal');
         }
-        function closeModal(ok) {
-            document.getElementById('modal').style.display='none';
-            if(ok) {
-                if(activeResType==='tool') app.statsAfter.k = Math.min(3,app.statsAfter.k+1);
-                else app.statsAfter.e = Math.min(3,app.statsAfter.e+1);
-                renderStars();
-                // Feedback visual simple sin alert
-                const btn = document.querySelector('.nav-item[onclick*="progress"]');
-                btn.style.color = "var(--gold)";
-                setTimeout(()=>btn.style.color="", 500);
-            }
+
+        // --- DASHBOARD ---
+        function goToDashboard() {
+            switchView('view-home');
+            document.getElementById('app-header').classList.remove('hidden');
+            document.getElementById('app-nav').classList.remove('hidden');
+            document.getElementById('app-nav').style.display = 'flex';
+            document.getElementById('dash-name').innerText = app.profile;
+
+            if(app.role === 'student') renderMissions();
+            else { document.getElementById('teacher-dash').classList.remove('hidden'); document.getElementById('student-dash').classList.add('hidden'); }
         }
+
+        function renderMissions() {
+            const container = document.getElementById('missions-container');
+            let m = '';
+            
+            // GENERATE COLORED CARDS
+            const add = (k) => {
+                const l = lessons[k];
+                m += `<div class="mission-card ${l.color}" onclick="openLesson('${k}')">
+                        <i class="check-badge fa-solid fa-check"></i>
+                        <i class="mission-icon fa-solid ${l.icon}"></i>
+                        <div style="font-weight:700;">${l.title}</div>
+                      </div>`;
+            };
+
+            if(app.profile.includes('Cauteloso')) { add('ethics'); add('perplexity'); }
+            else if(app.profile.includes('Desconfiado')) { add('notebook'); add('ethics'); }
+            else if(app.profile.includes('Avanzado')) { add('prompting'); add('perplexity'); }
+            else { add('perplexity'); add('ethics'); } // Explorador
+            
+            if(!app.profile.includes('Avanzado')) add('prompting'); // Todos menos avanzado reciben prompting basico extra
+
+            container.innerHTML = m;
+        }
+
+        // --- LESSONS ---
+        let currL = '';
+        function openLesson(k) {
+            currL = k;
+            document.getElementById('lesson-modal').style.display = 'flex';
+            document.getElementById('ls-step1').classList.remove('hidden');
+            document.getElementById('ls-step2').classList.add('hidden');
+            
+            const l = lessons[k];
+            document.getElementById('ls-title').innerText = l.title;
+            document.getElementById('ls-desc').innerText = l.desc;
+            document.getElementById('ls-icon').className = `fa-solid ${l.icon}`;
+        }
+
+        function showAnalogy() {
+            document.getElementById('ls-step1').classList.add('hidden');
+            document.getElementById('ls-step2').classList.remove('hidden');
+            document.getElementById('ls-step2').classList.add('fade-in');
+            document.getElementById('ls-analogy').innerText = lessons[currL].analogy;
+        }
+
+        function finishLesson() {
+            document.getElementById('lesson-modal').style.display = 'none';
+            app.xp += 50; document.getElementById('xp-val').innerText = app.xp;
+            // Mark visible cards as done (simple hack)
+            document.querySelectorAll('.mission-card').forEach(c => {
+                if(c.innerHTML.includes(lessons[currL].title)) c.classList.add('done');
+            });
+        }
+        function closeLesson() { document.getElementById('lesson-modal').style.display = 'none'; }
+
+        // --- BOT ---
+        function toggleBot() { 
+            const b = document.getElementById('bot-window');
+            b.style.display = (b.style.display==='flex') ? 'none' : 'flex'; 
+        }
+        function botReply(t) {
+            const f = document.getElementById('chat-feed');
+            f.innerHTML += `<div class="msg user-msg slide-up">${t==='quiz'?'Quiz':'Tip'}</div>`;
+            setTimeout(() => {
+                const txt = t==='quiz' ? '¿Verdadero o Falso? ChatGPT siempre dice la verdad.' : 'Tip: Verifica siempre las fuentes con Perplexity.';
+                f.innerHTML += `<div class="msg bot-msg slide-up">${txt}</div>`;
+                f.scrollTop = f.scrollHeight;
+            }, 600);
+        }
+
+        // --- NAV ---
+        function navTo(page, el) {
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            el.classList.add('active');
+            if(page === 'home') switchView('view-home');
+            else switchView('view-stats');
+            // Keep header/nav visible
+            document.getElementById('app-header').classList.remove('hidden');
+            document.getElementById('app-nav').classList.remove('hidden');
+        }
+
     </script>
 </body>
 </html>
