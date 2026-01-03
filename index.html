@@ -86,16 +86,7 @@
         .bg-blue { background: linear-gradient(135deg, #3B82F6, #1D4ED8); }
         .bg-orange { background: linear-gradient(135deg, #F59E0B, #B45309); }
         
-        /* --- 6. PANTALLA DE CARGA (SPLASH) --- */
-        #view-splash { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100vh; 
-            background: linear-gradient(135deg, var(--v-dark), #1e293b); 
-            color: white; display: flex; flex-direction: column; justify-content: center; align-items: center; 
-            z-index: 9999; transition: opacity 0.5s; 
-        }
-        .splash-logo { font-size: 6rem; margin-bottom: 20px; animation: pulse-soft 2s infinite; background: -webkit-linear-gradient(#eee, #333); -webkit-background-clip: text; }
-
-        /* --- 7. CHATBOT INMERSIVO (FULL SCREEN MOD) --- */
+        /* --- 7. CHATBOT INMERSIVO --- */
         .bot-trigger { 
             position: fixed; bottom: 110px; right: 20px; width: 70px; height: 70px; 
             border-radius: 50%; display: flex; align-items: center; justify-content: center; 
@@ -113,19 +104,18 @@
             position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
             background: rgba(15, 23, 42, 0.6); z-index: 20000; 
             display: none; align-items: center; justify-content: center; 
-            backdrop-filter: blur(8px); /* Efecto Glass */
+            backdrop-filter: blur(8px); 
             opacity: 0; transition: opacity 0.3s ease;
         }
 
         .bot-window { 
-            width: 95%; max-width: 800px; height: 92%; /* CASI PANTALLA COMPLETA */
+            width: 95%; max-width: 800px; height: 92%; 
             background: #F8FAFC; border-radius: 24px; 
             box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
             display: flex; flex-direction: column; position: relative; overflow: hidden;
             transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
         }
 
-        /* Header Chat */
         .chat-header { 
             padding: 20px 25px; 
             background: white; border-bottom: 1px solid #E2E8F0;
@@ -134,150 +124,55 @@
         .chat-title { display: flex; align-items: center; gap: 15px; }
         .chat-avatar { width: 45px; height: 45px; background: linear-gradient(135deg, var(--v-blue), var(--v-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; }
         .chat-close { width: 40px; height: 40px; border-radius: 50%; background: #F1F5F9; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--v-gray); font-size: 1.2rem; transition: 0.2s; }
-        .chat-close:hover { background: #E2E8F0; color: var(--v-red); }
-
-        /* Área Mensajes */
+        
         .chat-area { 
             flex-grow: 1; overflow-y: auto; padding: 25px; 
             display: flex; flex-direction: column; gap: 20px; 
             background-image: radial-gradient(#E2E8F0 1px, transparent 1px); background-size: 20px 20px;
         }
 
-        /* ESTILOS MENSAJES */
         .msg { padding: 15px 20px; border-radius: 20px; font-size: 1rem; line-height: 1.6; max-width: 88%; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        
-        .msg-bot { 
-            background: white; border-bottom-left-radius: 4px; align-self: flex-start; 
-            color: var(--v-dark); border: 1px solid #E2E8F0;
-        }
-        /* FORMATO DE LISTAS Y OPCIONES DEL CHATBOT (SOLUCIÓN VISUAL) */
+        .msg-bot { background: white; border-bottom-left-radius: 4px; align-self: flex-start; color: var(--v-dark); border: 1px solid #E2E8F0; }
         .msg-bot strong { color: var(--v-blue); font-weight: 800; }
-        .msg-bot ul, .msg-bot ol { list-style: none; padding: 0; margin-top: 10px; }
-        .msg-bot li {
-            background: #F8FAFC; margin-bottom: 8px; padding: 12px 15px; 
-            border-radius: 12px; border: 1px solid #E2E8F0; border-left: 4px solid var(--v-blue);
-            font-size: 0.95rem; font-weight: 600; color: var(--v-dark);
-            transition: 0.2s;
-        }
-        .msg-bot li:hover { background: white; transform: translateX(5px); border-color: var(--v-blue); box-shadow: 0 2px 8px rgba(0,0,0,0.05); }
-
-        .msg-user { 
-            background: var(--v-blue); color: white; border-bottom-right-radius: 4px; 
-            align-self: flex-end; box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
-        }
-
-        /* Footer Chat */
-        .chat-footer { background: white; padding: 15px; border-top: 1px solid #E2E8F0; }
-        .chat-chips-scroll { 
-            display: flex; gap: 10px; overflow-x: auto; padding-bottom: 12px; padding-left: 5px; 
-            -ms-overflow-style: none; scrollbar-width: none;
-        }
-        .chat-chips-scroll::-webkit-scrollbar { display: none; }
+        .msg-bot li { background: #F8FAFC; margin-bottom: 8px; padding: 12px 15px; border-radius: 12px; border: 1px solid #E2E8F0; border-left: 4px solid var(--v-blue); font-size: 0.95rem; font-weight: 600; transition: 0.2s; }
         
-        .chat-chip { 
-            white-space: nowrap; background: #EFF6FF; border: 1px solid var(--v-blue-light); 
-            color: var(--v-blue); padding: 8px 16px; border-radius: 50px; font-size: 0.85rem; 
-            font-weight: 700; cursor: pointer; transition: 0.2s; 
-        }
-        .chat-chip:hover { background: var(--v-blue); color: white; }
+        .msg-user { background: var(--v-blue); color: white; border-bottom-right-radius: 4px; align-self: flex-end; box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3); }
+
+        .chat-footer { background: white; padding: 15px; border-top: 1px solid #E2E8F0; }
+        .chat-chips-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 12px; scrollbar-width: none; }
+        .chat-chips-scroll::-webkit-scrollbar { display: none; }
+        .chat-chip { white-space: nowrap; background: #EFF6FF; border: 1px solid var(--v-blue-light); color: var(--v-blue); padding: 8px 16px; border-radius: 50px; font-size: 0.85rem; font-weight: 700; cursor: pointer; }
 
         .chat-input-container { display: flex; gap: 12px; align-items: center; background: #F8FAFC; padding: 8px; border-radius: 50px; border: 2px solid #E2E8F0; }
-        .chat-input-container:focus-within { border-color: var(--v-blue); background: white; }
         .chat-input { flex: 1; border: none; background: transparent; padding: 12px 15px; font-size: 1rem; outline: none; }
-        .chat-send { width: 45px; height: 45px; background: var(--v-blue); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
-        .chat-send:hover { transform: scale(1.1); }
+        .chat-send { width: 45px; height: 45px; background: var(--v-blue); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-
-        /* --- 8. MODAL DE MISIONES (MEJORADO + FIX OVERFLOW) --- */
-        .modal-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(0,0,0,0.85); z-index: 15000; 
-            display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); 
-        }
-        .modal-card-lg { 
-            background: #FAFAFA; width: 95%; max-width: 650px; max-height: 90vh; 
-            border-radius: 32px; overflow-y: auto; position: relative; 
-            animation: zoomIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-            display: flex; flex-direction: column;
-        }
-        
-        .modal-hero {
-            background: linear-gradient(135deg, var(--v-blue), var(--v-purple));
-            padding: 40px 30px; color: white; text-align: center;
-            border-radius: 32px 32px 0 0; position: relative;
-        }
-        .modal-icon-lg { font-size: 4rem; margin-bottom: 10px; text-shadow: 0 4px 10px rgba(0,0,0,0.2); }
-        
+        /* --- 8. MODAL MISIONES --- */
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 15000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
+        .modal-card-lg { background: #FAFAFA; width: 95%; max-width: 650px; max-height: 90vh; border-radius: 32px; overflow-y: auto; display: flex; flex-direction: column; animation: zoomIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
+        .modal-hero { background: linear-gradient(135deg, var(--v-blue), var(--v-purple)); padding: 40px 30px; color: white; text-align: center; border-radius: 32px 32px 0 0; position: relative; }
+        .modal-icon-lg { font-size: 4rem; margin-bottom: 10px; }
         .modal-body { padding: 30px; }
         .theory-text { font-size: 1.15rem; line-height: 1.7; color: #334155; margin-bottom: 30px; }
-        .theory-text strong { color: var(--v-blue); }
-
-        .ai-box { 
-            background: white; border: 2px dashed var(--v-blue-light); border-radius: 20px; 
-            padding: 25px; margin: 20px 0; display: none; position: relative;
-            /* FIX CRÍTICO DE OVERFLOW */
-            width: 100%;
-            box-sizing: border-box;
-        }
-        .ai-box-label { 
-            position: absolute; top: -12px; left: 20px; background: var(--v-blue); color: white; 
-            padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; letter-spacing: 1px;
-        }
-
-        /* CLASE PARA CONTENIDO MARKDOWN (TEXTO QUE SE AJUSTA) */
-        .markdown-content {
-            font-size: 0.95rem; line-height: 1.6; color: #333;
-            overflow-wrap: break-word; /* Rompe palabras largas */
-            word-wrap: break-word;
-            word-break: break-word;
-        }
-        .markdown-content strong { color: var(--v-dark); font-weight: 800; }
-        .markdown-content ul { padding-left: 20px; margin-bottom: 10px; }
+        .ai-box { background: white; border: 2px dashed var(--v-blue-light); border-radius: 20px; padding: 25px; margin: 20px 0; display: none; position: relative; width: 100%; }
+        .ai-box-label { position: absolute; top: -12px; left: 20px; background: var(--v-blue); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; }
+        .markdown-content { font-size: 0.95rem; line-height: 1.6; color: #333; overflow-wrap: break-word; }
 
         /* --- 9. NAVBAR --- */
-        nav { 
-            position: fixed; bottom: 0; left: 0; width: 100%; height: 85px; 
-            background: rgba(255,255,255,0.95); backdrop-filter: blur(10px);
-            border-top: 1px solid #E2E8F0; display: flex; justify-content: space-around; 
-            align-items: center; z-index: 9000; padding-bottom: 10px; display: none; 
-        }
-        .nav-item { 
-            flex: 1; text-align: center; color: var(--v-gray); cursor: pointer; 
-            height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px;
-            transition: 0.2s;
-        }
-        .nav-item i { font-size: 1.4rem; transition: 0.2s; }
+        nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 85px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-top: 1px solid #E2E8F0; display: flex; justify-content: space-around; align-items: center; z-index: 9000; padding-bottom: 10px; display: none; }
+        .nav-item { flex: 1; text-align: center; color: var(--v-gray); cursor: pointer; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px; }
         .nav-item.active { color: var(--v-blue); }
-        .nav-item.active i { transform: translateY(-5px); }
 
-        /* --- 10. EXTRA TOAST XP --- */
-        #toast-xp { 
-            position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-100px); 
-            background: var(--v-green); color: white; padding: 12px 30px; border-radius: 50px; 
-            display: flex; align-items: center; gap: 12px; z-index: 25000; 
-            font-weight: 800; font-size: 1.1rem; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4);
-            transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
+        /* --- 10. TOAST XP --- */
+        #toast-xp { position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-100px); background: var(--v-green); color: white; padding: 12px 30px; border-radius: 50px; display: flex; align-items: center; gap: 12px; z-index: 25000; font-weight: 800; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
         #toast-xp.show { transform: translateX(-50%) translateY(0); }
-
-        /* Loader */
         .loader-dots { display: flex; gap: 8px; justify-content: center; margin: 20px 0; }
         .dot { width: 12px; height: 12px; background: var(--v-blue); border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
-        .dot:nth-child(1) { animation-delay: -0.32s; }
-        .dot:nth-child(2) { animation-delay: -0.16s; }
         @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
         @keyframes zoomIn { from { transform: scale(0.9); opacity:0; } to { transform: scale(1); opacity:1; } }
-
     </style>
 </head>
 <body>
-
-    <!-- 0. SPLASH SCREEN -->
-    <div id="view-splash">
-        <i class="fa-solid fa-compass splash-logo"></i>
-        <h1 style="font-weight: 800;">Brújula GenIA</h1>
-        <p style="opacity: 0.7; font-size: 1.1rem;">Tu Campus Virtual Inteligente</p>
-    </div>
 
     <!-- TOAST XP -->
     <div id="toast-xp"><i class="fa-solid fa-star"></i> <span id="toast-msg">+15 XP Ganados</span></div>
@@ -292,8 +187,8 @@
 
     <div class="app-content">
 
-        <!-- 1. AUTH LOGIN/REGISTER -->
-        <div id="view-auth" class="container hidden fade-in">
+        <!-- 1. AUTH LOGIN/REGISTER (VISIBLE DE ENTRADA) -->
+        <div id="view-auth" class="container fade-in">
             <div style="margin-top: 60px; text-align: center; margin-bottom: 40px;">
                 <div style="width: 80px; height: 80px; background: var(--v-blue); border-radius: 24px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2.5rem; box-shadow: 0 10px 25px rgba(37,99,235,0.3);">
                     <i class="fa-solid fa-user-astronaut"></i>
@@ -385,16 +280,13 @@
 
             <!-- DASHBOARD ESTUDIANTE -->
             <div id="student-dash" class="hidden">
-                <!-- Novedades (REALES) -->
                 <h3 style="margin-bottom:15px;"><i class="fa-regular fa-newspaper"></i> Novedades IA</h3>
                 <div style="display:flex; gap:15px; overflow-x:auto; margin-bottom:30px; padding-bottom:10px; scrollbar-width: none;">
-                    <!-- Tarjeta Gemini -->
                     <div class="solid-card bg-purple" style="min-width:280px; margin-bottom:0;" onclick="openNews('gemini')">
                         <small style="background:rgba(255,255,255,0.2); padding:4px 10px; border-radius:10px;">🔥 TENDENCIA</small>
                         <h3 style="margin-top:10px;">Gemini vs ChatGPT</h3>
                         <p style="font-size:0.9rem;">Comparativa de modelos 2025.</p>
                     </div>
-                    <!-- Tarjeta Deepfakes -->
                     <div class="solid-card bg-orange" style="min-width:280px; margin-bottom:0;" onclick="openNews('deepfake')">
                         <small style="background:rgba(255,255,255,0.2); padding:4px 10px; border-radius:10px;">⚠️ SEGURIDAD</small>
                         <h3 style="margin-top:10px;">Deepfakes</h3>
@@ -402,11 +294,9 @@
                     </div>
                 </div>
 
-                <!-- Herramientas (MISIONES) -->
                 <h3 style="margin-bottom:15px;"><i class="fa-solid fa-toolbox"></i> Tus Herramientas (Misiones)</h3>
                 <div id="resources-list" style="display: grid; grid-template-columns: 1fr; gap: 15px;"></div>
                 
-                <!-- Consejos Docente -->
                 <h3 style="margin-top:30px; margin-bottom:15px;"><i class="fa-solid fa-chalkboard-user"></i> Feed del Docente</h3>
                 <div id="teacher-msgs">
                     <div style="text-align:center; padding:20px; color:var(--v-gray); background:white; border-radius:16px;">Sin novedades hoy.</div>
@@ -441,7 +331,6 @@
                 </div>
             </div>
 
-            <!-- TRIGGER CHAT PRIVADO -->
             <div id="bot-trigger-priv" class="bot-trigger bot-private hidden" onclick="toggleBot('private')">
                 <i class="fa-solid fa-robot"></i>
             </div>
@@ -487,12 +376,9 @@
         </div>
     </nav>
 
-    <!-- ========================================== -->
-    <!-- MODAL MISIONES MEJORADO (HERRAMIENTAS) -->
-    <!-- ========================================== -->
+    <!-- MODALES -->
     <div id="mission-modal" class="modal-overlay">
         <div class="modal-card-lg">
-            <!-- Cabecera Heroica -->
             <div class="modal-hero">
                 <div style="position:absolute; top:20px; right:20px; background:rgba(255,255,255,0.2); width:35px; height:35px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="closeModal('mission-modal')">
                     <i class="fa-solid fa-times"></i>
@@ -500,32 +386,19 @@
                 <i id="m-icon" class="fa-solid fa-wand-magic-sparkles modal-icon-lg"></i>
                 <h1 id="m-title" style="font-size: 1.8rem; margin-top:10px;">Título Misión</h1>
             </div>
-
-            <!-- Cuerpo Misión -->
             <div class="modal-body">
-                <h4 style="color:var(--v-gray); text-transform:uppercase; margin-bottom:10px; font-size:0.8rem; letter-spacing:1px;">Fase 1: Teoría</h4>
-                <div id="m-desc" class="theory-text">
-                    Aquí va la explicación detallada...
-                </div>
-
+                <div id="m-desc" class="theory-text"></div>
                 <div id="action-area">
                     <button class="btn btn-outline" onclick="generateAIExample()" id="btn-gen-ex">
                         <i class="fa-solid fa-microchip"></i> Ver Ejemplo Práctico con IA
                     </button>
-                    
-                    <!-- Caja de Ejemplo (Oculta al inicio) -->
                     <div id="ai-example-box" class="ai-box fade-in">
                         <div class="ai-box-label"><i class="fa-solid fa-robot"></i> Ejemplo Generado</div>
-                        <div id="loader-ai" class="loader-dots hidden">
-                            <div class="dot"></div><div class="dot"></div><div class="dot"></div>
-                        </div>
-                        <!-- AQUI ESTA LA CLASE MARKDOWN-CONTENT PARA QUE NO SE SALGA EL TEXTO -->
+                        <div id="loader-ai" class="loader-dots hidden"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
                         <div id="ai-example-content" class="markdown-content"></div>
                     </div>
                 </div>
-
                 <div id="completion-area" class="hidden slide-up" style="margin-top:30px; border-top:1px solid #eee; padding-top:20px; text-align:center;">
-                    <p style="margin-bottom:15px; font-weight:600;">¿Te ha quedado claro el concepto?</p>
                     <button class="btn btn-success" onclick="completeMission()">
                         <i class="fa-solid fa-check-circle"></i> ¡Sí, Entendido! (+15 XP)
                     </button>
@@ -534,12 +407,9 @@
         </div>
     </div>
     
-    <!-- ========================================== -->
-    <!-- NUEVO: MODAL NOTICIAS REALES           -->
-    <!-- ========================================== -->
     <div id="news-modal" class="modal-overlay">
         <div class="modal-card-lg">
-            <div id="n-header" style="padding:30px; color:white; position:relative;">
+            <div id="n-header" style="padding:30px; color:white; position:relative; background: var(--v-blue);">
                 <div style="position:absolute; top:15px; right:15px; cursor:pointer;" onclick="closeModal('news-modal')"><i class="fa-solid fa-times" style="font-size:1.5rem;"></i></div>
                 <span id="n-tag" style="background:rgba(0,0,0,0.2); padding:5px 10px; border-radius:10px; font-size:0.8rem;">TAG</span>
                 <h2 id="n-title" style="margin-top:10px;">Titulo</h2>
@@ -551,12 +421,9 @@
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- CHATBOT OVERLAY (FULL SCREEN GLASS)    -->
-    <!-- ========================================== -->
+    <!-- CHATBOT OVERLAY -->
     <div id="bot-overlay" class="chat-overlay">
         <div class="bot-window">
-            <!-- Header -->
             <div class="chat-header">
                 <div class="chat-title">
                     <div class="chat-avatar"><i class="fa-solid fa-brain"></i></div>
@@ -567,23 +434,16 @@
                 </div>
                 <div class="chat-close" onclick="closeBot()"><i class="fa-solid fa-times"></i></div>
             </div>
-            
-            <!-- Feed -->
             <div id="chat-feed" class="chat-area"></div>
-            
-            <!-- Typing Indicator -->
             <div id="typing-indicator" style="padding: 0 25px; margin-bottom: 10px; display:none;">
                 <span style="font-size:0.8rem; color:var(--v-gray); font-style:italic;">GenAI está escribiendo...</span>
             </div>
-
-            <!-- Footer -->
             <div class="chat-footer">
                 <div id="bot-quick-actions" class="chat-chips-scroll">
                     <button class="chat-chip" onclick="quickChat('Dame un reto sobre Prompting')">🎯 Reto Prompting</button>
                     <button class="chat-chip" onclick="quickChat('Explícame qué es una Alucinación')">👻 Alucinaciones</button>
                     <button class="chat-chip" onclick="quickChat('¿Cómo uso Perplexity?')">🔍 Perplexity</button>
                 </div>
-                
                 <div class="chat-input-container" style="margin-top:10px;">
                     <input id="chat-input" type="text" class="chat-input" placeholder="Pregunta sobre IA..." onkeypress="if(event.key==='Enter') sendToJamba()">
                     <button class="chat-send" onclick="sendToJamba()"><i class="fa-solid fa-paper-plane"></i></button>
@@ -592,38 +452,19 @@
         </div>
     </div>
 
-    <!-- SCRIPTS LÓGICA -->
     <script>
-        // ============================================
-        // CONFIGURACIÓN BACKEND - PON TU URL AQUÍ
-        // ============================================
         const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxSpFmMQZn1H3nR2cY7y2V33euF2owcgrgkpjswLp1PcFduphKftEDYfoPH9kCHOKSC/exec"; 
-        
-        // --- ESTADO GLOBAL ---
         let currentUser = { email:'', rol:'', xp:0, perfil:'', nombre:'' };
-        let authMode = 'login';
-        let qIdx = 0; 
-        let answers = [];
-        let currentMissionKey = '';
-        let chatHistory = [];
+        let authMode = 'login', qIdx = 0, answers = [], currentMissionKey = '', chatHistory = [];
 
-        // --- FUNCIÓN HELPER PARA LLAMAR AL BACKEND (REEMPLAZA A GOOGLE.SCRIPT.RUN) ---
         async function callBackend(action, data = {}) {
             const body = { action: action, ...data };
             try {
-                const response = await fetch(GOOGLE_SCRIPT_URL, {
-                    method: 'POST',
-                    body: JSON.stringify(body)
-                });
+                const response = await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify(body) });
                 return await response.json();
-            } catch (error) {
-                console.error("Error en conexión:", error);
-                alert("Error de conexión. Revisa tu internet.");
-                return { error: error };
-            }
+            } catch (error) { return { error: error }; }
         }
 
-        // --- DATOS FIJOS (IGUAL QUE ANTES) ---
         const quizQs = [
             {t:"¿Cuánto conoces de IA?", opts:[{t:"He creado mis propios GPTs",v:3},{t:"Lo uso para resumir textos",v:2},{t:"Solo he oído hablar de ello",v:1}]},
             {t:"¿Confías en las respuestas de la IA?", opts:[{t:"Siempre verifico fuentes",v:3},{t:"A veces dudo",v:2},{t:"Confío ciegamente",v:1}]},
@@ -632,50 +473,22 @@
         ];
 
         const lessons = {
-            'prompt': {
-                icon: 'fa-solid fa-terminal',
-                t:'Ingeniería de Prompts', 
-                d:'<p>La IA no lee tu mente, lee tus instrucciones. Para obtener resultados de oro, usa la fórmula <strong>C.O.F.</strong>:</p><ul><li><strong>C</strong>ontexto: "Eres un experto en..."</li><li><strong>O</strong>bjetivo: "Escribe un ensayo sobre..."</li><li><strong>F</strong>ormato: "En una lista con tono formal."</li></ul>', 
-                topic: 'Fórmula de Prompting COF'
-            },
-            'perplexity': {
-                icon: 'fa-solid fa-magnifying-glass-chart',
-                t:'Investigación Verificada', 
-                d:'<p>ChatGPT a veces inventa datos (alucina). Para trabajos académicos, necesitas fuentes reales.</p><p>Usa <strong>Perplexity.ai</strong> o Bing Chat, que citan de dónde sacan la información. ¡Nunca cites "ChatGPT" como bibliografía!</p>', 
-                topic: 'Diferencia entre ChatGPT y Perplexity'
-            },
-            'alucina': {
-                icon: 'fa-solid fa-ghost',
-                t:'Detector de Alucinaciones', 
-                d:'<p>Las "alucinaciones" ocurren cuando la IA responde con total seguridad algo que es falso.</p><p><strong>Regla de oro:</strong> Si la IA te da un dato específico (fechas, nombres, leyes), SIEMPRE verifícalo en Google.</p>', 
-                topic: 'Ejemplo de alucinación de IA'
-            }
+            'prompt': { icon: 'fa-solid fa-terminal', t:'Ingeniería de Prompts', d:'<p>La IA no lee tu mente. Usa la fórmula <strong>C.O.F.</strong>:</p><ul><li><strong>C</strong>ontexto</li><li><strong>O</strong>bjetivo</li><li><strong>F</strong>ormato</li></ul>', topic: 'Fórmula de Prompting COF' },
+            'perplexity': { icon: 'fa-solid fa-magnifying-glass-chart', t:'Investigación Verificada', d:'<p>ChatGPT alucina. Usa <strong>Perplexity.ai</strong> para fuentes reales.</p>', topic: 'Diferencia entre ChatGPT y Perplexity' },
+            'alucina': { icon: 'fa-solid fa-ghost', t:'Detector de Alucinaciones', d:'<p>Las alucinaciones son datos falsos seguros. Verifica siempre fechas y leyes.</p>', topic: 'Ejemplo de alucinación de IA' }
         };
 
         const newsData = {
-            'gemini': { 
-                tag:'TENDENCIA', color:'bg-purple', title:'Gemini 1.5 vs ChatGPT', 
-                body:'<p>Google ha actualizado Gemini con una ventana de contexto masiva. Esto significa que puedes subir libros enteros para que los analice en segundos. Mientras ChatGPT destaca en razonamiento creativo, Gemini está ganando terreno en el análisis de documentos largos.</p><p><strong>¿Qué significa para ti?</strong> Si tienes que leer 5 papers para tu tesis, Gemini puede encontrar las conexiones entre ellos más rápido.</p>' 
-            },
-            'deepfake': { 
-                tag:'SEGURIDAD', color:'bg-orange', title:'Auge de los Deepfakes', 
-                body:'<p>Nuevas herramientas permiten clonar voces con solo 3 segundos de audio. Esto se está usando para estafas telefónicas.</p><p><strong>Consejo de Seguridad:</strong> Establece una "palabra clave" secreta con tu familia. Si alguna vez te llaman pidiendo dinero urgente con la voz de un familiar, pide la palabra clave para verificar que no es una IA.</p>' 
-            }
+            'gemini': { tag:'TENDENCIA', color:'bg-purple', title:'Gemini 1.5 vs ChatGPT', body:'<p>Google actualizó Gemini con contexto masivo. Ideal para analizar libros enteros.</p>' },
+            'deepfake': { tag:'SEGURIDAD', color:'bg-orange', title:'Auge de los Deepfakes', body:'<p>Herramientas clonan voces en 3 segundos. Establece palabras clave con tu familia.</p>' }
         };
 
-        // --- INICIO ---
         window.onload = () => {
-            setTimeout(() => {
-                document.getElementById('view-splash').classList.add('hidden'); 
-                document.getElementById('view-auth').classList.remove('hidden');
-            }, 2000);
+            // CARGA INMEDIATA AL LOGIN
+            document.getElementById('view-auth').classList.remove('hidden');
         };
 
-        function loading(show) { 
-            const el = document.getElementById('loading-modal');
-            el.style.display = show ? 'flex' : 'none';
-            el.style.opacity = show ? '1' : '0';
-        }
+        function loading(show) { document.getElementById('loading-modal').style.display = show ? 'flex' : 'none'; }
         
         function showToastXP(points) {
             const t = document.getElementById('toast-xp');
@@ -685,75 +498,45 @@
             setTimeout(() => t.classList.remove('show'), 3000);
         }
 
-        // --- AUTH ---
         function setAuthMode(mode) {
             authMode = mode;
             document.getElementById('tab-login').style.background = mode==='login' ? 'white' : 'transparent';
             document.getElementById('tab-register').style.background = mode==='register' ? 'white' : 'transparent';
-            document.getElementById('btn-auth').innerHTML = mode==='login' ? 'Continuar <i class="fa-solid fa-arrow-right"></i>' : 'Registrarme';
-            
-            if(mode==='register') document.getElementById('in-name').classList.remove('hidden');
-            else document.getElementById('in-name').classList.add('hidden');
+            document.getElementById('in-name').classList.toggle('hidden', mode==='login');
         }
 
         function handleAuth() {
-            const email = document.getElementById('in-email').value;
-            const pass = document.getElementById('in-pass').value;
+            const email = document.getElementById('in-email').value, pass = document.getElementById('in-pass').value;
             if(!email || !pass) return alert("Completa los campos");
-            
             loading(true);
-            if(authMode === 'login') {
-                callBackend('login', {email, pass}).then(res => onLogin(res));
-            } else { 
-                // Registro local temporal hasta confirmación
-                currentUser.email = email; currentUser.pass = pass; currentUser.name = document.getElementById('in-name').value; 
-                loading(false);
-                switchView('view-role'); 
-            }
+            if(authMode === 'login') callBackend('login', {email, pass}).then(onLogin);
+            else { currentUser.email = email; currentUser.pass = pass; currentUser.name = document.getElementById('in-name').value; loading(false); switchView('view-role'); }
         }
 
         function finishRegister(rol) {
             loading(true);
-            callBackend('register', {
-                email: currentUser.email, 
-                pass: currentUser.pass, 
-                nombre: currentUser.name, 
-                rol: rol
-            }).then(res => onRegister(res));
+            callBackend('register', { email: currentUser.email, pass: currentUser.pass, nombre: currentUser.name, rol: rol }).then(onRegister);
         }
 
         function onRegister(res) {
             loading(false);
             if(res.error) alert(res.error);
-            else { 
-                currentUser.rol = res.rol; 
-                currentUser.nombre = res.nombre; 
-                if(res.rol === 'student') startQuiz(); 
-                else { currentUser.perfil = 'Profesor'; goToDashboard(); } 
-            }
+            else { currentUser.rol = res.rol; currentUser.nombre = res.nombre; if(res.rol === 'student') startQuiz(); else { currentUser.perfil = 'Profesor'; goToDashboard(); } }
         }
 
         function onLogin(res) {
             loading(false);
             if(res.error) alert(res.error);
-            else { 
-                currentUser = res; 
-                if(res.perfil === 'Pendiente' && res.rol === 'student') startQuiz(); 
-                else goToDashboard(); 
-            }
+            else { currentUser = res; if(res.perfil === 'Pendiente' && res.rol === 'student') startQuiz(); else goToDashboard(); }
         }
 
-        // --- QUIZ ---
         function startQuiz() { switchView('view-quiz'); renderQ(); }
         function renderQ() {
             const q = quizQs[qIdx];
             document.getElementById('q-counter').innerText = (qIdx+1) + "/4";
             document.getElementById('q-txt').innerText = q.t;
             document.getElementById('q-bar').style.width = ((qIdx+1)/4)*100 + "%";
-            let h = ''; 
-            q.opts.forEach(o => {
-                h += `<div class="btn btn-outline" style="justify-content:flex-start; text-align:left; font-weight:500;" onclick="nextQ(${o.v})">${o.t}</div>`;
-            });
+            let h = ''; q.opts.forEach(o => { h += `<div class="btn btn-outline" style="justify-content:flex-start;" onclick="nextQ(${o.v})">${o.t}</div>`; });
             document.getElementById('q-opts').innerHTML = h;
         }
         
@@ -761,33 +544,20 @@
             answers.push(v); qIdx++;
             if(qIdx < quizQs.length) renderQ();
             else {
-                let score = answers.reduce((a,b)=>a+b,0);
-                let p = 'Explorador Curioso'; let c = 'bg-blue'; let icon = 'fa-rocket';
-                
-                if(score < 6) { p='Cauteloso Digital'; c='bg-orange'; icon='fa-shield-cat'; } 
-                else if(score > 10) { p='Arquitecto de Prompts'; c='bg-purple'; icon='fa-wand-magic-sparkles'; }
-                
+                let s = answers.reduce((a,b)=>a+b,0), p = s < 6 ? 'Cauteloso Digital' : (s > 10 ? 'Arquitecto de Prompts' : 'Explorador Curioso');
                 currentUser.perfil = p;
-                
-                // Guardar en backend
                 callBackend('saveTest', {email: currentUser.email, respuestas: answers, perfil: p});
-                
                 document.getElementById('p-name').innerText = p;
-                document.getElementById('p-icon').className = `fa-solid ${icon}`;
-                document.getElementById('profile-card').className = `solid-card slide-up ${c}`;
                 switchView('view-reveal');
             }
         }
 
-        // --- DASHBOARD ---
         function goToDashboard() {
             switchView('view-home');
             document.getElementById('navbar').style.display = 'flex';
             document.getElementById('user-name').innerText = currentUser.nombre;
             document.getElementById('xp-val').innerText = currentUser.xp;
-            
             document.getElementById('bot-trigger-priv').classList.remove('hidden');
-
             if(currentUser.rol === 'student') {
                 document.getElementById('student-dash').classList.remove('hidden');
                 renderMissions();
@@ -817,8 +587,7 @@
                         <h3>Cazador de Fakes</h3> <i class="fa-solid fa-chevron-right"></i>
                     </div>
                     <p style="font-size:0.9rem; opacity:0.9;">No dejes que la IA te engañe.</p>
-                </div>
-            `;
+                </div>`;
         }
 
         function openM(id) {
@@ -830,22 +599,14 @@
             document.getElementById('ai-example-box').style.display = 'none'; 
             document.getElementById('btn-gen-ex').classList.remove('hidden');
             document.getElementById('completion-area').classList.add('hidden');
-            document.getElementById('ai-example-content').innerHTML = '';
-            
-            const modal = document.getElementById('mission-modal');
-            modal.style.display = 'flex';
-            modal.style.opacity = '1';
+            document.getElementById('mission-modal').style.display = 'flex';
         }
 
         function generateAIExample() {
             document.getElementById('btn-gen-ex').classList.add('hidden');
-            const box = document.getElementById('ai-example-box');
-            box.style.display = 'block';
+            document.getElementById('ai-example-box').style.display = 'block';
             document.getElementById('loader-ai').classList.remove('hidden');
-            
-            const topic = lessons[currentMissionKey].topic;
-            
-            callBackend('genExample', {tema: topic}).then(res => {
+            callBackend('genExample', {tema: lessons[currentMissionKey].topic}).then(res => {
                 document.getElementById('loader-ai').classList.add('hidden');
                 document.getElementById('ai-example-content').innerHTML = marked.parse(res.text);
                 document.getElementById('completion-area').classList.remove('hidden');
@@ -855,145 +616,74 @@
         function completeMission() {
             closeModal('mission-modal');
             callBackend('addXP', {email: currentUser.email, actividad: "Misión "+currentMissionKey, puntos: 15}).then(res => {
-                currentUser.xp = res; // Nota: el backend ahora devuelve el número directo en .addXP
-                document.getElementById('xp-val').innerText = res;
-                showToastXP(15);
-                const ul = document.getElementById('xp-history');
-                const li = document.createElement('li');
-                li.innerHTML = `<strong>Misión ${lessons[currentMissionKey].t}</strong> <span style="float:right; color:var(--v-green)">+15 XP</span>`;
-                li.style.padding = "10px 0"; li.style.borderBottom="1px solid #eee";
-                ul.prepend(li);
+                currentUser.xp = res; document.getElementById('xp-val').innerText = res; showToastXP(15);
             });
         }
 
-        // --- NOTICIAS ---
         function openNews(id) {
             const n = newsData[id];
-            const header = document.getElementById('n-header');
-            if(n.color === 'bg-purple') header.style.background = 'linear-gradient(135deg, #8B5CF6, #6D28D9)';
-            if(n.color === 'bg-orange') header.style.background = 'linear-gradient(135deg, #F59E0B, #B45309)';
             document.getElementById('n-tag').innerText = n.tag;
             document.getElementById('n-title').innerText = n.title;
             document.getElementById('n-body').innerHTML = n.body;
-            const modal = document.getElementById('news-modal');
-            modal.style.display = 'flex';
-            setTimeout(()=>modal.style.opacity=1, 10);
+            document.getElementById('news-modal').style.display = 'flex';
         }
 
-        function closeModal(id) { 
-            const targetId = id || 'mission-modal';
-            const el = document.getElementById(targetId);
-            if(el) { el.style.opacity = '0'; setTimeout(() => el.style.display='none', 300); }
-        }
+        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
 
-        // --- CHATBOT LOGIC ---
         function toggleBot(mode) { 
-            const feed = document.getElementById('chat-feed');
-            const overlay = document.getElementById('bot-overlay');
-            overlay.style.display = 'flex';
-            setTimeout(() => { overlay.style.opacity = '1'; document.querySelector('.bot-window').style.transform = 'scale(1)'; }, 10);
-
-            if(mode === 'public') {
-                feed.innerHTML = '<div class="msg msg-bot">¡Hola! Soy GenAI. Inicia sesión para empezar tu entrenamiento.</div>';
-                document.getElementById('bot-quick-actions').style.display = 'none';
-                document.getElementById('chat-input').disabled = true;
-            } else {
-                if(chatHistory.length === 0) {
-                     feed.innerHTML = `<div class="msg msg-bot">Hola <strong>${currentUser.nombre}</strong>, soy tu Entrenador IA. <br>¿Listo para el reto de hoy?</div>`;
-                }
-                document.getElementById('bot-quick-actions').style.display = 'flex';
-                document.getElementById('chat-input').disabled = false;
+            document.getElementById('bot-overlay').style.display = 'flex';
+            setTimeout(() => document.getElementById('bot-overlay').style.opacity = '1', 10);
+            if(mode === 'private' && chatHistory.length === 0) {
+                document.getElementById('chat-feed').innerHTML = `<div class="msg msg-bot">Hola <strong>${currentUser.nombre}</strong>, soy tu Mentor IA.</div>`;
             }
         }
 
-        function closeBot() { 
-            const overlay = document.getElementById('bot-overlay');
-            overlay.style.opacity = '0';
-            document.querySelector('.bot-window').style.transform = 'scale(0.95)';
-            setTimeout(() => { overlay.style.display='none'; }, 300);
-        }
-        
-        function quickChat(txt) {
-            document.getElementById('chat-input').value = txt;
-            sendToJamba();
-        }
-
-        // (Ya no necesitamos formatBotResponse porque no hay A/B/C estricto)
+        function closeBot() { document.getElementById('bot-overlay').style.display = 'none'; }
+        function quickChat(txt) { document.getElementById('chat-input').value = txt; sendToJamba(); }
 
         function sendToJamba() {
-            const input = document.getElementById('chat-input');
-            const txt = input.value;
+            const input = document.getElementById('chat-input'), txt = input.value;
             if(!txt) return;
-            
             const chat = document.getElementById('chat-feed');
             chat.innerHTML += `<div class="msg msg-user fade-in">${txt}</div>`;
-            input.value = '';
-            chat.scrollTop = chat.scrollHeight;
-            
-            document.getElementById('typing-indicator').style.display = 'block';
-            
+            input.value = ''; document.getElementById('typing-indicator').style.display = 'block';
             chatHistory.push({ "role": "user", "content": txt });
-            if(chatHistory.length > 8) chatHistory = chatHistory.slice(-8);
-
-            callBackend('chat', {history: chatHistory, email: currentUser.email, perfil: currentUser.perfil}).then(res => {
+            callBackend('chat', {history: chatHistory.slice(-8), email: currentUser.email, perfil: currentUser.perfil}).then(res => {
                 document.getElementById('typing-indicator').style.display = 'none';
-                
                 if(res.success) {
-                    const htmlText = marked.parse(res.text);
-                    chat.innerHTML += `<div class="msg msg-bot fade-in">${htmlText}</div>`;
+                    chat.innerHTML += `<div class="msg msg-bot fade-in">${marked.parse(res.text)}</div>`;
                     chatHistory.push({ "role": "assistant", "content": res.text });
-                    
-                    if(res.xpGranted) {
-                        currentUser.xp += 40;
-                        document.getElementById('xp-val').innerText = currentUser.xp;
-                        showToastXP(40);
-                        chat.innerHTML += `<div style="text-align:center; margin-top:10px;"><span class="chat-chip" style="background:var(--v-green); color:white; border:none;">🏆 ¡Respuesta Correcta! +40 XP</span></div>`;
-                    }
-                } else {
-                    chat.innerHTML += `<div class="msg msg-bot" style="color:red">Error: ${res.text}</div>`;
+                    if(res.xpGranted) { currentUser.xp += 40; document.getElementById('xp-val').innerText = currentUser.xp; showToastXP(40); }
                 }
                 chat.scrollTop = chat.scrollHeight;
             });
         }
 
-        // --- ADMIN FUNCTIONS ---
         function showMsgs(msgs) {
-            let h = ''; msgs.forEach(m => h+=`<div class="card" style="border-left:5px solid var(--v-blue); padding:15px;">${m.texto}<br><small style="color:var(--v-gray); font-weight:700; margin-top:5px; display:block;">👨‍🏫 Docente</small></div>`);
-            if(h) document.getElementById('teacher-msgs').innerHTML = h;
+            let h = ''; msgs.forEach(m => h+=`<div class="card" style="border-left:5px solid var(--v-blue);">${m.texto}</div>`);
+            document.getElementById('teacher-msgs').innerHTML = h;
         }
 
         function showStats(st) {
             document.getElementById('admin-total').innerText = st.total;
-            document.getElementById('admin-avg').innerText = st.avgXP + " XP";
-            document.getElementById('admin-stats').innerHTML = `
-                <div style="margin-bottom:10px; display:flex; justify-content:space-between;"><span>Cautelosos</span> <strong>${st.perfiles.caut}</strong></div>
-                <div style="width:100%; background:#eee; height:8px; border-radius:4px; margin-bottom:15px;"><div style="width:${Math.min(st.perfiles.caut*10, 100)}%; background:var(--v-orange); height:100%; border-radius:4px;"></div></div>
-                
-                <div style="margin-bottom:10px; display:flex; justify-content:space-between;"><span>Exploradores</span> <strong>${st.perfiles.expl}</strong></div>
-                <div style="width:100%; background:#eee; height:8px; border-radius:4px; margin-bottom:15px;"><div style="width:${Math.min(st.perfiles.expl*10, 100)}%; background:var(--v-blue); height:100%; border-radius:4px;"></div></div>
-            `;
+            document.getElementById('admin-avg').innerText = st.avgXP;
         }
 
         function postAdvice() {
-            const msg = document.getElementById('admin-msg').value;
-            const fil = document.getElementById('admin-filter').value;
+            const msg = document.getElementById('admin-msg').value, fil = document.getElementById('admin-filter').value;
             callBackend('postMsg', {tipo:"CONSEJO", email: currentUser.email, mensaje: msg, filtro: fil});
-            alert("Mensaje publicado en el tablón.");
-            document.getElementById('admin-msg').value = '';
+            alert("Publicado.");
         }
 
         function switchView(id) {
             document.querySelectorAll('.container').forEach(v=>{ v.classList.add('hidden'); });
-            const target = document.getElementById(id);
-            target.classList.remove('hidden');
-            window.scrollTo(0,0);
+            document.getElementById(id).classList.remove('hidden');
         }
 
         function nav(d, el) { 
             document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
             el.classList.add('active');
-            if(d==='home') goToDashboard(); 
-            else switchView('view-impact');
+            d==='home' ? goToDashboard() : switchView('view-impact');
         }
     </script>
 </body>
