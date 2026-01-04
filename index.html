@@ -140,7 +140,6 @@
 
         .chat-footer { background: white; padding: 15px; border-top: 1px solid #E2E8F0; }
         .chat-chips-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 12px; scrollbar-width: none; }
-        .chat-chips-scroll::-webkit-scrollbar { display: none; }
         .chat-chip { white-space: nowrap; background: #EFF6FF; border: 1px solid var(--v-blue-light); color: var(--v-blue); padding: 8px 16px; border-radius: 50px; font-size: 0.85rem; font-weight: 700; cursor: pointer; }
 
         .chat-input-container { display: flex; gap: 12px; align-items: center; background: #F8FAFC; padding: 8px; border-radius: 50px; border: 2px solid #E2E8F0; }
@@ -209,7 +208,8 @@
                 <button id="btn-auth" class="btn btn-primary" onclick="handleAuth()">Iniciar Aventura <i class="fa-solid fa-arrow-right"></i></button>
                 <div style="text-align: center; margin-top: 20px;">
                     <span style="color:var(--v-gray); font-size:0.9rem;">¿Solo quieres probar?</span><br>
-                    <button class="btn btn-ghost" onclick="switchView('view-role'); currentUser.nombre='Invitado';">Entrar como Invitado</button>
+                    <!-- CAMBIO: Ahora llama a handleGuestLogin en lugar de switchView directo -->
+                    <button class="btn btn-ghost" onclick="handleGuestLogin()">Entrar como Invitado</button>
                 </div>
             </div>
             
@@ -256,7 +256,7 @@
         <!-- 4. REVEAL PERFIL -->
         <div id="view-reveal" class="container hidden" style="text-align: center; padding-top: 50px;">
             <p style="color:var(--v-gray); font-weight: 600;">TU PERFIL GEN-IA ES:</p>
-            <div id="profile-card" class="solid-card slide-up" style="margin-top:20px; padding:50px 20px;">
+            <div id="profile-card" class="solid-card slide-up bg-blue" style="margin-top:20px; padding:50px 20px;">
                 <i id="p-icon" class="fa-solid fa-rocket" style="font-size:6rem; margin-bottom:20px; display:inline-block; animation: pulse-soft 2s infinite;"></i>
                 <h1 id="p-name" style="font-size: 2rem;">...</h1>
                 <p id="p-desc" style="opacity:0.9; margin-top: 10px;">Tu ruta ha sido personalizada.</p>
@@ -453,7 +453,7 @@
     </div>
 
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbxSpFmMQZn1H3nR2cY7y2V33euF2owcgrgkpjswLp1PcFduphKftEDYfoPH9kCHOKSC/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2iN52W56he6FmmXoOcw-jWY1Vj8Bg6v09rDLwGIpgosW3CE-Af3PsTRSDbrhtKsTL/exec"; 
         let currentUser = { email:'', rol:'', xp:0, perfil:'', nombre:'' };
         let authMode = 'login', qIdx = 0, answers = [], currentMissionKey = '', chatHistory = [];
 
@@ -465,6 +465,7 @@
             } catch (error) { return { error: error }; }
         }
 
+        // TUS PREGUNTAS ORIGINALES (RESTABLECIDAS)
         const quizQs = [
             {t:"¿Cuánto conoces de IA?", opts:[{t:"He creado mis propios GPTs",v:3},{t:"Lo uso para resumir textos",v:2},{t:"Solo he oído hablar de ello",v:1}]},
             {t:"¿Confías en las respuestas de la IA?", opts:[{t:"Siempre verifico fuentes",v:3},{t:"A veces dudo",v:2},{t:"Confío ciegamente",v:1}]},
@@ -472,6 +473,7 @@
             {t:"¿Cuál es tu mayor miedo con la IA?", opts:[{t:"Perder mi futuro trabajo",v:1},{t:"Privacidad de datos",v:3},{t:"Que se vuelva muy compleja",v:2}]}
         ];
 
+        // TUS LECCIONES ORIGINALES (RESTABLECIDAS)
         const lessons = {
             'prompt': { icon: 'fa-solid fa-terminal', t:'Ingeniería de Prompts', d:'<p>La IA no lee tu mente. Usa la fórmula <strong>C.O.F.</strong>:</p><ul><li><strong>C</strong>ontexto</li><li><strong>O</strong>bjetivo</li><li><strong>F</strong>ormato</li></ul>', topic: 'Fórmula de Prompting COF' },
             'perplexity': { icon: 'fa-solid fa-magnifying-glass-chart', t:'Investigación Verificada', d:'<p>ChatGPT alucina. Usa <strong>Perplexity.ai</strong> para fuentes reales.</p>', topic: 'Diferencia entre ChatGPT y Perplexity' },
@@ -484,7 +486,6 @@
         };
 
         window.onload = () => {
-            // CARGA INMEDIATA AL LOGIN
             document.getElementById('view-auth').classList.remove('hidden');
         };
 
@@ -510,12 +511,25 @@
             if(!email || !pass) return alert("Completa los campos");
             loading(true);
             if(authMode === 'login') callBackend('login', {email, pass}).then(onLogin);
-            else { currentUser.email = email; currentUser.pass = pass; currentUser.name = document.getElementById('in-name').value; loading(false); switchView('view-role'); }
+            else { currentUser.email = email; currentUser.pass = pass; currentUser.nombre = document.getElementById('in-name').value; loading(false); switchView('view-role'); }
+        }
+
+        // --- NUEVA LÓGICA DE INVITADO UNICO ---
+        function handleGuestLogin() {
+            loading(true);
+            callBackend('loginGuest').then(res => {
+                loading(false);
+                if(res.success) {
+                    onLogin(res); // Usa la misma lógica de login para entrar
+                } else {
+                    alert("Error al crear sesión de invitado.");
+                }
+            });
         }
 
         function finishRegister(rol) {
             loading(true);
-            callBackend('register', { email: currentUser.email, pass: currentUser.pass, nombre: currentUser.name, rol: rol }).then(onRegister);
+            callBackend('register', { email: currentUser.email, pass: currentUser.pass, nombre: currentUser.nombre, rol: rol }).then(onRegister);
         }
 
         function onRegister(res) {
@@ -606,17 +620,18 @@
             document.getElementById('btn-gen-ex').classList.add('hidden');
             document.getElementById('ai-example-box').style.display = 'block';
             document.getElementById('loader-ai').classList.remove('hidden');
-            callBackend('genExample', {tema: lessons[currentMissionKey].topic}).then(res => {
+            callBackend('genExample', {tema: lessons[currentMissionKey].topic}).then(resText => {
                 document.getElementById('loader-ai').classList.add('hidden');
-                document.getElementById('ai-example-content').innerHTML = marked.parse(res.text);
+                // En tu GS original, genExample devolvía un string directo. marked.parse lo maneja bien.
+                document.getElementById('ai-example-content').innerHTML = marked.parse(resText);
                 document.getElementById('completion-area').classList.remove('hidden');
             });
         }
 
         function completeMission() {
             closeModal('mission-modal');
-            callBackend('addXP', {email: currentUser.email, actividad: "Misión "+currentMissionKey, puntos: 15}).then(res => {
-                currentUser.xp = res; document.getElementById('xp-val').innerText = res; showToastXP(15);
+            callBackend('addXP', {email: currentUser.email, actividad: "Misión "+currentMissionKey, puntos: 15}).then(resXP => {
+                currentUser.xp = resXP; document.getElementById('xp-val').innerText = resXP; showToastXP(15);
             });
         }
 
@@ -653,7 +668,12 @@
                 if(res.success) {
                     chat.innerHTML += `<div class="msg msg-bot fade-in">${marked.parse(res.text)}</div>`;
                     chatHistory.push({ "role": "assistant", "content": res.text });
-                    if(res.xpGranted) { currentUser.xp += 40; document.getElementById('xp-val').innerText = currentUser.xp; showToastXP(40); }
+                    if(res.xpGranted) { 
+                        // Sumamos XP visualmente porque el backend ya lo hizo en la base de datos
+                        currentUser.xp += 40; 
+                        document.getElementById('xp-val').innerText = currentUser.xp; 
+                        showToastXP(40); 
+                    }
                 }
                 chat.scrollTop = chat.scrollHeight;
             });
@@ -661,18 +681,21 @@
 
         function showMsgs(msgs) {
             let h = ''; msgs.forEach(m => h+=`<div class="card" style="border-left:5px solid var(--v-blue);">${m.texto}</div>`);
-            document.getElementById('teacher-msgs').innerHTML = h;
+            document.getElementById('teacher-msgs').innerHTML = h || '<div style="text-align:center; padding:20px; color:var(--v-gray); background:white; border-radius:16px;">Sin novedades hoy.</div>';
         }
 
         function showStats(st) {
             document.getElementById('admin-total').innerText = st.total;
             document.getElementById('admin-avg').innerText = st.avgXP;
+            // Aquí puedes añadir la lógica para renderizar st.perfiles si quieres ver los números por perfil
         }
 
         function postAdvice() {
             const msg = document.getElementById('admin-msg').value, fil = document.getElementById('admin-filter').value;
-            callBackend('postMsg', {tipo:"CONSEJO", email: currentUser.email, mensaje: msg, filtro: fil});
-            alert("Publicado.");
+            if(!msg) return;
+            callBackend('postMsg', {tipo:"CONSEJO", email: currentUser.email, mensaje: msg, filtro: fil}).then(res => {
+                if(res.success) { alert("Publicado con éxito."); document.getElementById('admin-msg').value = ''; }
+            });
         }
 
         function switchView(id) {
