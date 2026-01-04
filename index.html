@@ -186,7 +186,7 @@
 
     <div class="app-content">
 
-        <!-- 1. AUTH LOGIN/REGISTER (VISIBLE DE ENTRADA) -->
+        <!-- 1. AUTH LOGIN/REGISTER -->
         <div id="view-auth" class="container fade-in">
             <div style="margin-top: 60px; text-align: center; margin-bottom: 40px;">
                 <div style="width: 80px; height: 80px; background: var(--v-blue); border-radius: 24px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2.5rem; box-shadow: 0 10px 25px rgba(37,99,235,0.3);">
@@ -208,7 +208,6 @@
                 <button id="btn-auth" class="btn btn-primary" onclick="handleAuth()">Iniciar Aventura <i class="fa-solid fa-arrow-right"></i></button>
                 <div style="text-align: center; margin-top: 20px;">
                     <span style="color:var(--v-gray); font-size:0.9rem;">¿Solo quieres probar?</span><br>
-                    <!-- CAMBIO: Ahora llama a handleGuestLogin en lugar de switchView directo -->
                     <button class="btn btn-ghost" onclick="handleGuestLogin()">Entrar como Invitado</button>
                 </div>
             </div>
@@ -387,6 +386,7 @@
                 <h1 id="m-title" style="font-size: 1.8rem; margin-top:10px;">Título Misión</h1>
             </div>
             <div class="modal-body">
+                <!-- CONTENIDO TEÓRICO COMPLETO -->
                 <div id="m-desc" class="theory-text"></div>
                 <div id="action-area">
                     <button class="btn btn-outline" onclick="generateAIExample()" id="btn-gen-ex">
@@ -453,7 +453,7 @@
     </div>
 
     <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbw2iN52W56he6FmmXoOcw-jWY1Vj8Bg6v09rDLwGIpgosW3CE-Af3PsTRSDbrhtKsTL/exec"; 
+        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzXZZPsINn_BC2r9EQihDWyO91gAUJggjkyieGt3EVlCmx4TsYHFPJnbm6FJZ0KmJWP/exec"; 
         let currentUser = { email:'', rol:'', xp:0, perfil:'', nombre:'' };
         let authMode = 'login', qIdx = 0, answers = [], currentMissionKey = '', chatHistory = [];
 
@@ -465,7 +465,7 @@
             } catch (error) { return { error: error }; }
         }
 
-        // TUS PREGUNTAS ORIGINALES (RESTABLECIDAS)
+        // TUS PREGUNTAS ORIGINALES COMPLETAS
         const quizQs = [
             {t:"¿Cuánto conoces de IA?", opts:[{t:"He creado mis propios GPTs",v:3},{t:"Lo uso para resumir textos",v:2},{t:"Solo he oído hablar de ello",v:1}]},
             {t:"¿Confías en las respuestas de la IA?", opts:[{t:"Siempre verifico fuentes",v:3},{t:"A veces dudo",v:2},{t:"Confío ciegamente",v:1}]},
@@ -473,16 +473,31 @@
             {t:"¿Cuál es tu mayor miedo con la IA?", opts:[{t:"Perder mi futuro trabajo",v:1},{t:"Privacidad de datos",v:3},{t:"Que se vuelva muy compleja",v:2}]}
         ];
 
-        // TUS LECCIONES ORIGINALES (RESTABLECIDAS)
+        // TUS LECCIONES ORIGINALES COMPLETAS
         const lessons = {
-            'prompt': { icon: 'fa-solid fa-terminal', t:'Ingeniería de Prompts', d:'<p>La IA no lee tu mente. Usa la fórmula <strong>C.O.F.</strong>:</p><ul><li><strong>C</strong>ontexto</li><li><strong>O</strong>bjetivo</li><li><strong>F</strong>ormato</li></ul>', topic: 'Fórmula de Prompting COF' },
-            'perplexity': { icon: 'fa-solid fa-magnifying-glass-chart', t:'Investigación Verificada', d:'<p>ChatGPT alucina. Usa <strong>Perplexity.ai</strong> para fuentes reales.</p>', topic: 'Diferencia entre ChatGPT y Perplexity' },
-            'alucina': { icon: 'fa-solid fa-ghost', t:'Detector de Alucinaciones', d:'<p>Las alucinaciones son datos falsos seguros. Verifica siempre fechas y leyes.</p>', topic: 'Ejemplo de alucinación de IA' }
+            'prompt': { 
+                icon: 'fa-solid fa-terminal', 
+                t:'Ingeniería de Prompts', 
+                d:'<p>La IA no lee tu mente. Para obtener resultados brillantes, deja de darle órdenes simples. Usa la fórmula <strong>C.O.F.</strong>:</p><ul><li><strong>C</strong>ontexto: ¿Quién eres tú y quién es la IA?</li><li><strong>O</strong>bjetivo: ¿Qué quieres lograr exactamente?</li><li><strong>F</strong>ormato: ¿Cómo quieres recibir la información (tabla, lista, código)?</li></ul>', 
+                topic: 'Fórmula de Prompting COF' 
+            },
+            'perplexity': { 
+                icon: 'fa-solid fa-magnifying-glass-chart', 
+                t:'Investigación Verificada', 
+                d:'<p>ChatGPT alucina con frecuencia porque no tiene acceso real a la web actualizada. Usa <strong>Perplexity.ai</strong> para investigaciones académicas; este motor cita fuentes reales y enlaces verificables.</p>', 
+                topic: 'Diferencia entre ChatGPT y Perplexity' 
+            },
+            'alucina': { 
+                icon: 'fa-solid fa-ghost', 
+                t:'Detector de Alucinaciones', 
+                d:'<p>Las alucinaciones son datos falsos presentados con total seguridad por la IA. Para combatirlas, nunca copies datos biográficos, fechas o leyes sin verificar. <strong>Regla de oro:</strong> Si la IA te da una cita bibliográfica, búscala en Google Académico antes de usarla.</p>', 
+                topic: 'Ejemplo de alucinación de IA' 
+            }
         };
 
         const newsData = {
-            'gemini': { tag:'TENDENCIA', color:'bg-purple', title:'Gemini 1.5 vs ChatGPT', body:'<p>Google actualizó Gemini con contexto masivo. Ideal para analizar libros enteros.</p>' },
-            'deepfake': { tag:'SEGURIDAD', color:'bg-orange', title:'Auge de los Deepfakes', body:'<p>Herramientas clonan voces en 3 segundos. Establece palabras clave con tu familia.</p>' }
+            'gemini': { tag:'TENDENCIA', color:'bg-purple', title:'Gemini 1.5 vs ChatGPT', body:'<p>Google ha lanzado Gemini 1.5 con una ventana de contexto masiva. Esto permite analizar libros enteros o largas bases de código de una sola vez, algo que ChatGPT aún procesa por partes.</p>' },
+            'deepfake': { tag:'SEGURIDAD', color:'bg-orange', title:'Auge de los Deepfakes', body:'<p>Las nuevas herramientas de IA permiten clonar voces en solo 3 segundos. Es vital establecer palabras clave de seguridad con familiares y nunca confiar en peticiones de dinero por audio o video sin verificación secundaria.</p>' }
         };
 
         window.onload = () => {
@@ -514,16 +529,12 @@
             else { currentUser.email = email; currentUser.pass = pass; currentUser.nombre = document.getElementById('in-name').value; loading(false); switchView('view-role'); }
         }
 
-        // --- NUEVA LÓGICA DE INVITADO UNICO ---
         function handleGuestLogin() {
             loading(true);
             callBackend('loginGuest').then(res => {
                 loading(false);
-                if(res.success) {
-                    onLogin(res); // Usa la misma lógica de login para entrar
-                } else {
-                    alert("Error al crear sesión de invitado.");
-                }
+                if(res.success) onLogin(res);
+                else alert("Error al crear sesión de invitado.");
             });
         }
 
@@ -616,15 +627,20 @@
             document.getElementById('mission-modal').style.display = 'flex';
         }
 
+        // --- CORRECCIÓN CLAVE PARA RECIBIR EL OBJETO {text: ...} ---
         function generateAIExample() {
             document.getElementById('btn-gen-ex').classList.add('hidden');
             document.getElementById('ai-example-box').style.display = 'block';
             document.getElementById('loader-ai').classList.remove('hidden');
-            callBackend('genExample', {tema: lessons[currentMissionKey].topic}).then(resText => {
+            callBackend('genExample', {tema: lessons[currentMissionKey].topic}).then(res => {
                 document.getElementById('loader-ai').classList.add('hidden');
-                // En tu GS original, genExample devolvía un string directo. marked.parse lo maneja bien.
-                document.getElementById('ai-example-content').innerHTML = marked.parse(resText);
-                document.getElementById('completion-area').classList.remove('hidden');
+                // Ahora lee correctamente res.text del objeto enviado por el GS corregido
+                if (res && res.text) {
+                    document.getElementById('ai-example-content').innerHTML = marked.parse(res.text);
+                    document.getElementById('completion-area').classList.remove('hidden');
+                } else {
+                    document.getElementById('ai-example-content').innerText = "Error al generar el ejemplo.";
+                }
             });
         }
 
@@ -669,7 +685,6 @@
                     chat.innerHTML += `<div class="msg msg-bot fade-in">${marked.parse(res.text)}</div>`;
                     chatHistory.push({ "role": "assistant", "content": res.text });
                     if(res.xpGranted) { 
-                        // Sumamos XP visualmente porque el backend ya lo hizo en la base de datos
                         currentUser.xp += 40; 
                         document.getElementById('xp-val').innerText = currentUser.xp; 
                         showToastXP(40); 
@@ -687,7 +702,6 @@
         function showStats(st) {
             document.getElementById('admin-total').innerText = st.total;
             document.getElementById('admin-avg').innerText = st.avgXP;
-            // Aquí puedes añadir la lógica para renderizar st.perfiles si quieres ver los números por perfil
         }
 
         function postAdvice() {
