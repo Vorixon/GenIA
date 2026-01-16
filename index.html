@@ -5,418 +5,299 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Brújula GenIA Campus</title>
     
-    <!-- LIBRERÍAS EXTERNAS -->
+    <!-- LIBRERÍAS -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
-    <!-- Markdown Parser -->
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
-    <!-- Efecto Confeti para XP -->
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-    
-    <style>
-        /* --- 1. VARIABLES & RESET --- */
-        :root {
-            --v-purple: #7C3AED; 
-            --v-purple-light: #DDD6FE;
-            --v-green: #10B981; 
-            --v-green-light: #D1FAE5;
-            --v-blue: #2563EB; 
-            --v-blue-light: #DBEAFE;
-            --v-orange: #F59E0B;
-            --v-red: #EF4444; 
-            --v-dark: #0F172A;
-            --v-gray: #64748B;
-            --bg: #F1F5F9; 
-            --card-bg: #FFFFFF;
-            --radius-xl: 28px;
-            --radius-md: 16px;
-            --shadow: 0 10px 30px -10px rgba(0,0,0,0.1);
-            --shadow-hover: 0 20px 40px -10px rgba(0,0,0,0.15);
-        }
-
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Plus Jakarta Sans', sans-serif; -webkit-tap-highlight-color: transparent; }
-        
-        body { background-color: var(--bg); color: var(--v-dark); height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
-
-        /* --- 2. UTILIDADES --- */
-        .hidden { display: none !important; }
-        .fade-in { animation: fadeIn 0.4s ease forwards; }
-        .slide-up { animation: slideUp 0.5s ease forwards; }
-        
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @keyframes slideUp { from { transform: translateY(30px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes pulse-soft { 0% { transform: scale(1); } 50% { transform: scale(1.05); } 100% { transform: scale(1); } }
-
-        /* --- 3. LAYOUT PRINCIPAL --- */
-        .app-content { flex: 1; overflow-y: auto; padding-bottom: 110px; width: 100%; position: relative; scroll-behavior: smooth; }
-        .container { width: 100%; max-width: 700px; margin: 0 auto; padding: 20px; }
-
-        /* --- 4. COMPONENTES UI --- */
-        .btn { 
-            width: 100%; padding: 18px; border-radius: 20px; border: none; 
-            font-weight: 800; font-size: 1.05rem; cursor: pointer; transition: 0.2s; 
-            display: flex; justify-content: center; align-items: center; gap: 10px; 
-            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
-        }
-        .btn:active { transform: scale(0.98); }
-        .btn-primary { background: var(--v-blue); color: white; box-shadow: 0 8px 20px rgba(37, 99, 235, 0.3); }
-        .btn-success { background: var(--v-green); color: white; box-shadow: 0 8px 20px rgba(16, 185, 129, 0.3); }
-        .btn-outline { background: white; border: 2px solid #E2E8F0; color: var(--v-dark); }
-        .btn-ghost { background: transparent; color: var(--v-gray); border: none; box-shadow: none; }
-
-        .input-field { 
-            width: 100%; padding: 18px; background: white; border: 2px solid #E2E8F0; 
-            border-radius: 20px; font-size: 1rem; margin-bottom: 15px; outline: none; transition: 0.3s;
-        }
-        .input-field:focus { border-color: var(--v-blue); box-shadow: 0 0 0 4px var(--v-blue-light); }
-
-        /* --- 5. TARJETAS (CARDS) --- */
-        .card { background: var(--card-bg); border-radius: var(--radius-xl); padding: 25px; margin-bottom: 20px; box-shadow: var(--shadow); border: 1px solid rgba(255,255,255,0.5); }
-        
-        .solid-card { 
-            padding: 30px; border-radius: var(--radius-xl); color: white; margin-bottom: 20px; 
-            position: relative; overflow: hidden; box-shadow: var(--shadow); cursor: pointer; 
-            transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
-        }
-        .solid-card:hover { transform: translateY(-5px); box-shadow: var(--shadow-hover); }
-        .solid-card::after { content:''; position: absolute; top:0; left:0; width:100%; height:100%; background: linear-gradient(rgba(255,255,255,0.1), transparent); pointer-events: none; }
-
-        .bg-purple { background: linear-gradient(135deg, #8B5CF6, #6D28D9); }
-        .bg-green { background: linear-gradient(135deg, #10B981, #059669); }
-        .bg-blue { background: linear-gradient(135deg, #3B82F6, #1D4ED8); }
-        .bg-orange { background: linear-gradient(135deg, #F59E0B, #B45309); }
-        
-        /* --- 7. CHATBOT INMERSIVO --- */
-        .bot-trigger { 
-            position: fixed; bottom: 110px; right: 20px; width: 70px; height: 70px; 
-            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
-            font-size: 2.2rem; color: white; cursor: pointer; z-index: 8000; 
-            box-shadow: 0 15px 35px rgba(37, 99, 235, 0.4); 
-            transition: transform 0.2s; animation: float 6s ease-in-out infinite;
-        }
-        .bot-trigger:active { transform: scale(0.9); }
-        .bot-public { background: var(--v-orange); }
-        .bot-private { background: linear-gradient(135deg, var(--v-blue), var(--v-purple)); }
-
-        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
-
-        .chat-overlay { 
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
-            background: rgba(15, 23, 42, 0.6); z-index: 20000; 
-            display: none; align-items: center; justify-content: center; 
-            backdrop-filter: blur(8px); 
-            opacity: 0; transition: opacity 0.3s ease;
-        }
-
-        .bot-window { 
-            width: 95%; max-width: 800px; height: 92%; 
-            background: #F8FAFC; border-radius: 24px; 
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5); 
-            display: flex; flex-direction: column; position: relative; overflow: hidden;
-            transform: scale(0.95); transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
-        }
-
-        .chat-header { 
-            padding: 20px 25px; 
-            background: white; border-bottom: 1px solid #E2E8F0;
-            display: flex; justify-content: space-between; align-items: center; 
-        }
-        .chat-title { display: flex; align-items: center; gap: 15px; }
-        .chat-avatar { width: 45px; height: 45px; background: linear-gradient(135deg, var(--v-blue), var(--v-purple)); border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 1.2rem; }
-        .chat-close { width: 40px; height: 40px; border-radius: 50%; background: #F1F5F9; display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--v-gray); font-size: 1.2rem; transition: 0.2s; }
-        
-        .chat-area { 
-            flex-grow: 1; overflow-y: auto; padding: 25px; 
-            display: flex; flex-direction: column; gap: 20px; 
-            background-image: radial-gradient(#E2E8F0 1px, transparent 1px); background-size: 20px 20px;
-        }
-
-        .msg { padding: 15px 20px; border-radius: 20px; font-size: 1rem; line-height: 1.6; max-width: 88%; position: relative; box-shadow: 0 2px 5px rgba(0,0,0,0.05); }
-        .msg-bot { background: white; border-bottom-left-radius: 4px; align-self: flex-start; color: var(--v-dark); border: 1px solid #E2E8F0; }
-        .msg-bot strong { color: var(--v-blue); font-weight: 800; }
-        .msg-bot li { background: #F8FAFC; margin-bottom: 8px; padding: 12px 15px; border-radius: 12px; border: 1px solid #E2E8F0; border-left: 4px solid var(--v-blue); font-size: 0.95rem; font-weight: 600; transition: 0.2s; }
-        
-        .msg-user { background: var(--v-blue); color: white; border-bottom-right-radius: 4px; align-self: flex-end; box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3); }
-
-        .chat-footer { background: white; padding: 15px; border-top: 1px solid #E2E8F0; }
-        .chat-chips-scroll { display: flex; gap: 10px; overflow-x: auto; padding-bottom: 12px; scrollbar-width: none; }
-        .chat-chip { white-space: nowrap; background: #EFF6FF; border: 1px solid var(--v-blue-light); color: var(--v-blue); padding: 8px 16px; border-radius: 50px; font-size: 0.85rem; font-weight: 700; cursor: pointer; }
-
-        .chat-input-container { display: flex; gap: 12px; align-items: center; background: #F8FAFC; padding: 8px; border-radius: 50px; border: 2px solid #E2E8F0; }
-        .chat-input { flex: 1; border: none; background: transparent; padding: 12px 15px; font-size: 1rem; outline: none; }
-        .chat-send { width: 45px; height: 45px; background: var(--v-blue); color: white; border: none; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-
-        /* --- 8. MODAL MISIONES --- */
-        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.85); z-index: 15000; display: none; align-items: center; justify-content: center; backdrop-filter: blur(5px); }
-        .modal-card-lg { background: #FAFAFA; width: 95%; max-width: 650px; max-height: 90vh; border-radius: 32px; overflow-y: auto; display: flex; flex-direction: column; animation: zoomIn 0.3s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        .modal-hero { background: linear-gradient(135deg, var(--v-blue), var(--v-purple)); padding: 40px 30px; color: white; text-align: center; border-radius: 32px 32px 0 0; position: relative; }
-        .modal-icon-lg { font-size: 4rem; margin-bottom: 10px; }
-        .modal-body { padding: 30px; }
-        .theory-text { font-size: 1.15rem; line-height: 1.7; color: #334155; margin-bottom: 30px; }
-        .ai-box { background: white; border: 2px dashed var(--v-blue-light); border-radius: 20px; padding: 25px; margin: 20px 0; display: none; position: relative; width: 100%; }
-        .ai-box-label { position: absolute; top: -12px; left: 20px; background: var(--v-blue); color: white; padding: 4px 12px; border-radius: 20px; font-size: 0.75rem; font-weight: 800; text-transform: uppercase; }
-        .markdown-content { font-size: 0.95rem; line-height: 1.6; color: #333; overflow-wrap: break-word; }
-
-        /* --- 9. NAVBAR --- */
-        nav { position: fixed; bottom: 0; left: 0; width: 100%; height: 85px; background: rgba(255,255,255,0.95); backdrop-filter: blur(10px); border-top: 1px solid #E2E8F0; display: flex; justify-content: space-around; align-items: center; z-index: 9000; padding-bottom: 10px; display: none; }
-        .nav-item { flex: 1; text-align: center; color: var(--v-gray); cursor: pointer; height: 100%; display: flex; flex-direction: column; justify-content: center; align-items: center; gap: 5px; }
-        .nav-item.active { color: var(--v-blue); }
-
-        /* --- 10. TOAST XP --- */
-        #toast-xp { position: fixed; top: 30px; left: 50%; transform: translateX(-50%) translateY(-100px); background: var(--v-green); color: white; padding: 12px 30px; border-radius: 50px; display: flex; align-items: center; gap: 12px; z-index: 25000; font-weight: 800; box-shadow: 0 10px 30px rgba(16, 185, 129, 0.4); transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1); }
-        #toast-xp.show { transform: translateX(-50%) translateY(0); }
-        .loader-dots { display: flex; gap: 8px; justify-content: center; margin: 20px 0; }
-        .dot { width: 12px; height: 12px; background: var(--v-blue); border-radius: 50%; animation: bounce 1.4s infinite ease-in-out both; }
-        @keyframes bounce { 0%, 80%, 100% { transform: scale(0); } 40% { transform: scale(1); } }
-        @keyframes zoomIn { from { transform: scale(0.9); opacity:0; } to { transform: scale(1); opacity:1; } }
-    </style>
+    <link rel="stylesheet" href="style.css">
 </head>
 <body>
 
-    <!-- TOAST XP -->
-    <div id="toast-xp"><i class="fa-solid fa-star"></i> <span id="toast-msg">+15 XP Ganados</span></div>
+    <!-- UI GLOBAL -->
+    <div id="toast-xp" class="toast-hidden">
+        <i class="fa-solid fa-star"></i> <span id="toast-msg">+15 XP Ganados</span>
+    </div>
 
-    <!-- CARGANDO GLOBAL -->
-    <div id="loading-modal" class="modal-overlay" style="background:white; z-index:30000;">
+    <!-- LOADER ESTÁNDAR -->
+    <div id="loading-modal" class="loading-overlay hidden">
         <div class="loader-dots">
             <div class="dot"></div><div class="dot"></div><div class="dot"></div>
         </div>
-        <h3 style="color:var(--v-dark); margin-top:10px;">Conectando...</h3>
+        <h3 id="loading-text" class="loading-msg">Cargando...</h3>
     </div>
 
+    <!-- LOADER INVITADO -->
+    <div id="guest-loader" class="guest-loader-overlay hidden">
+        <div class="guest-loader-content">
+            <div class="brand-logo-large pulse-logo">
+                <i class="fa-solid fa-user-astronaut"></i>
+            </div>
+            <h2 id="guest-loader-text">Creando perfil...</h2>
+            <div class="progress-bar-loader"><div class="fill"></div></div>
+        </div>
+    </div>
+
+    <!-- CONTENIDO PRINCIPAL -->
     <div class="app-content">
 
-        <!-- 1. AUTH LOGIN/REGISTER -->
-        <div id="view-auth" class="container fade-in">
-            <div style="margin-top: 60px; text-align: center; margin-bottom: 40px;">
-                <div style="width: 80px; height: 80px; background: var(--v-blue); border-radius: 24px; margin: 0 auto 20px; display: flex; align-items: center; justify-content: center; color: white; font-size: 2.5rem; box-shadow: 0 10px 25px rgba(37,99,235,0.3);">
+        <!-- 1. VISTA AUTH -->
+        <div id="view-auth" class="container-view fade-in">
+            <div class="auth-header">
+                <div class="brand-logo-main">
                     <i class="fa-solid fa-user-astronaut"></i>
                 </div>
-                <h1>Bienvenido</h1>
-                <p style="color:var(--v-gray);">Accede para iniciar tu ruta de aprendizaje.</p>
-            </div>
-            
-            <div class="card" style="padding: 10px; background: #E2E8F0; display: flex; border-radius: 18px; border:none;">
-                <button class="btn btn-ghost" id="tab-login" onclick="setAuthMode('login')" style="flex:1; background:white; color:var(--v-dark); box-shadow:0 2px 5px rgba(0,0,0,0.05);">Ingresar</button>
-                <button class="btn btn-ghost" id="tab-register" onclick="setAuthMode('register')" style="flex:1;">Registro</button>
+                <h1>Brújula GenIA</h1>
+                <p>Tu portal al aprendizaje de Inteligencia Artificial.</p>
             </div>
 
-            <div style="margin-top: 20px;">
-                <input id="in-email" type="email" placeholder="Correo Institucional" class="input-field">
-                <input id="in-pass" type="password" placeholder="Contraseña" class="input-field">
-                <input id="in-name" type="text" placeholder="Tu Nombre" class="input-field hidden">
-                <button id="btn-auth" class="btn btn-primary" onclick="handleAuth()">Iniciar Aventura <i class="fa-solid fa-arrow-right"></i></button>
-                <div style="text-align: center; margin-top: 20px;">
-                    <span style="color:var(--v-gray); font-size:0.9rem;">¿Solo quieres probar?</span><br>
-                    <button class="btn btn-ghost" onclick="handleGuestLogin()">Entrar como Invitado</button>
+            <!-- BOTÓN INVITADO (AHORA CON COLOR) -->
+            <div class="guest-card-colored pulse-premium" onclick="handleGuestLogin()">
+                <div class="guest-info">
+                    <div class="icon-circle"><i class="fa-solid fa-bolt"></i></div>
+                    <div class="text-box-light">
+                        <h3>Entrar como Invitado</h3>
+                        <p>Acceso rápido sin registro</p>
+                    </div>
+                </div>
+                <i class="fa-solid fa-arrow-right arrow-light"></i>
+            </div>
+
+            <div class="divider"><span>O USA TU CUENTA</span></div>
+
+            <div id="auth-tabs-row" class="tabs-row">
+                <button class="btn btn-outline" onclick="showAuthForm('login')">Ingresar</button>
+                <button class="btn btn-outline" onclick="showAuthForm('register')">Crear Cuenta</button>
+            </div>
+
+            <div id="form-container" class="hidden fade-in">
+                <div class="card-form">
+                    <input id="in-name" type="text" placeholder="Tu Nombre" class="input-field hidden">
+                    <input id="in-email" type="email" placeholder="Correo Institucional" class="input-field">
+                    <input id="in-pass" type="password" placeholder="Contraseña" class="input-field">
+                    <button class="btn btn-primary" onclick="handleAuth()">Confirmar e Iniciar</button>
+                    <button class="btn btn-ghost" onclick="resetAuthUI()">Cancelar</button>
                 </div>
             </div>
             
             <div class="bot-trigger bot-public" onclick="toggleBot('public')"><i class="fa-solid fa-question"></i></div>
         </div>
 
-        <!-- 2. SELECCIÓN DE ROL -->
-        <div id="view-role" class="container hidden fade-in">
-            <h2 style="margin: 40px 0 20px 0;">Elige tu Camino</h2>
-            <div class="solid-card bg-blue" onclick="finishRegister('student')">
-                <div style="position:relative; z-index:2;">
-                    <i class="fa-solid fa-user-graduate" style="font-size: 3rem; margin-bottom: 15px;"></i>
-                    <h2>Soy Estudiante</h2>
-                    <p style="opacity:0.9; margin-top:5px;">Aprende, experimenta y gana XP.</p>
-                </div>
+        <!-- 2. ROL SELECTION -->
+        <div id="view-role" class="container-view hidden fade-in">
+            <h2 class="title-center" style="margin-top:40px;">Elige tu Camino</h2>
+            <div class="solid-card bg-blue role-card" onclick="finishRegister('student')">
+                <i class="fa-solid fa-user-graduate"></i>
+                <h2>Soy Estudiante</h2>
+                <p>Quiero aprender y ganar XP.</p>
             </div>
-            <div class="solid-card bg-purple" onclick="finishRegister('admin')">
-                <div style="position:relative; z-index:2;">
-                    <i class="fa-solid fa-chalkboard-user" style="font-size: 3rem; margin-bottom: 15px;"></i>
-                    <h2>Soy Docente</h2>
-                    <p style="opacity:0.9; margin-top:5px;">Gestiona el aula y monitorea el progreso.</p>
-                </div>
+            <div class="solid-card bg-purple role-card" onclick="finishRegister('admin')">
+                <i class="fa-solid fa-chalkboard-user"></i>
+                <h2>Soy Docente</h2>
+                <p>Gestionar aula y monitorear.</p>
             </div>
         </div>
 
-        <!-- 3. QUIZ INICIAL -->
-        <div id="view-quiz" class="container hidden fade-in">
-            <div style="margin-top: 30px;">
-                <div style="display:flex; justify-content:space-between; margin-bottom:10px;">
-                    <span style="font-weight: 700; color: var(--v-blue);">Diagnóstico IA</span>
-                    <span style="color: var(--v-gray);" id="q-counter">1/4</span>
+        <!-- 3. QUIZ -->
+        <div id="view-quiz" class="container-view hidden fade-in">
+            <div class="quiz-container">
+                <div class="quiz-header">
+                    <b>Diagnóstico IA</b>
+                    <span id="q-counter">1/4</span>
                 </div>
-                <div style="height: 8px; background: #E2E8F0; border-radius: 10px; overflow: hidden; margin-bottom: 30px;">
-                    <div id="q-bar" style="height: 100%; background: var(--v-blue); width: 25%; transition: width 0.3s;"></div>
-                </div>
-                
-                <div class="card">
-                    <h2 id="q-txt" style="margin-bottom:25px; font-size: 1.5rem;">...</h2>
-                    <div id="q-opts" style="display: flex; flex-direction: column; gap: 12px;"></div>
+                <div class="progress-bar-bg"><div id="q-bar" class="progress-bar-fill"></div></div>
+                <div class="card card-quiz">
+                    <h2 id="q-txt">...</h2>
+                    <div id="q-opts" class="opts-list"></div>
                 </div>
             </div>
         </div>
 
         <!-- 4. REVEAL PERFIL -->
-        <div id="view-reveal" class="container hidden" style="text-align: center; padding-top: 50px;">
-            <p style="color:var(--v-gray); font-weight: 600;">TU PERFIL GEN-IA ES:</p>
-            <div id="profile-card" class="solid-card slide-up bg-blue" style="margin-top:20px; padding:50px 20px;">
-                <i id="p-icon" class="fa-solid fa-rocket" style="font-size:6rem; margin-bottom:20px; display:inline-block; animation: pulse-soft 2s infinite;"></i>
-                <h1 id="p-name" style="font-size: 2rem;">...</h1>
-                <p id="p-desc" style="opacity:0.9; margin-top: 10px;">Tu ruta ha sido personalizada.</p>
+        <div id="view-reveal" class="container-view hidden" style="text-align: center; padding-top:40px;">
+            <p class="reveal-label">TU PERFIL GEN-IA ES:</p>
+            <div id="profile-card" class="solid-card bg-blue slide-up profile-reveal">
+                <i id="p-icon" class="fa-solid fa-rocket profile-icon"></i>
+                <h1 id="p-name">...</h1>
+                <p id="p-desc">Hemos personalizado tu ruta de aprendizaje.</p>
             </div>
-            <button class="btn btn-primary" onclick="goToDashboard()">Ir a mi Campus</button>
+            <button class="btn btn-primary" onclick="goToDashboard()">Comenzar Aventura</button>
         </div>
 
         <!-- 5. DASHBOARD HOME -->
-        <div id="view-home" class="container hidden fade-in">
-            <!-- Header Home -->
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-top:20px; margin-bottom:25px;">
+        <div id="view-home" class="container-view hidden fade-in">
+            <div class="user-header">
                 <div>
-                    <h2 style="font-size:1.8rem;">Hola, <span id="user-name" style="color:var(--v-blue)">...</span> 👋</h2>
+                    <h2>Hola, <span id="user-name" style="color:var(--v-blue)">...</span> 👋</h2>
                     <p style="color:var(--v-gray);">Campus Virtual</p>
                 </div>
-                <div style="background:white; padding:8px 16px; border-radius:20px; box-shadow: var(--shadow); display:flex; align-items:center; gap:8px;">
-                    <i class="fa-solid fa-trophy" style="color:var(--v-orange);"></i>
-                    <span id="xp-val" style="font-weight:800; font-size:1.1rem;">0</span> <span style="font-size:0.8rem; font-weight:700; color:var(--v-gray)">XP</span>
+                <div class="xp-pill">
+                    <i class="fa-solid fa-trophy"></i>
+                    <span id="xp-val">0</span> <b>XP</b>
                 </div>
             </div>
 
-            <!-- DASHBOARD ESTUDIANTE -->
+            <!-- Panel Estudiante -->
             <div id="student-dash" class="hidden">
-                <h3 style="margin-bottom:15px;"><i class="fa-regular fa-newspaper"></i> Novedades IA</h3>
-                <div style="display:flex; gap:15px; overflow-x:auto; margin-bottom:30px; padding-bottom:10px; scrollbar-width: none;">
-                    <div class="solid-card bg-purple" style="min-width:280px; margin-bottom:0;" onclick="openNews('gemini')">
-                        <small style="background:rgba(255,255,255,0.2); padding:4px 10px; border-radius:10px;">🔥 TENDENCIA</small>
-                        <h3 style="margin-top:10px;">Gemini vs ChatGPT</h3>
-                        <p style="font-size:0.9rem;">Comparativa de modelos 2025.</p>
+                <h3 class="section-title"><i class="fa-regular fa-newspaper"></i> Novedades</h3>
+                <div class="news-scroll">
+                    <div class="solid-card bg-purple news-card" onclick="openNews('gemini')">
+                        <span class="badge">TENDENCIA</span>
+                        <h3>Gemini vs ChatGPT</h3>
+                        <p>Comparativa de modelos 2025.</p>
                     </div>
-                    <div class="solid-card bg-orange" style="min-width:280px; margin-bottom:0;" onclick="openNews('deepfake')">
-                        <small style="background:rgba(255,255,255,0.2); padding:4px 10px; border-radius:10px;">⚠️ SEGURIDAD</small>
-                        <h3 style="margin-top:10px;">Deepfakes</h3>
-                        <p style="font-size:0.9rem;">Cómo detectarlos a tiempo.</p>
+                    <div class="solid-card bg-orange news-card" onclick="openNews('deepfake')">
+                        <span class="badge">SEGURIDAD</span>
+                        <h3>Deepfakes</h3>
+                        <p>Aprende a identificarlos.</p>
                     </div>
                 </div>
 
-                <h3 style="margin-bottom:15px;"><i class="fa-solid fa-toolbox"></i> Tus Herramientas (Misiones)</h3>
-                <div id="resources-list" style="display: grid; grid-template-columns: 1fr; gap: 15px;"></div>
+                <h3 class="section-title"><i class="fa-solid fa-toolbox"></i> Tus Misiones</h3>
+                <div id="resources-list" class="grid-misiones"></div>
                 
-                <h3 style="margin-top:30px; margin-bottom:15px;"><i class="fa-solid fa-chalkboard-user"></i> Feed del Docente</h3>
-                <div id="teacher-msgs">
-                    <div style="text-align:center; padding:20px; color:var(--v-gray); background:white; border-radius:16px;">Sin novedades hoy.</div>
-                </div>
+                <h3 class="section-title"><i class="fa-solid fa-chalkboard-user"></i> Feed Docente</h3>
+                <div id="teacher-msgs"><div class="card-empty">No hay mensajes hoy.</div></div>
             </div>
 
-            <!-- DASHBOARD DOCENTE -->
+            <!-- Panel Docente -->
             <div id="teacher-dash" class="hidden">
                 <div style="display:grid; grid-template-columns:1fr 1fr; gap:15px; margin-bottom:25px;">
-                    <div class="card" style="text-align:center; margin-bottom:0;">
-                        <h1 id="admin-total" style="color:var(--v-blue); font-size:2.5rem;">0</h1>
-                        <small style="color:var(--v-gray); font-weight:700;">Estudiantes</small>
+                    <div class="card center-text">
+                        <h1 id="admin-total" class="stat-num color-blue">0</h1>
+                        <small>Estudiantes</small>
                     </div>
-                    <div class="card" style="text-align:center; margin-bottom:0;">
-                        <h1 id="admin-avg" style="color:var(--v-green); font-size:2.5rem;">0</h1>
-                        <small style="color:var(--v-gray); font-weight:700;">XP Promedio</small>
+                    <div class="card center-text">
+                        <h1 id="admin-avg" class="stat-num color-green">0</h1>
+                        <small>XP Promedio</small>
                     </div>
                 </div>
-                
-                <h3 style="margin-bottom:15px;">Estadísticas de Perfil</h3>
-                <div id="admin-stats" class="card">Cargando datos...</div>
-
-                <h3 style="margin-top:25px; margin-bottom:15px;">📢 Publicar Anuncio</h3>
+                <h3 class="section-title">Publicar Anuncio</h3>
                 <div class="card">
-                    <textarea id="admin-msg" class="input-field" placeholder="Escribe un consejo o aviso..." rows="3" style="resize:none;"></textarea>
+                    <textarea id="admin-msg" class="input-field" placeholder="Escribe un consejo..." rows="3"></textarea>
                     <select id="admin-filter" class="input-field">
-                        <option value="Todos">Para: Todos</option>
-                        <option value="Cauteloso">Para: Cautelosos</option>
-                        <option value="Explorador">Para: Exploradores</option>
+                        <option value="Todos">Todos</option>
+                        <option value="Cauteloso">Cautelosos</option>
+                        <option value="Explorador">Exploradores</option>
                     </select>
-                    <button class="btn btn-primary" onclick="postAdvice()">Publicar Mensaje</button>
+                    <button class="btn btn-primary" onclick="postAdvice()">Publicar</button>
                 </div>
             </div>
 
+            <!-- TRIGGER CHAT PRIVADO -->
             <div id="bot-trigger-priv" class="bot-trigger bot-private hidden" onclick="toggleBot('private')">
                 <i class="fa-solid fa-robot"></i>
+                <div id="bot-callout" class="bot-bubble-msg hidden">
+                    👋 <strong>¡Hola!</strong> Haz clic aquí.
+                </div>
             </div>
         </div>
 
         <!-- 6. PROGRESO -->
-        <div id="view-impact" class="container hidden fade-in">
+        <div id="view-impact" class="container-view hidden fade-in">
             <h2 style="margin-top:20px; margin-bottom:20px;">Tu Evolución</h2>
             <div class="card">
-                <div style="display:flex; justify-content:space-between; margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">
-                    <span>🧠 Conocimiento</span> <span style="color:var(--v-blue)">★★★</span>
-                </div>
-                <div style="display:flex; justify-content:space-between; margin-bottom:15px; border-bottom:1px solid #eee; padding-bottom:10px;">
-                    <span>🛡️ Seguridad</span> <span style="color:var(--v-purple)">★★☆</span>
-                </div>
-                <div style="display:flex; justify-content:space-between;">
-                    <span>⚖️ Ética</span> <span style="color:var(--v-orange)">★☆☆</span>
-                </div>
+                <div class="stat-row"><span>🧠 Conocimiento</span> <span class="stars">★★★</span></div>
+                <div class="stat-row"><span>🛡️ Seguridad</span> <span class="stars">★★☆</span></div>
+                <div class="stat-row"><span>⚖️ Ética</span> <span class="stars">★☆☆</span></div>
             </div>
-            
-            <h3>📜 Historial XP</h3>
+            <h3>Historial XP</h3>
             <div class="card" style="padding:0; overflow:hidden;">
-                <ul id="xp-history" style="list-style:none; padding:20px;">
-                    <li style="color:var(--v-gray); text-align:center;">Aún no tienes actividad.</li>
+                <ul id="xp-history" class="list-xp">
+                    <li style="padding:20px; text-align:center; color:#94a3b8;">Sin actividad reciente.</li>
                 </ul>
             </div>
         </div>
     </div>
 
-    <!-- NAVBAR INFERIOR -->
+    <!-- NAVBAR -->
     <nav id="navbar">
         <div class="nav-item active" onclick="nav('home', this)">
-            <i class="fa-solid fa-compass"></i>
-            <span style="font-size:0.75rem; font-weight:700;">Inicio</span>
+            <i class="fa-solid fa-compass"></i><span>Inicio</span>
         </div>
         <div class="nav-item" onclick="nav('impact', this)">
-            <i class="fa-solid fa-chart-line"></i>
-            <span style="font-size:0.75rem; font-weight:700;">Progreso</span>
+            <i class="fa-solid fa-chart-line"></i><span>Progreso</span>
         </div>
         <div class="nav-item" onclick="location.reload()">
-            <i class="fa-solid fa-right-from-bracket"></i>
-            <span style="font-size:0.75rem; font-weight:700;">Salir</span>
+            <i class="fa-solid fa-right-from-bracket"></i><span>Salir</span>
         </div>
     </nav>
 
-    <!-- MODALES -->
+    <!-- 7. MODAL TUTORIAL (2 PASOS, DISEÑO MEJORADO) -->
+    <div id="welcome-modal" class="modal-overlay" style="z-index: 28000; display: none;">
+        <div class="modal-card-lg modal-tutorial">
+            
+            <!-- PASO 1: BIENVENIDA -->
+            <div id="tut-step-1" class="tutorial-step">
+                <div class="tut-illustration bg-blue-soft">
+                    <i class="fa-solid fa-handshake-simple" style="color: var(--v-blue);"></i>
+                </div>
+                <h2 class="tut-title">¡Hola, bienvenido!</h2>
+                <p class="tut-text">
+                    Estás entrando a <strong>GenIA</strong>, tu campus virtual. Aquí aprenderás a dominar la Inteligencia Artificial de forma práctica.
+                </p>
+                <button class="btn btn-primary" onclick="animateTutorialStep()">
+                    Siguiente <i class="fa-solid fa-arrow-right"></i>
+                </button>
+            </div>
+
+            <!-- PASO 2: MENTOR (FINAL) -->
+            <div id="tut-step-2" class="tutorial-step hidden">
+                <div class="tut-illustration bg-purple-soft pulse-soft">
+                    <i class="fa-solid fa-robot" style="color: var(--v-purple);"></i>
+                </div>
+                <h2 class="tut-title">Tu Mentor Inteligente</h2>
+                <p class="tut-text">
+                    ¿Tienes dudas? El chat está conectado a una IA real. <strong>Ábrelo ahora</strong> para empezar tu primera misión.
+                </p>
+                <button class="btn btn-success" onclick="startGenIATutorial()">
+                    <i class="fa-regular fa-comments"></i> Abrir Chatbot
+                </button>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- MODAL MISIONES -->
     <div id="mission-modal" class="modal-overlay">
         <div class="modal-card-lg">
             <div class="modal-hero">
-                <div style="position:absolute; top:20px; right:20px; background:rgba(255,255,255,0.2); width:35px; height:35px; border-radius:50%; display:flex; align-items:center; justify-content:center; cursor:pointer;" onclick="closeModal('mission-modal')">
-                    <i class="fa-solid fa-times"></i>
-                </div>
+                <div class="modal-close-btn" onclick="closeModal('mission-modal')"><i class="fa-solid fa-times"></i></div>
                 <i id="m-icon" class="fa-solid fa-wand-magic-sparkles modal-icon-lg"></i>
-                <h1 id="m-title" style="font-size: 1.8rem; margin-top:10px;">Título Misión</h1>
+                <h1 id="m-title">Título Misión</h1>
             </div>
             <div class="modal-body">
-                <!-- CONTENIDO TEÓRICO COMPLETO -->
                 <div id="m-desc" class="theory-text"></div>
                 <div id="action-area">
                     <button class="btn btn-outline" onclick="generateAIExample()" id="btn-gen-ex">
                         <i class="fa-solid fa-microchip"></i> Ver Ejemplo Práctico con IA
                     </button>
                     <div id="ai-example-box" class="ai-box fade-in">
-                        <div class="ai-box-label"><i class="fa-solid fa-robot"></i> Ejemplo Generado</div>
+                        <div class="ai-box-label">EJEMPLO IA</div>
                         <div id="loader-ai" class="loader-dots hidden"><div class="dot"></div><div class="dot"></div><div class="dot"></div></div>
                         <div id="ai-example-content" class="markdown-content"></div>
                     </div>
                 </div>
-                <div id="completion-area" class="hidden slide-up" style="margin-top:30px; border-top:1px solid #eee; padding-top:20px; text-align:center;">
+                <div id="completion-area" class="hidden slide-up" style="margin-top:20px; text-align:center;">
                     <button class="btn btn-success" onclick="completeMission()">
-                        <i class="fa-solid fa-check-circle"></i> ¡Sí, Entendido! (+15 XP)
+                        <i class="fa-solid fa-check-circle"></i> ¡Entendido! (+15 XP)
                     </button>
                 </div>
             </div>
         </div>
     </div>
     
+    <!-- MODAL NOTICIAS -->
     <div id="news-modal" class="modal-overlay">
         <div class="modal-card-lg">
             <div id="n-header" style="padding:30px; color:white; position:relative; background: var(--v-blue);">
-                <div style="position:absolute; top:15px; right:15px; cursor:pointer;" onclick="closeModal('news-modal')"><i class="fa-solid fa-times" style="font-size:1.5rem;"></i></div>
+                <div class="modal-close-btn" onclick="closeModal('news-modal')"><i class="fa-solid fa-times"></i></div>
                 <span id="n-tag" style="background:rgba(0,0,0,0.2); padding:5px 10px; border-radius:10px; font-size:0.8rem;">TAG</span>
                 <h2 id="n-title" style="margin-top:10px;">Titulo</h2>
             </div>
             <div style="padding:25px; line-height:1.7; color:#333;" id="n-body"></div>
             <div style="padding:0 25px 25px;">
-                <button class="btn btn-primary" onclick="closeModal('news-modal')">Entendido</button>
+                <button class="btn btn-primary" onclick="closeModal('news-modal')">Cerrar Noticia</button>
             </div>
         </div>
     </div>
@@ -428,23 +309,25 @@
                 <div class="chat-title">
                     <div class="chat-avatar"><i class="fa-solid fa-brain"></i></div>
                     <div>
-                        <div style="font-weight: 800; font-size: 1.1rem; color:var(--v-dark);">GenAI Mentor</div>
-                        <div style="font-size: 0.8rem; color: var(--v-green); display:flex; align-items:center; gap:5px;"><div style="width:6px; height:6px; background:var(--v-green); border-radius:50%;"></div> En línea</div>
+                        <div class="chat-name">GenAI Mentor</div>
+                        <div class="chat-status">● En línea</div>
                     </div>
                 </div>
                 <div class="chat-close" onclick="closeBot()"><i class="fa-solid fa-times"></i></div>
             </div>
             <div id="chat-feed" class="chat-area"></div>
-            <div id="typing-indicator" style="padding: 0 25px; margin-bottom: 10px; display:none;">
-                <span style="font-size:0.8rem; color:var(--v-gray); font-style:italic;">GenAI está escribiendo...</span>
+            <div id="typing-indicator" class="typing-container hidden">
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
+                <div class="typing-dot"></div>
             </div>
             <div class="chat-footer">
-                <div id="bot-quick-actions" class="chat-chips-scroll">
+                <div class="chat-chips-scroll">
                     <button class="chat-chip" onclick="quickChat('Dame un reto sobre Prompting')">🎯 Reto Prompting</button>
                     <button class="chat-chip" onclick="quickChat('Explícame qué es una Alucinación')">👻 Alucinaciones</button>
                     <button class="chat-chip" onclick="quickChat('¿Cómo uso Perplexity?')">🔍 Perplexity</button>
                 </div>
-                <div class="chat-input-container" style="margin-top:10px;">
+                <div class="chat-input-container">
                     <input id="chat-input" type="text" class="chat-input" placeholder="Pregunta sobre IA..." onkeypress="if(event.key==='Enter') sendToJamba()">
                     <button class="chat-send" onclick="sendToJamba()"><i class="fa-solid fa-paper-plane"></i></button>
                 </div>
@@ -452,276 +335,6 @@
         </div>
     </div>
 
-    <script>
-        const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwlr79W34FnrB1e6DyLLYBOQIHkF833P5G7_xShFG32mn0fwrmgE9Lu-tD81-5GPH0/exec"; 
-        let currentUser = { email:'', rol:'', xp:0, perfil:'', nombre:'' };
-        let authMode = 'login', qIdx = 0, answers = [], currentMissionKey = '', chatHistory = [];
-
-        async function callBackend(action, data = {}) {
-            const body = { action: action, ...data };
-            try {
-                const response = await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', body: JSON.stringify(body) });
-                return await response.json();
-            } catch (error) { return { error: error }; }
-        }
-
-        // TUS PREGUNTAS ORIGINALES COMPLETAS
-        const quizQs = [
-            {t:"¿Cuánto conoces de IA?", opts:[{t:"He creado mis propios GPTs",v:3},{t:"Lo uso para resumir textos",v:2},{t:"Solo he oído hablar de ello",v:1}]},
-            {t:"¿Confías en las respuestas de la IA?", opts:[{t:"Siempre verifico fuentes",v:3},{t:"A veces dudo",v:2},{t:"Confío ciegamente",v:1}]},
-            {t:"Un compañero usa ChatGPT para todo su ensayo...", opts:[{t:"Es plagio y no aprende nada",v:3},{t:"Es inteligente, ahorra tiempo",v:1},{t:"Debería editarlo al menos",v:2}]},
-            {t:"¿Cuál es tu mayor miedo con la IA?", opts:[{t:"Perder mi futuro trabajo",v:1},{t:"Privacidad de datos",v:3},{t:"Que se vuelva muy compleja",v:2}]}
-        ];
-
-        // TUS LECCIONES ORIGINALES COMPLETAS
-        const lessons = {
-            'prompt': { 
-                icon: 'fa-solid fa-terminal', 
-                t:'Ingeniería de Prompts', 
-                d:'<p>La IA no lee tu mente. Para obtener resultados brillantes, deja de darle órdenes simples. Usa la fórmula <strong>C.O.F.</strong>:</p><ul><li><strong>C</strong>ontexto: ¿Quién eres tú y quién es la IA?</li><li><strong>O</strong>bjetivo: ¿Qué quieres lograr exactamente?</li><li><strong>F</strong>ormato: ¿Cómo quieres recibir la información (tabla, lista, código)?</li></ul>', 
-                topic: 'Fórmula de Prompting COF' 
-            },
-            'perplexity': { 
-                icon: 'fa-solid fa-magnifying-glass-chart', 
-                t:'Investigación Verificada', 
-                d:'<p>ChatGPT alucina con frecuencia porque no tiene acceso real a la web actualizada. Usa <strong>Perplexity.ai</strong> para investigaciones académicas; este motor cita fuentes reales y enlaces verificables.</p>', 
-                topic: 'Diferencia entre ChatGPT y Perplexity' 
-            },
-            'alucina': { 
-                icon: 'fa-solid fa-ghost', 
-                t:'Detector de Alucinaciones', 
-                d:'<p>Las alucinaciones son datos falsos presentados con total seguridad por la IA. Para combatirlas, nunca copies datos biográficos, fechas o leyes sin verificar. <strong>Regla de oro:</strong> Si la IA te da una cita bibliográfica, búscala en Google Académico antes de usarla.</p>', 
-                topic: 'Ejemplo de alucinación de IA' 
-            }
-        };
-
-        const newsData = {
-            'gemini': { tag:'TENDENCIA', color:'bg-purple', title:'Gemini 1.5 vs ChatGPT', body:'<p>Google ha lanzado Gemini 1.5 con una ventana de contexto masiva. Esto permite analizar libros enteros o largas bases de código de una sola vez, algo que ChatGPT aún procesa por partes.</p>' },
-            'deepfake': { tag:'SEGURIDAD', color:'bg-orange', title:'Auge de los Deepfakes', body:'<p>Las nuevas herramientas de IA permiten clonar voces en solo 3 segundos. Es vital establecer palabras clave de seguridad con familiares y nunca confiar en peticiones de dinero por audio o video sin verificación secundaria.</p>' }
-        };
-
-        window.onload = () => {
-            document.getElementById('view-auth').classList.remove('hidden');
-        };
-
-        function loading(show) { document.getElementById('loading-modal').style.display = show ? 'flex' : 'none'; }
-        
-        function showToastXP(points) {
-            const t = document.getElementById('toast-xp');
-            document.getElementById('toast-msg').innerText = `+${points} XP Ganados`;
-            t.classList.add('show');
-            confetti({ particleCount: 100, spread: 70, origin: { y: 0.6 } });
-            setTimeout(() => t.classList.remove('show'), 3000);
-        }
-
-        function setAuthMode(mode) {
-            authMode = mode;
-            document.getElementById('tab-login').style.background = mode==='login' ? 'white' : 'transparent';
-            document.getElementById('tab-register').style.background = mode==='register' ? 'white' : 'transparent';
-            document.getElementById('in-name').classList.toggle('hidden', mode==='login');
-        }
-
-        function handleAuth() {
-            const email = document.getElementById('in-email').value, pass = document.getElementById('in-pass').value;
-            if(!email || !pass) return alert("Completa los campos");
-            loading(true);
-            if(authMode === 'login') callBackend('login', {email, pass}).then(onLogin);
-            else { currentUser.email = email; currentUser.pass = pass; currentUser.nombre = document.getElementById('in-name').value; loading(false); switchView('view-role'); }
-        }
-
-        function handleGuestLogin() {
-            loading(true);
-            callBackend('loginGuest').then(res => {
-                loading(false);
-                if(res.success) onLogin(res);
-                else alert("Error al crear sesión de invitado.");
-            });
-        }
-
-        function finishRegister(rol) {
-            loading(true);
-            callBackend('register', { email: currentUser.email, pass: currentUser.pass, nombre: currentUser.nombre, rol: rol }).then(onRegister);
-        }
-
-        function onRegister(res) {
-            loading(false);
-            if(res.error) alert(res.error);
-            else { currentUser.rol = res.rol; currentUser.nombre = res.nombre; if(res.rol === 'student') startQuiz(); else { currentUser.perfil = 'Profesor'; goToDashboard(); } }
-        }
-
-        function onLogin(res) {
-            loading(false);
-            if(res.error) alert(res.error);
-            else { currentUser = res; if(res.perfil === 'Pendiente' && res.rol === 'student') startQuiz(); else goToDashboard(); }
-        }
-
-        function startQuiz() { switchView('view-quiz'); renderQ(); }
-        function renderQ() {
-            const q = quizQs[qIdx];
-            document.getElementById('q-counter').innerText = (qIdx+1) + "/4";
-            document.getElementById('q-txt').innerText = q.t;
-            document.getElementById('q-bar').style.width = ((qIdx+1)/4)*100 + "%";
-            let h = ''; q.opts.forEach(o => { h += `<div class="btn btn-outline" style="justify-content:flex-start;" onclick="nextQ(${o.v})">${o.t}</div>`; });
-            document.getElementById('q-opts').innerHTML = h;
-        }
-        
-        function nextQ(v) {
-            answers.push(v); qIdx++;
-            if(qIdx < quizQs.length) renderQ();
-            else {
-                let s = answers.reduce((a,b)=>a+b,0), p = s < 6 ? 'Cauteloso Digital' : (s > 10 ? 'Arquitecto de Prompts' : 'Explorador Curioso');
-                currentUser.perfil = p;
-                callBackend('saveTest', {email: currentUser.email, respuestas: answers, perfil: p});
-                document.getElementById('p-name').innerText = p;
-                switchView('view-reveal');
-            }
-        }
-
-        function goToDashboard() {
-            switchView('view-home');
-            document.getElementById('navbar').style.display = 'flex';
-            document.getElementById('user-name').innerText = currentUser.nombre;
-            document.getElementById('xp-val').innerText = currentUser.xp;
-            document.getElementById('bot-trigger-priv').classList.remove('hidden');
-            if(currentUser.rol === 'student') {
-                document.getElementById('student-dash').classList.remove('hidden');
-                renderMissions();
-                callBackend('readMessages', {perfil: currentUser.perfil}).then(showMsgs);
-            } else {
-                document.getElementById('teacher-dash').classList.remove('hidden');
-                callBackend('getStats').then(showStats);
-            }
-        }
-
-        function renderMissions() {
-            document.getElementById('resources-list').innerHTML = `
-                <div class="solid-card bg-green" onclick="openM('prompt')">
-                    <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h3>Prompting PRO</h3> <i class="fa-solid fa-chevron-right"></i>
-                    </div>
-                    <p style="font-size:0.9rem; opacity:0.9;">Aprende a pedir para recibir.</p>
-                </div>
-                <div class="solid-card bg-blue" onclick="openM('perplexity')">
-                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h3>Investigación Real</h3> <i class="fa-solid fa-chevron-right"></i>
-                    </div>
-                    <p style="font-size:0.9rem; opacity:0.9;">Cita fuentes sin errores.</p>
-                </div>
-                <div class="solid-card bg-orange" onclick="openM('alucina')">
-                     <div style="display:flex; justify-content:space-between; align-items:center;">
-                        <h3>Cazador de Fakes</h3> <i class="fa-solid fa-chevron-right"></i>
-                    </div>
-                    <p style="font-size:0.9rem; opacity:0.9;">No dejes que la IA te engañe.</p>
-                </div>`;
-        }
-
-        function openM(id) {
-            currentMissionKey = id; 
-            const l = lessons[id];
-            document.getElementById('m-title').innerText = l.t;
-            document.getElementById('m-icon').className = `${l.icon} modal-icon-lg`;
-            document.getElementById('m-desc').innerHTML = l.d;
-            document.getElementById('ai-example-box').style.display = 'none'; 
-            document.getElementById('btn-gen-ex').classList.remove('hidden');
-            document.getElementById('completion-area').classList.add('hidden');
-            document.getElementById('mission-modal').style.display = 'flex';
-        }
-
-        // --- CORRECCIÓN CLAVE PARA RECIBIR EL OBJETO {text: ...} ---
-        function generateAIExample() {
-            document.getElementById('btn-gen-ex').classList.add('hidden');
-            document.getElementById('ai-example-box').style.display = 'block';
-            document.getElementById('loader-ai').classList.remove('hidden');
-            callBackend('genExample', {tema: lessons[currentMissionKey].topic}).then(res => {
-                document.getElementById('loader-ai').classList.add('hidden');
-                // Ahora lee correctamente res.text del objeto enviado por el GS corregido
-                if (res && res.text) {
-                    document.getElementById('ai-example-content').innerHTML = marked.parse(res.text);
-                    document.getElementById('completion-area').classList.remove('hidden');
-                } else {
-                    document.getElementById('ai-example-content').innerText = "Error al generar el ejemplo.";
-                }
-            });
-        }
-
-        function completeMission() {
-            closeModal('mission-modal');
-            callBackend('addXP', {email: currentUser.email, actividad: "Misión "+currentMissionKey, puntos: 15}).then(resXP => {
-                currentUser.xp = resXP; document.getElementById('xp-val').innerText = resXP; showToastXP(15);
-            });
-        }
-
-        function openNews(id) {
-            const n = newsData[id];
-            document.getElementById('n-tag').innerText = n.tag;
-            document.getElementById('n-title').innerText = n.title;
-            document.getElementById('n-body').innerHTML = n.body;
-            document.getElementById('news-modal').style.display = 'flex';
-        }
-
-        function closeModal(id) { document.getElementById(id).style.display = 'none'; }
-
-        function toggleBot(mode) { 
-            document.getElementById('bot-overlay').style.display = 'flex';
-            setTimeout(() => document.getElementById('bot-overlay').style.opacity = '1', 10);
-            if(mode === 'private' && chatHistory.length === 0) {
-                document.getElementById('chat-feed').innerHTML = `<div class="msg msg-bot">Hola <strong>${currentUser.nombre}</strong>, soy tu Mentor IA.</div>`;
-            }
-        }
-
-        function closeBot() { document.getElementById('bot-overlay').style.display = 'none'; }
-        function quickChat(txt) { document.getElementById('chat-input').value = txt; sendToJamba(); }
-
-        function sendToJamba() {
-            const input = document.getElementById('chat-input'), txt = input.value;
-            if(!txt) return;
-            const chat = document.getElementById('chat-feed');
-            chat.innerHTML += `<div class="msg msg-user fade-in">${txt}</div>`;
-            input.value = ''; document.getElementById('typing-indicator').style.display = 'block';
-            chatHistory.push({ "role": "user", "content": txt });
-            callBackend('chat', {history: chatHistory.slice(-8), email: currentUser.email, perfil: currentUser.perfil}).then(res => {
-                document.getElementById('typing-indicator').style.display = 'none';
-                if(res.success) {
-                    chat.innerHTML += `<div class="msg msg-bot fade-in">${marked.parse(res.text)}</div>`;
-                    chatHistory.push({ "role": "assistant", "content": res.text });
-                    if(res.xpGranted) { 
-                        currentUser.xp += 40; 
-                        document.getElementById('xp-val').innerText = currentUser.xp; 
-                        showToastXP(40); 
-                    }
-                }
-                chat.scrollTop = chat.scrollHeight;
-            });
-        }
-
-        function showMsgs(msgs) {
-            let h = ''; msgs.forEach(m => h+=`<div class="card" style="border-left:5px solid var(--v-blue);">${m.texto}</div>`);
-            document.getElementById('teacher-msgs').innerHTML = h || '<div style="text-align:center; padding:20px; color:var(--v-gray); background:white; border-radius:16px;">Sin novedades hoy.</div>';
-        }
-
-        function showStats(st) {
-            document.getElementById('admin-total').innerText = st.total;
-            document.getElementById('admin-avg').innerText = st.avgXP;
-        }
-
-        function postAdvice() {
-            const msg = document.getElementById('admin-msg').value, fil = document.getElementById('admin-filter').value;
-            if(!msg) return;
-            callBackend('postMsg', {tipo:"CONSEJO", email: currentUser.email, mensaje: msg, filtro: fil}).then(res => {
-                if(res.success) { alert("Publicado con éxito."); document.getElementById('admin-msg').value = ''; }
-            });
-        }
-
-        function switchView(id) {
-            document.querySelectorAll('.container').forEach(v=>{ v.classList.add('hidden'); });
-            document.getElementById(id).classList.remove('hidden');
-        }
-
-        function nav(d, el) { 
-            document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
-            el.classList.add('active');
-            d==='home' ? goToDashboard() : switchView('view-impact');
-        }
-    </script>
+    <script src="script.js"></script>
 </body>
 </html>
