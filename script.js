@@ -1,9 +1,17 @@
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbwlr79W34FnrB1e6DyLLYBOQIHkF833P5G7_xShFG32mn0fwrmgE9Lu-tD81-5GPH0/exec"; 
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzan2eDiB7-QXGNCgRptJA6CbY7kGtsGNLz5g69bkVCs-qYna1RbpzPfa7SRqmX_cJH/exec"; 
 
 let currentUser = { email:'', rol:'', xp:0, perfil:'', nombre:'' };
 let authMode = 'login', qIdx = 0, answers = [], currentMissionKey = '', chatHistory = [];
+let currentChatMode = 'mentor'; 
 
-// --- DATOS ---
+window.onload = function() {
+    setTimeout(() => {
+        const splash = document.getElementById('splash-screen');
+        splash.classList.add('splash-hidden');
+        setTimeout(() => splash.style.display = 'none', 800);
+    }, 2500); 
+};
+
 const quizQs = [
     {t:"¿Cuánto conoces de IA?", opts:[{t:"He creado mis propios GPTs",v:3},{t:"Lo uso para resumir textos",v:2},{t:"Solo he oído hablar de ello",v:1}]},
     {t:"¿Confías en las respuestas de la IA?", opts:[{t:"Siempre verifico fuentes",v:3},{t:"A veces dudo",v:2},{t:"Confío ciegamente",v:1}]},
@@ -37,8 +45,6 @@ const newsData = {
     'deepfake': { tag:'SEGURIDAD', color:'bg-orange', title:'Auge de los Deepfakes', body:'<p>Las nuevas herramientas de IA permiten clonar voces en solo 3 segundos. Es vital establecer palabras clave de seguridad con familiares y nunca confiar en peticiones de dinero por audio o video sin verificación secundaria.</p>' }
 };
 
-// --- LOGICA ---
-
 async function callBackend(action, data = {}) {
     const body = { action: action, ...data };
     try {
@@ -60,15 +66,11 @@ function resetAuthUI() {
 }
 
 async function handleGuestLogin() {
-    // Pantalla de carga
     document.getElementById('guest-loader').classList.remove('hidden');
     const textElem = document.getElementById('guest-loader-text');
-
     setTimeout(() => { textElem.innerText = "Configurando acceso..."; }, 1500);
     setTimeout(() => { textElem.innerText = "Personalizando entorno..."; }, 3000);
-
     const res = await callBackend('loginGuest');
-    
     setTimeout(() => {
         document.getElementById('guest-loader').classList.add('hidden');
         if(res.success) onLogin(res);
@@ -121,10 +123,12 @@ function goToDashboard() {
     document.getElementById('user-name').innerText = currentUser.nombre;
     document.getElementById('xp-val').innerText = currentUser.xp;
     
-    // MOSTRAR TUTORIAL (MODAL)
-    document.getElementById('welcome-modal').style.display = 'flex';
+    setTimeout(() => {
+        const modal = document.getElementById('welcome-modal');
+        modal.classList.remove('hidden'); 
+        modal.style.display = 'flex'; 
+    }, 500);
     
-    // BOT CHAT LISTO
     const botBtn = document.getElementById('bot-trigger-priv');
     botBtn.classList.remove('hidden');
     
@@ -141,24 +145,20 @@ function goToDashboard() {
     }
 }
 
-// --- LOGICA DEL TUTORIAL ANIMADO (2 PASOS) ---
 function animateTutorialStep() {
     const step1 = document.getElementById('tut-step-1');
     const step2 = document.getElementById('tut-step-2');
-
-    // 1. Deslizar Paso 1 hacia afuera
     step1.classList.add('slide-out-left');
-
     setTimeout(() => {
-        step1.classList.add('hidden'); // Ocultar Paso 1
-        step2.classList.remove('hidden'); // Mostrar Paso 2
-        step2.classList.add('slide-in-right'); // Deslizar Paso 2 hacia adentro
-    }, 280); // Esperar a que termine la animación de salida
+        step1.classList.add('hidden'); 
+        step2.classList.remove('hidden'); 
+        step2.classList.add('slide-in-right'); 
+    }, 280); 
 }
 
 function startGenIATutorial() {
     document.getElementById('welcome-modal').style.display = 'none'; 
-    toggleBot('private'); // Acción final: Abrir Chat
+    toggleBot('private'); 
 }
 
 function renderMissions() {
@@ -187,16 +187,17 @@ function openM(id) {
     currentMissionKey = id; const l = lessons[id];
     document.getElementById('m-title').innerText = l.t;
     document.getElementById('m-icon').className = `${l.icon} modal-icon-lg`;
-    document.getElementById('m-desc').innerHTML = l.d;
-    document.getElementById('ai-example-box').style.display = 'none'; 
+    document.getElementById('m-desc').innerHTML = marked.parse(l.d);
+    document.getElementById('ai-example-box').classList.add('hidden');
     document.getElementById('btn-gen-ex').classList.remove('hidden');
     document.getElementById('completion-area').classList.add('hidden');
+    document.getElementById('mission-modal').classList.remove('hidden');
     document.getElementById('mission-modal').style.display = 'flex';
 }
 
 async function generateAIExample() {
     document.getElementById('btn-gen-ex').classList.add('hidden');
-    document.getElementById('ai-example-box').style.display = 'block';
+    document.getElementById('ai-example-box').classList.remove('hidden');
     document.getElementById('loader-ai').classList.remove('hidden');
     const res = await callBackend('genExample', {tema: lessons[currentMissionKey].topic});
     document.getElementById('loader-ai').classList.add('hidden');
@@ -212,16 +213,84 @@ async function completeMission() {
     currentUser.xp = resXP; document.getElementById('xp-val').innerText = resXP; showToastXP(15);
 }
 
-// --- CHATBOT ---
+// --- LOGICA DEL CHAT Y CAMBIO DE MODO ---
+
+function setChatMode(mode) {
+    if(mode === currentChatMode) return;
+    currentChatMode = mode;
+    document.querySelectorAll('.mode-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById(`btn-mode-${mode}`).classList.add('active');
+    
+    const chips = document.getElementById('quick-chips');
+    const chat = document.getElementById('chat-feed');
+
+    if(mode === 'libre') {
+        chips.innerHTML = `
+            <button class="chat-chip" onclick="quickChat('Genera una tabla comparativa sobre...')">📊 Tabla</button>
+            <button class="chat-chip" onclick="quickChat('Dame un formato de cita APA para...')">📝 Cita APA</button>
+            <button class="chat-chip" onclick="quickChat('Explícame en detalle qué es...')">🧠 Profundizar</button>
+        `;
+        chat.innerHTML += `<div class="msg-system system-libre fade-in">✨ Modo <strong>LIBRE</strong> activado</div>`;
+        sendHiddenTrigger(`[SISTEMA: El usuario ha cambiado al modo LIBRE. Actúa ahora como un INVESTIGADOR ACADÉMICO SERIO. Saluda formalmente y pregunta en qué investigación puedes ayudar.]`);
+
+    } else {
+        chips.innerHTML = `
+            <button class="chat-chip" onclick="quickChat('Dame un reto sobre Prompting')">🎯 Reto Prompting</button>
+            <button class="chat-chip" onclick="quickChat('Explícame qué es una Alucinación')">👻 Alucinaciones</button>
+            <button class="chat-chip" onclick="quickChat('¿Cómo uso Perplexity?')">🔍 Perplexity</button>
+        `;
+        chat.innerHTML += `<div class="msg-system system-mentor fade-in">🎓 Modo <strong>MENTOR</strong> activado</div>`;
+        sendHiddenTrigger(`[SISTEMA: El usuario ha cambiado al modo MENTOR. Actúa ahora como un MENTOR GAMIFICADO ENÉRGICO. Saluda con entusiasmo, recuérdale que ganará XP y proponle un reto rápido para empezar.]`);
+    }
+}
+
+async function sendHiddenTrigger(hiddenText) {
+    lockInput(true);
+    document.getElementById('typing-indicator').classList.remove('hidden');
+    const chat = document.getElementById('chat-feed');
+    chat.scrollTop = chat.scrollHeight;
+
+    chatHistory.push({ "role": "user", "content": hiddenText });
+    
+    const res = await callBackend('chat', {
+        history: chatHistory.slice(-6), 
+        email: currentUser.email, 
+        perfil: currentUser.perfil,
+        mode: currentChatMode 
+    });
+    
+    lockInput(false);
+    document.getElementById('typing-indicator').classList.add('hidden');
+    if(res.success) {
+        chat.innerHTML += `<div class="msg msg-bot fade-in">${marked.parse(res.text)}</div>`;
+        chatHistory.push({ "role": "assistant", "content": res.text });
+        chat.scrollTop = chat.scrollHeight;
+    }
+}
+
+function lockInput(state) {
+    const input = document.getElementById('chat-input');
+    const btn = document.getElementById('btn-send');
+    if(state) {
+        input.disabled = true;
+        btn.disabled = true;
+        input.placeholder = "Esperando respuesta...";
+    } else {
+        input.disabled = false;
+        btn.disabled = false;
+        input.placeholder = "Pregunta sobre IA...";
+        input.focus();
+    }
+}
+
 function toggleBot(mode) { 
-    // Limpieza de efectos
     document.getElementById('bot-callout').classList.add('hidden');
-    // Quitar glow si existe
     const btn = document.getElementById('bot-trigger-priv');
     if(btn) btn.classList.remove('bot-highlight');
-
+    
     document.getElementById('bot-overlay').style.display = 'flex';
     setTimeout(() => document.getElementById('bot-overlay').style.opacity = '1', 10);
+    
     if(chatHistory.length === 0) {
         document.getElementById('chat-feed').innerHTML = `<div class="msg msg-bot fade-in">¡Hola <strong>${currentUser.nombre}</strong>! Soy tu Mentor IA. ¿Qué quieres aprender hoy?</div>`;
     }
@@ -230,29 +299,47 @@ function toggleBot(mode) {
 async function sendToJamba() {
     const input = document.getElementById('chat-input'), txt = input.value;
     if(!txt) return;
+    
     const chat = document.getElementById('chat-feed');
-    chat.innerHTML += `<div class="msg msg-user fade-in">${txt}</div>`;
+    
+    chat.innerHTML += `<div class="msg msg-user fade-in">${marked.parse(txt)}</div>`;
+    
     input.value = ''; 
-    document.getElementById('typing-indicator').classList.remove('hidden'); // Mostrar indicador visual
+    lockInput(true);
+    document.getElementById('typing-indicator').classList.remove('hidden');
+    chat.scrollTop = chat.scrollHeight;
+
     chatHistory.push({ "role": "user", "content": txt });
     
-    const res = await callBackend('chat', {history: chatHistory.slice(-6), email: currentUser.email, perfil: currentUser.perfil});
-    document.getElementById('typing-indicator').classList.add('hidden'); // Ocultar indicador
+    const res = await callBackend('chat', {
+        history: chatHistory.slice(-6), 
+        email: currentUser.email, 
+        perfil: currentUser.perfil,
+        mode: currentChatMode 
+    });
+    
+    lockInput(false);
+    document.getElementById('typing-indicator').classList.add('hidden');
+    
     if(res.success) {
         chat.innerHTML += `<div class="msg msg-bot fade-in">${marked.parse(res.text)}</div>`;
         chatHistory.push({ "role": "assistant", "content": res.text });
         if(res.xpGranted) { currentUser.xp += 40; document.getElementById('xp-val').innerText = currentUser.xp; showToastXP(40); }
+    } else {
+        chat.innerHTML += `<div class="msg msg-bot fade-in" style="color:red;">Error de conexión.</div>`;
     }
     chat.scrollTop = chat.scrollHeight;
 }
 
-// --- UTILIDADES ---
 function loading(s, msg = "Cargando...") { 
     document.getElementById('loading-modal').style.display = s ? 'flex' : 'none'; 
     if(s) document.getElementById('loading-text').innerText = msg;
 }
 function switchView(id) { document.querySelectorAll('.container-view').forEach(v=>v.classList.add('hidden')); document.getElementById(id).classList.remove('hidden'); }
-function closeModal(id) { document.getElementById(id).style.display = 'none'; }
+function closeModal(id) { 
+    document.getElementById(id).classList.add('hidden'); 
+    document.getElementById(id).style.display = 'none'; 
+}
 function closeBot() { document.getElementById('bot-overlay').style.display = 'none'; }
 function quickChat(t) { document.getElementById('chat-input').value = t; sendToJamba(); }
 function nav(d, el) { document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active')); el.classList.add('active'); d==='home' ? goToDashboard() : switchView('view-impact'); }
@@ -261,6 +348,7 @@ function openNews(id) {
     document.getElementById('n-tag').innerText = n.tag;
     document.getElementById('n-title').innerText = n.title;
     document.getElementById('n-body').innerHTML = n.body;
+    document.getElementById('news-modal').classList.remove('hidden');
     document.getElementById('news-modal').style.display = 'flex';
 }
 function showMsgs(msgs) {
