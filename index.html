@@ -63,12 +63,12 @@
             </div>
 
             <!-- BOTÓN INVITADO -->
-            <div class="guest-card-colored pulse-premium" onclick="handleGuestLogin()">
+            <div class="guest-card-colored pulse-premium" onclick="startGuestFlow()">
                 <div class="guest-info">
                     <div class="icon-circle"><i class="fa-solid fa-bolt"></i></div>
                     <div class="text-box-light">
                         <h3>Entrar como Invitado</h3>
-                        <p>Acceso rápido sin registro</p>
+                        <p>Acceso rápido (Sin contraseña)</p>
                     </div>
                 </div>
                 <i class="fa-solid fa-arrow-right arrow-light"></i>
@@ -97,19 +97,24 @@
         <!-- 2. ROL SELECTION -->
         <div id="view-role" class="container-view hidden fade-in">
             <h2 class="title-center">Elige tu Camino</h2>
-            <div class="solid-card bg-blue role-card" onclick="finishRegister('student')">
+            <!-- ROL ESTUDIANTE -->
+            <div class="solid-card bg-blue role-card" onclick="handleRoleSelection('student')">
                 <i class="fa-solid fa-user-graduate icon-role"></i>
                 <h2>Soy Estudiante</h2>
                 <p>Quiero aprender y ganar XP.</p>
             </div>
-            <div class="solid-card bg-purple role-card" onclick="finishRegister('admin')">
+            <!-- ROL DOCENTE: Ahora envía 'docente' -->
+            <div class="solid-card bg-purple role-card" onclick="handleRoleSelection('docente')">
                 <i class="fa-solid fa-chalkboard-user icon-role"></i>
                 <h2>Soy Docente</h2>
-                <p>Gestionar aula y monitorear.</p>
+                <p>Quiero usar la IA para mis clases.</p>
+            </div>
+            <div style="text-align:center;">
+                <button class="btn btn-ghost" onclick="switchView('view-auth')">Volver</button>
             </div>
         </div>
 
-        <!-- 3. QUIZ -->
+        <!-- 3. QUIZ (TODOS PASAN POR AQUI) -->
         <div id="view-quiz" class="container-view hidden fade-in">
             <div class="quiz-container">
                 <div class="quiz-header">
@@ -138,7 +143,7 @@
             <button class="btn btn-primary" onclick="goToDashboard()">Comenzar Aventura</button>
         </div>
 
-        <!-- 5. DASHBOARD HOME -->
+        <!-- 5. DASHBOARD HOME (UNIFICADO) -->
         <div id="view-home" class="container-view hidden fade-in">
             <div class="user-header">
                 <div>
@@ -151,8 +156,8 @@
                 </div>
             </div>
 
-            <!-- Panel Estudiante -->
-            <div id="student-dash" class="hidden">
+            <!-- DASHBOARD UNIFICADO PARA TODOS -->
+            <div id="main-dash">
                 <h3 class="section-title"><i class="fa-regular fa-newspaper"></i> Novedades</h3>
                 <div class="news-scroll">
                     <div class="solid-card bg-purple news-card" onclick="openNews('gemini')">
@@ -167,35 +172,11 @@
                     </div>
                 </div>
 
-                <h3 class="section-title"><i class="fa-solid fa-toolbox"></i> Tus Misiones</h3>
+                <h3 class="section-title"><i class="fa-solid fa-toolbox"></i> Misiones IA</h3>
                 <div id="resources-list" class="grid-misiones"></div>
                 
-                <h3 class="section-title-feed"><i class="fa-solid fa-chalkboard-user"></i> Feed Docente</h3>
+                <h3 class="section-title-feed"><i class="fa-solid fa-chalkboard-user"></i> Feed Comunidad</h3>
                 <div id="teacher-msgs"></div>
-            </div>
-
-            <!-- Panel Docente -->
-            <div id="teacher-dash" class="hidden">
-                <div class="grid-stats">
-                    <div class="card center-text">
-                        <h1 id="admin-total" class="stat-num color-blue">0</h1>
-                        <small>Estudiantes</small>
-                    </div>
-                    <div class="card center-text">
-                        <h1 id="admin-avg" class="stat-num color-green">0</h1>
-                        <small>XP Promedio</small>
-                    </div>
-                </div>
-                <h3 class="section-title">Publicar Anuncio</h3>
-                <div class="card">
-                    <textarea id="admin-msg" class="input-field" placeholder="Escribe un consejo..." rows="3"></textarea>
-                    <select id="admin-filter" class="input-field">
-                        <option value="Todos">Todos</option>
-                        <option value="Cauteloso">Cautelosos</option>
-                        <option value="Explorador">Exploradores</option>
-                    </select>
-                    <button class="btn btn-primary" onclick="postAdvice()">Publicar</button>
-                </div>
             </div>
 
             <div id="bot-trigger-priv" class="bot-trigger bot-private hidden" onclick="toggleBot('private')">
