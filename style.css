@@ -187,7 +187,7 @@ body { background-color: var(--bg); color: var(--v-dark); height: 100vh; display
 .system-mentor { background: var(--v-blue-light); color: var(--v-blue); }
 .system-libre { background: #CCFBF1; color: #0F766E; }
 
-/* MARKDOWN STYLES (CORREGIDO: PRE CLARO Y BLOCKQUOTE VERDE MENTA) */
+/* MARKDOWN STYLES */
 .msg-bot blockquote, .markdown-content blockquote {
     border-left: 4px solid #10B981;
     background-color: #ECFDF5;
@@ -202,7 +202,6 @@ body { background-color: var(--bg); color: var(--v-dark); height: 100vh; display
 .msg-bot th, .markdown-content th { border: 1px solid #E2E8F0; padding: 12px; text-align: left; background: #F1F5F9; color: var(--v-blue); font-weight: 700; }
 .msg-bot td, .markdown-content td { border: 1px solid #E2E8F0; padding: 12px; text-align: left; }
 
-/* LA CLAVE: PRE CLARO PARA QUE NO SE VEA OSCURO HACKER */
 .msg-bot pre, .markdown-content pre { 
     background: #F8FAFC; 
     color: #1E293B; 
