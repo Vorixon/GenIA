@@ -1,8 +1,11 @@
-const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbzan2eDiB7-QXGNCgRptJA6CbY7kGtsGNLz5g69bkVCs-qYna1RbpzPfa7SRqmX_cJH/exec"; 
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbx37SLKtwxzXHQJS7Bm0_5XDQ-A4arFfFXSl__fVWi_uZoLk6MXLhclm_oTyCMj31KIHQ/exec"; 
 
 let currentUser = { email:'', rol:'', xp:0, perfil:'', nombre:'' };
 let authMode = 'login', qIdx = 0, answers = [], currentMissionKey = '', chatHistory = [];
 let currentChatMode = 'mentor'; 
+
+// VARIABLE PARA CONTROLAR EL FLUJO
+let isGuestFlow = false;
 
 window.onload = function() {
     setTimeout(() => {
@@ -65,35 +68,85 @@ function resetAuthUI() {
     document.getElementById('form-container').classList.add('hidden');
 }
 
-async function handleGuestLogin() {
+// 1. EL INVITADO INICIA EL FLUJO -> VA A ELEGIR ROL
+function startGuestFlow() {
+    isGuestFlow = true;
+    switchView('view-role');
+}
+
+// 2. MANEJA LA SELECCIÓN DE ROL (SIRVE PARA INVITADO Y REGISTRO)
+function handleRoleSelection(rol) {
+    if (isGuestFlow) {
+        completeGuestLogin(rol);
+    } else {
+        finishRegister(rol);
+    }
+}
+
+// 3. FINALIZA EL LOGIN DE INVITADO CON EL ROL ELEGIDO
+async function completeGuestLogin(rol) {
     document.getElementById('guest-loader').classList.remove('hidden');
     const textElem = document.getElementById('guest-loader-text');
+    
+    // Texto personalizado según rol
+    const rolTxt = rol === 'student' ? 'Estudiante' : 'Docente';
+    textElem.innerText = `Ingresando como ${rolTxt}...`;
+    
     setTimeout(() => { textElem.innerText = "Configurando acceso..."; }, 1500);
-    setTimeout(() => { textElem.innerText = "Personalizando entorno..."; }, 3000);
-    const res = await callBackend('loginGuest');
+    
+    // Llamada al backend pasando el ROL
+    const res = await callBackend('loginGuest', { rol: rol });
+    
     setTimeout(() => {
         document.getElementById('guest-loader').classList.add('hidden');
         if(res.success) onLogin(res);
-    }, 4500);
+    }, 4000);
 }
 
 async function handleAuth() {
     const email = document.getElementById('in-email').value, pass = document.getElementById('in-pass').value;
     if(!email || !pass) return alert("Completa los campos");
+    
     loading(true, "Verificando...");
-    if(authMode === 'login') callBackend('login', {email, pass}).then(onLogin);
-    else { currentUser.email = email; currentUser.pass = pass; currentUser.nombre = document.getElementById('in-name').value; loading(false); switchView('view-role'); }
+    
+    if(authMode === 'login') {
+        callBackend('login', {email, pass}).then(onLogin);
+    } else {
+        // MODO REGISTRO: Guardamos datos y vamos a selección de rol
+        currentUser.email = email; 
+        currentUser.pass = pass; 
+        currentUser.nombre = document.getElementById('in-name').value; 
+        loading(false); 
+        
+        isGuestFlow = false; // Importante: NO es flujo invitado
+        switchView('view-role'); 
+    }
 }
 
 async function finishRegister(rol) {
-    loading(true, "Configurando cuenta...");
+    loading(true, "Creando cuenta...");
     const res = await callBackend('register', { ...currentUser, rol: rol });
     loading(false);
-    if(res.error) alert(res.error); else { currentUser = res; if(rol==='student') startQuiz(); else { currentUser.perfil = 'Profesor'; goToDashboard(); } }
+    if(res.error) {
+        alert(res.error); 
+    } else { 
+        currentUser = res; 
+        // TODOS van al quiz si son Pendiente
+        if(res.perfil === 'Pendiente') startQuiz(); 
+        else goToDashboard(); 
+    }
 }
 
 function onLogin(res) {
-    loading(false); if(res.error) alert(res.error); else { currentUser = res; if(res.perfil === 'Pendiente' && res.rol === 'student') startQuiz(); else goToDashboard(); }
+    loading(false); 
+    if(res.error) {
+        alert(res.error); 
+    } else { 
+        currentUser = res; 
+        // TODOS van al quiz si son Pendiente
+        if(res.perfil === 'Pendiente') startQuiz(); 
+        else goToDashboard(); 
+    }
 }
 
 function startQuiz() { switchView('view-quiz'); renderQ(); }
@@ -132,17 +185,9 @@ function goToDashboard() {
     const botBtn = document.getElementById('bot-trigger-priv');
     botBtn.classList.remove('hidden');
     
-    if(currentUser.rol === 'student') {
-        document.getElementById('student-dash').classList.remove('hidden');
-        renderMissions();
-        callBackend('readMessages', {perfil: currentUser.perfil}).then(showMsgs);
-    } else {
-        document.getElementById('teacher-dash').classList.remove('hidden');
-        callBackend('getStats').then(st => {
-            document.getElementById('admin-total').innerText = st.total || 0;
-            document.getElementById('admin-avg').innerText = st.avgXP || 0;
-        });
-    }
+    // AQUÍ ESTÁ LA SIMPLIFICACIÓN: TODOS VEN LO MISMO
+    renderMissions();
+    callBackend('readMessages', {perfil: currentUser.perfil}).then(showMsgs);
 }
 
 function animateTutorialStep() {
