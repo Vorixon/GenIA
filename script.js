@@ -24,19 +24,19 @@ const quizQs = [
 
 const lessons = {
     'prompt': { 
-        icon: 'fa-solid fa-terminal', 
+        icon: '', 
         t:'Ingeniería de Prompts', 
         d:'<p>La IA no lee tu mente. Para obtener resultados brillantes, deja de darle órdenes simples. Usa la fórmula <strong>C.O.F.</strong>:</p><ul><li><strong>C</strong>ontexto: ¿Quién eres tú y quién es la IA?</li><li><strong>O</strong>bjetivo: ¿Qué quieres lograr exactamente?</li><li><strong>F</strong>ormato: ¿Cómo quieres recibir la información (tabla, lista, código)?</li></ul>', 
         topic: 'Fórmula de Prompting COF' 
     },
     'perplexity': { 
-        icon: 'fa-solid fa-magnifying-glass-chart', 
+        icon: '', 
         t:'Investigación Verificada', 
         d:'<p>ChatGPT alucina con frecuencia porque no tiene acceso real a la web actualizada. Usa <strong>Perplexity.ai</strong> para investigaciones académicas; este motor cita fuentes reales y enlaces verificables.</p>', 
         topic: 'Diferencia entre ChatGPT y Perplexity' 
     },
     'alucina': { 
-        icon: 'fa-solid fa-ghost', 
+        icon: '', 
         t:'Detector de Alucinaciones', 
         d:'<p>Las alucinaciones son datos falsos presentados con total seguridad por la IA. Para combatirlas, nunca copies datos biográficos, fechas o leyes sin verificar. <strong>Regla de oro:</strong> Si la IA te da una cita bibliográfica, búscala en Google Académico antes de usarla.</p>', 
         topic: 'Ejemplo de alucinación de IA' 
@@ -210,19 +210,19 @@ function renderMissions() {
     document.getElementById('resources-list').innerHTML = `
         <div class="solid-card bg-green" onclick="openM('prompt')">
             <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h3>Prompting PRO</h3> <i class="fa-solid fa-chevron-right"></i>
+                <h3>Prompting PRO</h3>
             </div>
             <p style="font-size:0.9rem; opacity:0.9;">Aprende C.O.F.</p>
         </div>
         <div class="solid-card bg-blue" onclick="openM('perplexity')">
              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h3>Investigación Real</h3> <i class="fa-solid fa-chevron-right"></i>
+                <h3>Investigación Real</h3>
             </div>
             <p style="font-size:0.9rem; opacity:0.9;">Fuentes verificadas.</p>
         </div>
         <div class="solid-card bg-orange" onclick="openM('alucina')">
              <div style="display:flex; justify-content:space-between; align-items:center;">
-                <h3>Cazador de Fakes</h3> <i class="fa-solid fa-chevron-right"></i>
+                <h3>Cazador de Fakes</h3>
             </div>
             <p style="font-size:0.9rem; opacity:0.9;">Detecta alucinaciones.</p>
         </div>`;
@@ -231,7 +231,7 @@ function renderMissions() {
 function openM(id) {
     currentMissionKey = id; const l = lessons[id];
     document.getElementById('m-title').innerText = l.t;
-    document.getElementById('m-icon').className = `${l.icon} modal-icon-lg`;
+    // Eliminado el icono para Indecopi
     document.getElementById('m-desc').innerHTML = marked.parse(l.d);
     document.getElementById('ai-example-box').classList.add('hidden');
     document.getElementById('btn-gen-ex').classList.remove('hidden');
@@ -271,21 +271,21 @@ function setChatMode(mode) {
 
     if(mode === 'libre') {
         chips.innerHTML = `
-            <button class="chat-chip" onclick="quickChat('Genera una tabla comparativa sobre...')">📊 Tabla</button>
-            <button class="chat-chip" onclick="quickChat('Dame un formato de cita APA para...')">📝 Cita APA</button>
-            <button class="chat-chip" onclick="quickChat('Explícame en detalle qué es...')">🧠 Profundizar</button>
+            <button class="chat-chip" onclick="quickChat('Genera una tabla comparativa sobre...')">Tabla</button>
+            <button class="chat-chip" onclick="quickChat('Dame un formato de cita APA para...')">Cita APA</button>
+            <button class="chat-chip" onclick="quickChat('Explícame en detalle qué es...')">Profundizar</button>
         `;
-        chat.innerHTML += `<div class="msg-system system-libre fade-in">✨ Modo <strong>LIBRE</strong> activado</div>`;
-        sendHiddenTrigger(`[SISTEMA: El usuario ha cambiado al modo LIBRE. Actúa ahora como un INVESTIGADOR ACADÉMICO SERIO. Saluda formalmente y pregunta en qué investigación puedes ayudar.]`);
+        chat.innerHTML += `<div class="msg-system system-libre fade-in">Modo <strong>LIBRE</strong> activado</div>`;
+        sendHiddenTrigger(`[SISTEMA: El usuario ha cambiado al modo LIBRE. Actúa ahora como un INVESTIGADOR ACADÉMICO SERIO. Saluda formalmente y pregunta en qué investigación puedes ayudar sin usar emojis.]`);
 
     } else {
         chips.innerHTML = `
-            <button class="chat-chip" onclick="quickChat('Dame un reto sobre Prompting')">🎯 Reto Prompting</button>
-            <button class="chat-chip" onclick="quickChat('Explícame qué es una Alucinación')">👻 Alucinaciones</button>
-            <button class="chat-chip" onclick="quickChat('¿Cómo uso Perplexity?')">🔍 Perplexity</button>
+            <button class="chat-chip" onclick="quickChat('Dame un reto sobre Prompting')">Reto Prompting</button>
+            <button class="chat-chip" onclick="quickChat('Explícame qué es una Alucinación')">Alucinaciones</button>
+            <button class="chat-chip" onclick="quickChat('¿Cómo uso Perplexity?')">Perplexity</button>
         `;
-        chat.innerHTML += `<div class="msg-system system-mentor fade-in">🎓 Modo <strong>MENTOR</strong> activado</div>`;
-        sendHiddenTrigger(`[SISTEMA: El usuario ha cambiado al modo MENTOR. Actúa ahora como un MENTOR GAMIFICADO ENÉRGICO. Saluda con entusiasmo, recuérdale que ganará XP y proponle un reto rápido para empezar.]`);
+        chat.innerHTML += `<div class="msg-system system-mentor fade-in">Modo <strong>MENTOR</strong> activado</div>`;
+        sendHiddenTrigger(`[SISTEMA: El usuario ha cambiado al modo MENTOR. Actúa ahora como un MENTOR GAMIFICADO ENÉRGICO. Saluda con entusiasmo, recuérdale que ganará XP y proponle un reto rápido para empezar. IMPORTANTE: NO uses ningún emoji.]`);
     }
 }
 
