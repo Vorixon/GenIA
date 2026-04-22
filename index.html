@@ -6,7 +6,6 @@
     <title>Brújula GenIA Campus</title>
     
     <!-- LIBRERÍAS -->
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
@@ -18,7 +17,7 @@
     <div id="splash-screen">
         <div class="splash-content">
             <div class="splash-logo">
-                <i class="fa-solid fa-user-astronaut"></i>
+                <span>GIA</span>
             </div>
             <h1>GenIA</h1>
             <p>Campus Virtual</p>
@@ -27,7 +26,7 @@
 
     <!-- UI GLOBAL -->
     <div id="toast-xp" class="toast-hidden">
-        <i class="fa-solid fa-star"></i> <span id="toast-msg">+15 XP Ganados</span>
+        <span id="toast-msg">+15 XP Ganados</span>
     </div>
 
     <!-- LOADER ESTÁNDAR -->
@@ -42,7 +41,7 @@
     <div id="guest-loader" class="guest-loader-overlay hidden">
         <div class="guest-loader-content">
             <div class="brand-logo-large pulse-logo">
-                <i class="fa-solid fa-user-astronaut"></i>
+                <span>GIA</span>
             </div>
             <h2 id="guest-loader-text">Personalizando entorno...</h2>
             <div class="progress-bar-loader"><div class="fill"></div></div>
@@ -56,7 +55,7 @@
         <div id="view-auth" class="container-view fade-in">
             <div class="auth-header">
                 <div class="brand-logo-main">
-                    <i class="fa-solid fa-user-astronaut"></i>
+                    <span>GIA</span>
                 </div>
                 <h1>Brújula GenIA</h1>
                 <p>Tu portal al aprendizaje de Inteligencia Artificial.</p>
@@ -65,13 +64,13 @@
             <!-- BOTÓN INVITADO -->
             <div class="guest-card-colored pulse-premium" onclick="startGuestFlow()">
                 <div class="guest-info">
-                    <div class="icon-circle"><i class="fa-solid fa-bolt"></i></div>
+                    <div class="icon-circle"><span>></span></div>
                     <div class="text-box-light">
                         <h3>Entrar como Invitado</h3>
                         <p>Acceso rápido (Sin contraseña)</p>
                     </div>
                 </div>
-                <i class="fa-solid fa-arrow-right arrow-light"></i>
+                <span class="arrow-light">></span>
             </div>
 
             <div class="divider"><span>O USA TU CUENTA</span></div>
@@ -91,7 +90,7 @@
                 </div>
             </div>
             
-            <div class="bot-trigger bot-public" onclick="toggleBot('public')"><i class="fa-solid fa-question"></i></div>
+            <div class="bot-trigger bot-public" onclick="toggleBot('public')"><span style="font-size: 1rem; font-weight: bold;">Ayuda</span></div>
         </div>
 
         <!-- 2. ROL SELECTION -->
@@ -99,13 +98,11 @@
             <h2 class="title-center">Elige tu Camino</h2>
             <!-- ROL ESTUDIANTE -->
             <div class="solid-card bg-blue role-card" onclick="handleRoleSelection('student')">
-                <i class="fa-solid fa-user-graduate icon-role"></i>
                 <h2>Soy Estudiante</h2>
                 <p>Quiero aprender y ganar XP.</p>
             </div>
             <!-- ROL DOCENTE: Ahora envía 'docente' -->
             <div class="solid-card bg-purple role-card" onclick="handleRoleSelection('docente')">
-                <i class="fa-solid fa-chalkboard-user icon-role"></i>
                 <h2>Soy Docente</h2>
                 <p>Quiero usar la IA para mis clases.</p>
             </div>
@@ -119,7 +116,6 @@
             <div class="quiz-container">
                 <div class="quiz-header">
                     <div style="display:flex; align-items:center; gap:10px;">
-                        <i class="fa-solid fa-clipboard-question"></i>
                         <b>Diagnóstico IA</b>
                     </div>
                     <span id="q-counter" class="quiz-counter-badge">1/4</span>
@@ -136,7 +132,6 @@
         <div id="view-reveal" class="container-view hidden">
             <p class="reveal-label">TU PERFIL GEN-IA ES:</p>
             <div id="profile-card" class="solid-card bg-blue slide-up profile-card-center">
-                <i id="p-icon" class="fa-solid fa-rocket profile-icon-lg"></i>
                 <h1 id="p-name">...</h1>
                 <p id="p-desc">Hemos personalizado tu ruta de aprendizaje.</p>
             </div>
@@ -147,18 +142,17 @@
         <div id="view-home" class="container-view hidden fade-in">
             <div class="user-header">
                 <div>
-                    <h2>Hola, <span id="user-name" style="color:var(--v-blue)">...</span> 👋</h2>
+                    <h2>Hola, <span id="user-name" style="color:var(--v-blue)">...</span></h2>
                     <p style="color:var(--v-gray);">Campus Virtual</p>
                 </div>
                 <div class="xp-pill">
-                    <i class="fa-solid fa-trophy"></i>
                     <span id="xp-val">0</span> <b>XP</b>
                 </div>
             </div>
 
             <!-- DASHBOARD UNIFICADO PARA TODOS -->
             <div id="main-dash">
-                <h3 class="section-title"><i class="fa-regular fa-newspaper"></i> Novedades</h3>
+                <h3 class="section-title">Novedades</h3>
                 <div class="news-scroll">
                     <div class="solid-card bg-purple news-card" onclick="openNews('gemini')">
                         <span class="badge">TENDENCIA</span>
@@ -172,7 +166,7 @@
                     </div>
                 </div>
 
-                <h3 class="section-title"><i class="fa-solid fa-toolbox"></i> Misiones IA</h3>
+                <h3 class="section-title">Misiones IA</h3>
                 <div id="resources-list" class="grid-misiones"></div>
                 
                 <h3 class="section-title-feed"><i class="fa-solid fa-chalkboard-user"></i> Feed Comunidad</h3>
@@ -180,9 +174,9 @@
             </div>
 
             <div id="bot-trigger-priv" class="bot-trigger bot-private hidden" onclick="toggleBot('private')">
-                <i class="fa-solid fa-robot"></i>
+                <span style="font-size: 1rem; font-weight: bold;">Chat</span>
                 <div id="bot-callout" class="bot-bubble-msg hidden">
-                    👋 <strong>¡Hola!</strong> Haz clic aquí.
+                    <strong>¡Hola!</strong> Haz clic aquí.
                 </div>
             </div>
         </div>
@@ -191,9 +185,9 @@
         <div id="view-impact" class="container-view hidden fade-in">
             <h2 class="section-title">Tu Evolución</h2>
             <div class="card">
-                <div class="stat-row"><span>🧠 Conocimiento</span> <span class="stars">★★★</span></div>
-                <div class="stat-row"><span>🛡️ Seguridad</span> <span class="stars">★★☆</span></div>
-                <div class="stat-row-last"><span>⚖️ Ética</span> <span class="stars">★☆☆</span></div>
+                <div class="stat-row"><span>Conocimiento</span> <span class="stars">Nivel Alto</span></div>
+                <div class="stat-row"><span>Seguridad</span> <span class="stars">Nivel Medio</span></div>
+                <div class="stat-row-last"><span>Ética</span> <span class="stars">Nivel Básico</span></div>
             </div>
             <h3 class="section-title">Historial XP</h3>
             <div class="card card-history">
@@ -207,13 +201,13 @@
     <!-- NAVBAR -->
     <nav id="navbar">
         <div class="nav-item active" onclick="nav('home', this)">
-            <i class="fa-solid fa-compass"></i><span>Inicio</span>
+            <span>Inicio</span>
         </div>
         <div class="nav-item" onclick="nav('impact', this)">
-            <i class="fa-solid fa-chart-line"></i><span>Progreso</span>
+            <span>Progreso</span>
         </div>
         <div class="nav-item" onclick="location.reload()">
-            <i class="fa-solid fa-right-from-bracket"></i><span>Salir</span>
+            <span>Salir</span>
         </div>
     </nav>
 
@@ -222,23 +216,21 @@
         <div class="modal-card-lg fade-scale modal-tutorial">
             <div id="tut-step-1" class="tutorial-step">
                 <div class="tut-icon-bg bg-blue-soft">
-                    <i class="fa-solid fa-handshake-simple"></i>
                 </div>
                 <h2 class="tut-title">¡Bienvenido!</h2>
                 <p class="tut-text">
                     Estás entrando a <strong>GenIA</strong>. Aquí aprenderás IA jugando y ganando XP.
                 </p>
-                <button class="btn btn-primary" onclick="animateTutorialStep()">Siguiente <i class="fa-solid fa-arrow-right"></i></button>
+                <button class="btn btn-primary" onclick="animateTutorialStep()">Siguiente</button>
             </div>
             <div id="tut-step-2" class="tutorial-step hidden">
                 <div class="tut-icon-bg bg-purple-soft">
-                    <i class="fa-solid fa-robot"></i>
                 </div>
                 <h2 class="tut-title">Tu Mentor IA</h2>
                 <p class="tut-text">
                     Usa el chat para completar misiones. El modo <strong>Mentor</strong> te dará retos y XP.
                 </p>
-                <button class="btn btn-success" onclick="startGenIATutorial()"><i class="fa-regular fa-comments"></i> Abrir Chatbot</button>
+                <button class="btn btn-success" onclick="startGenIATutorial()">Abrir Chatbot</button>
             </div>
         </div>
     </div>
@@ -247,15 +239,14 @@
     <div id="mission-modal" class="modal-overlay hidden">
         <div class="modal-card-lg fade-scale">
             <div class="modal-hero">
-                <div class="modal-close-btn" onclick="closeModal('mission-modal')"><i class="fa-solid fa-times"></i></div>
-                <i id="m-icon" class="modal-icon-lg"></i>
+                <div class="modal-close-btn" onclick="closeModal('mission-modal')">X</div>
                 <h1 id="m-title">Título</h1>
             </div>
             <div class="modal-body">
                 <div id="m-desc" class="theory-text markdown-body"></div>
                 <div id="action-area">
                     <button class="btn btn-outline" onclick="generateAIExample()" id="btn-gen-ex">
-                        <i class="fa-solid fa-microchip"></i> Ver Ejemplo Práctico con IA
+                        Ver Ejemplo Práctico con IA
                     </button>
                     <!-- CAJA DE EJEMPLO IA -->
                     <div id="ai-example-box" class="ai-box fade-in hidden">
@@ -267,7 +258,7 @@
                 </div>
                 <div id="completion-area" class="hidden slide-up completion-box">
                     <button class="btn btn-success" onclick="completeMission()">
-                        <i class="fa-solid fa-check-circle"></i> ¡Entendido! (+15 XP)
+                        ¡Entendido! (+15 XP)
                     </button>
                 </div>
             </div>
@@ -278,7 +269,7 @@
     <div id="news-modal" class="modal-overlay hidden">
         <div class="modal-card-lg fade-scale">
             <div id="n-header" class="news-header">
-                <div class="modal-close-btn" onclick="closeModal('news-modal')"><i class="fa-solid fa-times"></i></div>
+                <div class="modal-close-btn" onclick="closeModal('news-modal')">X</div>
                 <span id="n-tag" class="news-tag">TAG</span>
                 <h2 id="n-title" class="news-title">Titulo</h2>
             </div>
@@ -294,7 +285,7 @@
         <div class="bot-window fade-scale">
             <div class="chat-header">
                 <div class="chat-title">
-                    <div class="chat-avatar"><i class="fa-solid fa-brain"></i></div>
+                    <div class="chat-avatar">AI</div>
                     <div>
                         <div class="chat-name">GenAI</div>
                         <div class="chat-status">● En línea</div>
@@ -309,7 +300,7 @@
                     </div>
                 </div>
 
-                <div class="chat-close" onclick="closeBot()"><i class="fa-solid fa-times"></i></div>
+                <div class="chat-close" onclick="closeBot()">X</div>
             </div>
             
             <div id="chat-feed" class="chat-area"></div>
@@ -324,13 +315,13 @@
             
             <div class="chat-footer">
                 <div class="chat-chips-scroll" id="quick-chips">
-                    <button class="chat-chip" onclick="quickChat('Dame un reto sobre Prompting')">🎯 Reto Prompting</button>
-                    <button class="chat-chip" onclick="quickChat('Explícame qué es una Alucinación')">👻 Alucinaciones</button>
-                    <button class="chat-chip" onclick="quickChat('¿Cómo uso Perplexity?')">🔍 Perplexity</button>
+                    <button class="chat-chip" onclick="quickChat('Dame un reto sobre Prompting')">Reto Prompting</button>
+                    <button class="chat-chip" onclick="quickChat('Explícame qué es una Alucinación')">Alucinaciones</button>
+                    <button class="chat-chip" onclick="quickChat('¿Cómo uso Perplexity?')">Perplexity</button>
                 </div>
                 <div class="chat-input-container">
                     <input id="chat-input" type="text" class="chat-input" placeholder="Pregunta sobre IA..." onkeypress="if(event.key==='Enter') sendToJamba()">
-                    <button id="btn-send" class="chat-send" onclick="sendToJamba()"><i class="fa-solid fa-paper-plane"></i></button>
+                    <button id="btn-send" class="chat-send" onclick="sendToJamba()">Enviar</button>
                 </div>
             </div>
         </div>
