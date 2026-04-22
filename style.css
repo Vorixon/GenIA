@@ -208,6 +208,8 @@ body { background-color: var(--bg); color: var(--v-dark); height: 100vh; display
     padding: 20px; 
     border-radius: 12px; 
     overflow-x: auto; 
+    white-space: pre-wrap;
+    word-break: break-word;
     font-family: 'Courier New', monospace; 
     font-size: 0.95rem; 
     margin: 15px 0; 
